@@ -1,18 +1,16 @@
-// --- FIREBASE კონფიგურაცია (ჩასვი შენი მონაცემები) ---
 const firebaseConfig = {
-  apiKey: "შენი_api_key",
-  authDomain: "შენი_პროექტი.firebaseapp.com",
-  projectId: "შენი_პროექტის_id",
-  storageBucket: "შენი_პროექტი.appspot.com",
-  messagingSenderId: "შენი_sender_id",
-  appId: "შენი_app_id"
+  apiKey: "AIzaSyDuZpWaZFY18eyJNOMjFap2XVTr6D0cMyE",
+  authDomain: "makasia.firebaseapp.com",
+  projectId: "makasia",
+  storageBucket: "makasia.firebasestorage.app",
+  messagingSenderId: "51102698357",
+  appId: "1:51102698357:web:59f62a3c8e76663947a13c"
 };
 
 firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
 const db = firebase.firestore();
 
-// პროდუქტების მონაცემთა ბაზა
 const products = [
     { id: 1, title: "მინიმალისტური ტყავის ჩანთა", category: "ყოველდღიური", price: 140, image: "https://images.unsplash.com/photo-1584917865442-de89df76afd3?auto=format&fit=crop&w=800&q=80" },
     { id: 2, title: "ელეგანტური საღამოს კლატჩი", category: "საღამოს", price: 95, image: "https://images.unsplash.com/photo-1566150905458-1bf1fc113f0d?auto=format&fit=crop&w=800&q=80" },
@@ -23,7 +21,6 @@ const products = [
 let cart = JSON.parse(localStorage.getItem('feshven_cart')) || [];
 let currentUser = null;
 
-// ავტორიზაციის მოსმენა
 auth.onAuthStateChanged(async (user) => {
     if (user) {
         const userDoc = await db.collection('users').doc(user.uid).get();
@@ -38,7 +35,6 @@ auth.onAuthStateChanged(async (user) => {
     updateAuthUI();
 });
 
-// პროდუქტების რენდერი საიტზე
 function renderProducts(filterCat = "ყველა", searchQuery = "") {
     const grid = document.getElementById('product-grid');
     if(!grid) return;
@@ -94,7 +90,6 @@ function updateCart() {
     }
 }
 
-// რეგისტრაცია და ავტორიზაციის ტაბები
 function switchAuthTab(tab) {
     const loginForm = document.getElementById('login-form');
     const regForm = document.getElementById('register-form');
@@ -184,7 +179,6 @@ document.addEventListener('DOMContentLoaded', () => {
     renderProducts();
     updateCart();
     
-    // ძებნის და ფილტრების ლოგიკა
     const searchInput = document.getElementById('search-input');
     if(searchInput) {
         searchInput.addEventListener('input', (e) => renderProducts("ყველა", e.target.value));
