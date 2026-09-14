@@ -4,33 +4,39 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Makasia - ადმინ პანელი</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Noto+Sans+Georgian:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'DM Sans', 'Noto Sans Georgian', sans-serif; }
         body { background-color: #f4f7f6; color: #333; padding: 20px; }
-        .login-container, .admin-container { max-width: 900px; margin: 0 auto; background: #fff; padding: 30px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.08); }
-        h2 { margin-bottom: 20px; color: #2c3e50; }
+        .login-container, .admin-container { max-width: 900px; margin: 30px auto; background: #fff; padding: 30px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.08); }
+        h2 { margin-bottom: 20px; color: #111; }
         .form-group { margin-bottom: 15px; }
-        label { display: block; margin-bottom: 6px; font-weight: 600; font-size: 14px; }
-        input { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 16px; }
-        button { background: #27ae60; color: white; border: none; padding: 12px 20px; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer; }
-        button:hover { background: #219653; }
+        label { display: block; margin-bottom: 6px; font-weight: 600; font-size: 14px; color: #555; }
+        input { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 16px; outline: none; }
+        input:focus { border-color: #111; }
+        button { background: #111; color: white; border: none; padding: 12px 20px; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer; transition: background 0.2s; }
+        button:hover { background: #333; }
         
-        .admin-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 1px solid #eee; padding-bottom: 15px; }
-        .logout-btn { background: #e74c3c; padding: 8px 15px; font-size: 14px; }
-        .logout-btn:hover { background: #c0392b; }
+        .admin-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; border-bottom: 1px solid #eee; padding-bottom: 15px; }
+        .logout-btn { background: #d32f2f; padding: 8px 15px; font-size: 14px; }
+        .logout-btn:hover { background: #b71c1c; }
         
-        /* შეკვეთების ბარათები მობილურისთვისაც რომ იდეალური იყოს */
-        .order-card { background: #fafafa; border: 1px solid #e0e0e0; border-radius: 8px; padding: 15px; margin-bottom: 15px; box-shadow: 0 2px 5px rgba(0,0,0,0.03); }
-        .order-header { display: flex; justify-content: space-between; font-weight: bold; color: #34495e; margin-bottom: 8px; border-bottom: 1px solid #ddd; padding-bottom: 5px; }
-        .order-body p { margin-bottom: 6px; font-size: 14px; }
-        .order-body span { font-weight: 600; color: #555; }
-        .no-orders { text-align: center; color: #888; padding: 20px; }
+        .order-card { background: #fafafa; border: 1px solid #e0e0e0; border-radius: 8px; padding: 18px; margin-bottom: 15px; box-shadow: 0 2px 5px rgba(0,0,0,0.02); }
+        .order-header { display: flex; justify-content: space-between; font-weight: bold; color: #111; margin-bottom: 10px; border-bottom: 1px solid #ddd; padding-bottom: 8px; font-size: 16px; }
+        .order-body p { margin-bottom: 6px; font-size: 14px; color: #444; }
+        .order-body span { font-weight: 600; color: #111; }
+        .no-orders { text-align: center; color: #888; padding: 30px; font-size: 15px; }
+        .back-link { display: inline-block; margin-bottom: 15px; color: #111; text-decoration: none; font-size: 14px; font-weight: 500; }
+        .back-link:hover { text-decoration: underline; }
     </style>
 </head>
 <body>
 
-    <!-- ავტორიზაციის ფანჯარა ადმინისთვის -->
+    <!-- ადმინად შესვლის ფორმა -->
     <div id="loginSection" class="login-container">
+        <a href="index.html" class="back-link">← საიტზე დაბრუნება</a>
         <h2>ადმინისტრატორად შესვლა</h2>
         <div class="form-group">
             <label>ელ-ფოსტა:</label>
@@ -41,14 +47,14 @@
             <input type="password" id="adminPassword" placeholder="******">
         </div>
         <button id="loginBtn">შესვლა</button>
-        <p id="loginError" style="color: red; margin-top: 10px; font-size: 14px;"></p>
+        <p id="loginError" style="color: #d32f2f; margin-top: 10px; font-size: 14px;"></p>
     </div>
 
     <!-- შეკვეთების სრული პანელი -->
     <div id="adminSection" class="admin-container" style="display: none;">
         <div class="admin-header">
             <h2>შეკვეთების სრული დეტალიზაცია</h2>
-            <button class="logout-btn" id="logoutBtn">მოსვლა / გასვლა</button>
+            <button class="logout-btn" id="logoutBtn">გასვლა</button>
         </div>
         <div id="ordersList">
             <p class="no-orders">იტვირთება შეკვეთები...</p>
@@ -56,10 +62,99 @@
     </div>
 
     <!-- Firebase SDK-ები -->
-    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
     
-    <script src="admin.js"></script>
+    <script>
+        // Firebase კონფიგურაცია და ინიციალიზაცია
+        const firebaseConfig = {
+          apiKey: "AIzaSyDuZpWaZFY18eyJNOMjFap2XVTr6D0cMyE",
+          authDomain: "makasia.firebaseapp.com",
+          projectId: "makasia",
+          storageBucket: "makasia.firebasestorage.app",
+          messagingSenderId: "51102698357",
+          appId: "1:51102698357:web:59f62a3c8e76663947a13c"
+        };
+
+        if (!firebase.apps.length) {
+            firebase.initializeApp(firebaseConfig);
+        }
+
+        const db = firebase.firestore();
+        const auth = firebase.auth();
+
+        const loginSection = document.getElementById('loginSection');
+        const adminSection = document.getElementById('adminSection');
+        const loginBtn = document.getElementById('loginBtn');
+        const logoutBtn = document.getElementById('logoutBtn');
+        const loginError = document.getElementById('loginError');
+        const ordersList = document.getElementById('ordersList');
+
+        // შესვლა
+        loginBtn.addEventListener('click', () => {
+            const email = document.getElementById('adminEmail').value;
+            const password = document.getElementById('adminPassword').value;
+
+            auth.signInWithEmailAndPassword(email, password)
+                .then(() => {
+                    loginError.textContent = "";
+                })
+                .catch((error) => {
+                    loginError.textContent = "არასწორი ელ-ფოსტა ან პაროლი!";
+                });
+        });
+
+        // გასვლა
+        logoutBtn.addEventListener('click', () => {
+            auth.signOut();
+        });
+
+        // ავტორიზაციის სტატუსის კონტროლი
+        auth.onAuthStateChanged((user) => {
+            if (user) {
+                loginSection.style.display = 'none';
+                adminSection.style.display = 'block';
+                loadOrders();
+            } else {
+                loginSection.style.display = 'block';
+                adminSection.style.display = 'none';
+            }
+        });
+
+        // შეკვეთების წამოღება ბაზიდან
+        function loadOrders() {
+            db.collection("orders").orderBy("createdAt", "desc").onSnapshot((snapshot) => {
+                ordersList.innerHTML = "";
+                
+                if (snapshot.empty) {
+                    ordersList.innerHTML = `<p class="no-orders">ჯერ შეკვეთები არ არის.</p>`;
+                    return;
+                }
+
+                snapshot.forEach((doc) => {
+                    const data = doc.data();
+                    const dateStr = data.createdAt ? new Date(data.createdAt.toDate()).toLocaleString('ka-GE') : 'ახალი';
+
+                    const card = document.createElement('div');
+                    card.className = 'order-card';
+                    card.innerHTML = `
+                        <div class="order-header">
+                            <span>მომხმარებელი: ${data.customerName || 'უცნობი'}</span>
+                            <span>ჯამი: ${data.totalPrice || '0'}</span>
+                        </div>
+                        <div class="order-body">
+                            <p><span>ტელეფონი:</span> ${data.phone || '-'}</p>
+                            <p><span>მისამართი:</span> ${data.address || '-'}</p>
+                            <p><span>მიწოდების მეთოდი:</span> ${data.delivery || '-'}</p>
+                            <p><span>პროდუქტები:</span> ${data.productDetails || '-'}</p>
+                            <p style="color: #666; font-size: 12px; margin-top: 8px;">შეკვეთის დრო: ${dateStr}</p>
+                        </div>
+                    `;
+                    ordersList.appendChild(card);
+                });
+            });
+        }
+    </script>
 </body>
 </html>
