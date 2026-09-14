@@ -34,6 +34,7 @@ document.addEventListener('DOMContentLoaded', () => {
     loadProductsFromDB();
     updateCartUI();
     initEvents();
+    checkAuthStatus();
 });
 
 // პროდუქტების წამოღება Firestore-დან რეალურ დროში
@@ -176,22 +177,48 @@ function calculateCheckout() {
     if (totalEl) totalEl.textContent = finalTotal + " ₾";
 }
 
+// ავტორიზაციის სტატუსის შემოწმება და ტექსტის შეცვლა
+function checkAuthStatus() {
+    auth.onAuthStateChanged((user) => {
+        const accountToggle = document.getElementById('account-toggle');
+        if (accountToggle) {
+            if (user) {
+                // თუ შესულია, ვუწერთ სახელს/მეილს ან "გასვლა"-ს
+                accountToggle.textContent = user.email === "suloanani1@gmail.com" ? "ადმინი" : "პროფილი";
+            } else {
+                accountToggle.textContent = "შესვლა";
+            }
+        }
+    });
+}
+
 // ღონისძიებების მართვა
 function initEvents() {
+    // კალათის გახსნა
     document.getElementById('cart-toggle').addEventListener('click', () => {
         cartPanel.classList.add('open');
         overlay.classList.add('show');
     });
 
-    document.querySelectorAll('[data-close="cart-panel"], #overlay').forEach(el => {
-        el.addEventListener('click', () => {
-            cartPanel.classList.remove('open');
-            overlay.classList.remove('show');
-            const authDialog = document.getElementById('auth-dialog');
-            const checkoutDialog = document.getElementById('checkout-dialog');
-            if(authDialog) authDialog.close();
-            if(checkoutDialog) checkoutDialog.close();
-        });
+    // სრული დახურვის ლოგიკა (× ღილაკები და overlay)
+    function closeAllModals() {
+        if(cartPanel) cartPanel.classList.remove('open');
+        if(overlay) overlay.classList.remove('show');
+        
+        const authDialog = document.getElementById('auth-dialog');
+        const checkoutDialog = document.getElementById('checkout-dialog');
+        if(authDialog && typeof authDialog.close === 'function') authDialog.close();
+        if(checkoutDialog && typeof checkoutDialog.close === 'function') checkoutDialog.close();
+    }
+
+    // overlay-ზე დაჭერით დახურვა
+    if(overlay) {
+        overlay.addEventListener('click', closeAllModals);
+    }
+
+    // ყველა დახურვის ღილაკზე (× ან [data-close]) მიბმა
+    document.querySelectorAll('[data-close], .close-modal, .close-btn, [id*="close"]').forEach(el => {
+        el.addEventListener('click', closeAllModals);
     });
 
     const searchInput = document.getElementById('search-input');
@@ -211,11 +238,25 @@ function initEvents() {
         });
     });
 
+    // ავტორიზაციის ფანჯრის გახსნა
     const accountToggle = document.getElementById('account-toggle');
     if (accountToggle) {
         accountToggle.addEventListener('click', () => {
-            document.getElementById('auth-dialog').showModal();
-            overlay.classList.add('show');
+            const user = auth.currentUser;
+            if (user) {
+                // თუ უკვე შესულია, კითხულობს უნდა თუ არა გასვლა
+                if(confirm("გსურთ სისტემიდან გასვლა?")) {
+                    auth.signOut().then(() => {
+                        showToast("გახვედით სისტემიდან");
+                    });
+                }
+            } else {
+                const authDialog = document.getElementById('auth-dialog');
+                if(authDialog) {
+                    authDialog.showModal();
+                    if(overlay) overlay.classList.add('show');
+                }
+            }
         });
     }
 
@@ -227,9 +268,13 @@ function initEvents() {
                 alert("კალათა ცარიელია!");
                 return;
             }
-            cartPanel.classList.remove('open');
+            if(cartPanel) cartPanel.classList.remove('open');
             calculateCheckout();
-            document.getElementById('checkout-dialog').showModal();
+            const checkoutDialog = document.getElementById('checkout-dialog');
+            if(checkoutDialog) {
+                checkoutDialog.showModal();
+                if(overlay) overlay.classList.add('show');
+            }
         });
     }
 
@@ -277,8 +322,7 @@ function initEvents() {
                 cart = [];
                 saveCart();
                 updateCartUI();
-                document.getElementById('checkout-dialog').close();
-                overlay.classList.remove('show');
+                closeAllModals();
                 e.target.reset();
             }).catch(err => {
                 const errEl = document.getElementById('checkout-error');
@@ -310,12 +354,12 @@ function initEvents() {
             const password = e.target.loginPassword.value;
             auth.signInWithEmailAndPassword(email, password)
                 .then(() => {
-                    document.getElementById('auth-dialog').close();
-                    overlay.classList.remove('show');
+                    closeAllModals();
                     showToast("წარმატებით შეხვედით სისტემაში");
                 })
                 .catch(() => {
-                    document.getElementById('login-error').textContent = "არასწორი მეილი ან პაროლი";
+                    const loginErr = document.getElementById('login-error');
+                    if(loginErr) loginErr.textContent = "არასწორი მეილი ან პაროლი";
                 });
         });
     }
@@ -333,12 +377,12 @@ function initEvents() {
                     return db.collection("users").doc(cred.user.uid).set({ name, email, role: "user" });
                 })
                 .then(() => {
-                    document.getElementById('auth-dialog').close();
-                    overlay.classList.remove('show');
+                    closeAllModals();
                     showToast("რეგისტრაცია წარმატებულია");
                 })
                 .catch(() => {
-                    document.getElementById('reg-error').textContent = "შეცდომა რეგისტრაციისას";
+                    const regErr = document.getElementById('reg-error');
+                    if(regErr) regErr.textContent = "შეცდომა რეგისტრაციისას";
                 });
         });
     }
