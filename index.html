@@ -10,7 +10,6 @@
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@600;700&family=Noto+Sans+Georgian:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css">
   <style>
-    /* მცირე სტილები რეგისტრაციის და ავტორიზაციის ტაბებისთვის */
     .auth-tabs { display: flex; gap: 10px; margin-bottom: 20px; border-bottom: 2px solid #eee; padding-bottom: 10px; }
     .tab-btn { background: none; border: none; font-size: 16px; font-weight: 600; cursor: pointer; color: #777; padding: 5px 10px; }
     .tab-btn.active { color: #111; border-bottom: 2px solid #111; margin-bottom: -12px; }
@@ -101,7 +100,6 @@
   
   <dialog id="product-dialog"><button class="close-button dialog-close" aria-label="დახურვა">×</button><div id="dialog-content"></div></dialog>  
   
-  <!-- ავტორიზაცია / რეგისტრაციის დიალოგი -->
   <dialog class="form-dialog" id="auth-dialog">
     <button class="close-button dialog-close" aria-label="დახურვა">×</button>
     <div id="auth-content">
@@ -146,7 +144,6 @@
 
   <div class="toast" id="toast" role="status"></div>  
 
-  <!-- Firebase ბიბლიოთეკები -->
   <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
