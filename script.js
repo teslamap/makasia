@@ -1,12 +1,219 @@
-const products=[{id:1,name:'Mia Mini',category:'საღამოს',price:129,image:'https://images.unsplash.com/photo-1594223274512-ad4803739b7c?auto=format&fit=crop&w=700&q=85',tag:'ბესტსელერი',description:'კომპაქტური ჩანთა მეტალის დეტალით.'},{id:2,name:'Noa Tote',category:'ყოველდღიური',price:189,image:'https://images.unsplash.com/photo-1548036328-c9fa89d128fa?auto=format&fit=crop&w=700&q=85',tag:'ახალი',description:'ტევადი ყოველდღიური tote-ჩანთა.'},{id:3,name:'Luna Shoulder',category:'ყოველდღიური',price:149,image:'https://images.unsplash.com/photo-1585488434455-2ba6b2508b15?auto=format&fit=crop&w=700&q=85',tag:'',description:'რბილი ფორმა ყველა დღისათვის.'},{id:4,name:'Kira Backpack',category:'ზურგჩანთა',price:169,image:'https://images.unsplash.com/photo-1622560480605-d83c853bc5c3?auto=format&fit=crop&w=700&q=85',tag:'ახალი',description:'მსუბუქი ზურგჩანთა ქალაქისთვის.'},{id:5,name:'Cleo Clutch',category:'საღამოს',price:119,image:'https://images.unsplash.com/photo-1584917865442-de89df76afd3?auto=format&fit=crop&w=700&q=85',tag:'',description:'ელეგანტური ტექსტურა განსაკუთრებული საღამოსთვის.'},{id:6,name:'Ava Crossbody',category:'ყოველდღიური',price:139,image:'https://images.unsplash.com/photo-1566150905458-1bf1fc113f0d?auto=format&fit=crop&w=700&q=85',tag:'ბესტსელერი',description:'თავისუფალი მოძრაობა და აუცილებელი ნივთები.'}];
-const store={get:(k,d)=>JSON.parse(localStorage.getItem(k)||JSON.stringify(d)),set:(k,v)=>localStorage.setItem(k,JSON.stringify(v))},money=n=>`${n.toLocaleString('ka-GE')} ₾`;let cart=store.get('feshven-cart',[]),user=store.get('feshven-current-user',null),cat='ყველა',q='';const total=()=>cart.reduce((s,x)=>s+x.price*x.quantity,0);
-function toast(m){let e=document.querySelector('#toast');e.textContent=m;e.classList.add('show');setTimeout(()=>e.classList.remove('show'),2800)}
-function renderProducts(){let x=products.filter(p=>(cat==='ყველა'||p.category===cat)&&p.name.toLowerCase().includes(q.toLowerCase()));document.querySelector('#product-result').textContent=`${x.length} მოდელი`;document.querySelector('#product-grid').innerHTML=x.map(p=>`<article class="product-card"><div class="product-image" data-detail="${p.id}">${p.tag?`<span class="tag">${p.tag}</span>`:''}<img src="${p.image}" alt="${p.name}"><button class="quick-add" data-add="${p.id}">+</button></div><div class="product-info"><div><h3>${p.name}</h3><p>${p.category}</p></div><strong class="price">${money(p.price)}</strong></div></article>`).join('')||'<p>შესაბამისი პროდუქტი ვერ მოიძებნა.</p>'}
-function render(){document.querySelector('#cart-count').textContent=cart.reduce((s,x)=>s+x.quantity,0);document.querySelector('#cart-total').textContent=money(total());document.querySelector('#account-toggle').textContent=user?user.name.split(' ')[0]:'შესვლა';document.querySelector('#cart-items').innerHTML=cart.length?cart.map(x=>`<div class="cart-item"><img src="${x.image}" alt=""><div><h3>${x.name}</h3><p>${money(x.price)} · ${x.quantity} ც.</p></div><button class="remove" data-remove="${x.id}">×</button></div>`).join(''):'<p class="empty-cart">კალათა ჯერ ცარიელია.</p>'}
-function add(id){let p=products.find(x=>x.id===+id),x=cart.find(x=>x.id===p.id);x?x.quantity++:cart.push({...p,quantity:1});store.set('feshven-cart',cart);render();toast(`${p.name} დაემატა კალათაში`)}
-function cartOpen(on){document.querySelector('#cart-panel').classList.toggle('open',on);document.querySelector('#overlay').classList.toggle('visible',on)}
-function auth(view='login'){let e=document.querySelector('#auth-content');if(view==='account'){let o=store.get('feshven-orders',[]).filter(x=>x.email===user.email);e.innerHTML=`<div class="form-dialog-content"><p class="eyebrow">ჩემი პროფილი</p><h2>გამარჯობა, ${user.name}</h2><p class="dialog-intro">${user.email}</p><h3 class="orders-title">ჩემი შეკვეთები</h3>${o.length?`<div class="orders">${o.map(x=>`<div><span>${x.number}</span><span>${x.date}</span><strong>${money(x.total)}</strong></div>`).join('')}</div>`:'<p class="dialog-intro">შეკვეთა ჯერ არ გაქვს.</p>'}<button class="button button-dark full" id="logout">გამოსვლა</button></div>`}else if(view==='register')e.innerHTML=`<div class="form-dialog-content"><p class="eyebrow">ახალი მომხმარებელი</p><h2>რეგისტრაცია</h2><form id="register-form" novalidate><label>სახელი და გვარი<input name="name" required minlength="3"></label><label>ელფოსტა<input name="email" type="email" required></label><label>პაროლი<input name="password" type="password" required minlength="6"><small>მინიმუმ 6 სიმბოლო</small></label><label>გაიმეორე პაროლი<input name="confirm" type="password" required></label><button class="button button-dark full">ანგარიშის შექმნა</button><p class="field-error"></p></form><p class="switch-form">უკვე გაქვს ანგარიში? <button data-auth="login">შესვლა</button></p></div>`;else e.innerHTML=`<div class="form-dialog-content"><p class="eyebrow">მოხარული ვართ შენი ნახვით</p><h2>შესვლა</h2><form id="login-form" novalidate><label>ელფოსტა<input name="email" type="email" required></label><label>პაროლი<input name="password" type="password" required></label><button class="button button-dark full">შესვლა</button><p class="field-error"></p></form><p class="switch-form">ჯერ არ ხარ დარეგისტრირებული? <button data-auth="register">რეგისტრაცია</button></p></div>`;document.querySelector('#auth-dialog').showModal()}
-function checkout(){if(!cart.length)return toast('ჯერ დაამატე პროდუქტი კალათაში.');if(!user){auth();return toast('შეკვეთისთვის საჭიროა შესვლა.')}let f=document.querySelector('#checkout-form'),d=f.delivery.value==='კურიერი თბილისში'?8:12;f.customerName.value=user.name;document.querySelector('#checkout-subtotal').textContent=money(total());document.querySelector('#checkout-delivery').textContent=money(d);document.querySelector('#checkout-total').textContent=money(total()+d);cartOpen(false);document.querySelector('#checkout-dialog').showModal()}
-document.addEventListener('click',e=>{let t=e.target.closest('[data-add]');if(t)return add(t.dataset.add);t=e.target.closest('[data-remove]');if(t){cart=cart.filter(x=>x.id!==+t.dataset.remove);store.set('feshven-cart',cart);render()}if(e.target.closest('#cart-toggle'))cartOpen(true);if(e.target.closest('[data-close]')||e.target.id==='overlay')cartOpen(false);if(e.target.closest('.dialog-close'))e.target.closest('dialog').close();if(e.target.closest('#account-toggle'))auth(user?'account':'login');if(e.target.closest('[data-auth]'))auth(e.target.closest('[data-auth]').dataset.auth);if(e.target.closest('#logout')){user=null;localStorage.removeItem('feshven-current-user');document.querySelector('#auth-dialog').close();render()}let f=e.target.closest('[data-category]');if(f){cat=f.dataset.category;document.querySelectorAll('.filter').forEach(x=>x.classList.toggle('active',x===f));renderProducts()}f=e.target.closest('[data-category-link]');if(f){cat=f.dataset.categoryLink;renderProducts()}});
-document.querySelector('#auth-content').addEventListener('submit',e=>{e.preventDefault();let d=Object.fromEntries(new FormData(e.target)),err=e.target.querySelector('.field-error'),users=store.get('feshven-users',[]);if(!e.target.checkValidity())return err.textContent='შეავსე ყველა ველი სწორად.';if(e.target.id==='register-form'){if(d.password!==d.confirm)return err.textContent='პაროლები ერთმანეთს არ ემთხვევა.';if(users.some(x=>x.email===d.email.toLowerCase()))return err.textContent='ამ ელფოსტით ანგარიში უკვე არსებობს.';users.push({name:d.name.trim(),email:d.email.toLowerCase(),password:d.password});store.set('feshven-users',users);user={name:d.name.trim(),email:d.email.toLowerCase()};toast('ანგარიში წარმატებით შეიქმნა.')}else{let u=users.find(x=>x.email===d.email.toLowerCase()&&x.password===d.password);if(!u)return err.textContent='ელფოსტა ან პაროლი არასწორია.';user={name:u.name,email:u.email};toast('წარმატებით შეხვედი ანგარიშში.')}store.set('feshven-current-user',user);document.querySelector('#auth-dialog').close();render()});
-document.querySelector('#checkout').onclick=checkout;document.querySelector('#checkout-form').onsubmit=e=>{e.preventDefault();let f=e.target,d=Object.fromEntries(new FormData(f)),err=document.querySelector('#checkout-error');if(!f.checkValidity())return err.textContent='შეავსე მიწოდების ყველა ველი.';let fee=d.delivery==='კურიერი თბილისში'?8:12,o={number:`FB-${Date.now().toString().slice(-6)}`,date:new Intl.DateTimeFormat('ka-GE',{dateStyle:'medium'}).format(new Date()),email:user.email,total:total()+fee,...d};let orders=store.get('feshven-orders',[]);orders.unshift(o);store.set('feshven-orders',orders);cart=[];store.set('feshven-cart',cart);render();document.querySelector('#checkout-dialog').close();toast(`შეკვეთა ${o.number} მიღებულია — მადლობა!`)};document.querySelector('#checkout-form').delivery.onchange=()=>{let f=document.querySelector('#checkout-form'),d=f.delivery.value==='კურიერი თბილისში'?8:12;document.querySelector('#checkout-delivery').textContent=money(d);document.querySelector('#checkout-total').textContent=money(total()+d)};document.querySelector('#search-input').oninput=e=>{q=e.target.value;renderProducts()};document.querySelector('#search-toggle').onclick=()=>{document.querySelector('#shop').scrollIntoView();document.querySelector('#search-input').focus()};document.querySelector('#newsletter-form').onsubmit=e=>{e.preventDefault();e.target.reset();document.querySelector('#form-message').textContent='მადლობა — მალე მოგწერთ!'};renderProducts();render();
+// --- FIREBASE კონფიგურაცია (ჩასვი შენი მონაცემები) ---
+const firebaseConfig = {
+  apiKey: "შენი_api_key",
+  authDomain: "შენი_პროექტი.firebaseapp.com",
+  projectId: "შენი_პროექტის_id",
+  storageBucket: "შენი_პროექტი.appspot.com",
+  messagingSenderId: "შენი_sender_id",
+  appId: "შენი_app_id"
+};
+
+firebase.initializeApp(firebaseConfig);
+const auth = firebase.auth();
+const db = firebase.firestore();
+
+// პროდუქტების მონაცემთა ბაზა
+const products = [
+    { id: 1, title: "მინიმალისტური ტყავის ჩანთა", category: "ყოველდღიური", price: 140, image: "https://images.unsplash.com/photo-1584917865442-de89df76afd3?auto=format&fit=crop&w=800&q=80" },
+    { id: 2, title: "ელეგანტური საღამოს კლატჩი", category: "საღამოს", price: 95, image: "https://images.unsplash.com/photo-1566150905458-1bf1fc113f0d?auto=format&fit=crop&w=800&q=80" },
+    { id: 3, title: "ქალაქის ტყავის ზურგჩანთა", category: "ზურგჩანთა", price: 180, image: "https://images.unsplash.com/photo-1548036328-c9fa89d128fa?auto=format&fit=crop&w=800&q=80" },
+    { id: 4, title: "კლასიკური ხელჩანთა", category: "ყოველდღიური", price: 160, image: "https://images.unsplash.com/photo-1590874103328-eac38a683ce7?auto=format&fit=crop&w=800&q=80" }
+];
+
+let cart = JSON.parse(localStorage.getItem('feshven_cart')) || [];
+let currentUser = null;
+
+// ავტორიზაციის მოსმენა
+auth.onAuthStateChanged(async (user) => {
+    if (user) {
+        const userDoc = await db.collection('users').doc(user.uid).get();
+        if (userDoc.exists) {
+            currentUser = { uid: user.uid, email: user.email, ...userDoc.data() };
+        } else {
+            currentUser = { uid: user.uid, email: user.email, name: 'მომხმარებელი' };
+        }
+    } else {
+        currentUser = null;
+    }
+    updateAuthUI();
+});
+
+// პროდუქტების რენდერი საიტზე
+function renderProducts(filterCat = "ყველა", searchQuery = "") {
+    const grid = document.getElementById('product-grid');
+    if(!grid) return;
+    grid.innerHTML = "";
+
+    const filtered = products.filter(p => {
+        const matchCat = filterCat === "ყველა" || p.category === filterCat;
+        const matchSearch = p.title.toLowerCase().includes(searchQuery.toLowerCase());
+        return matchCat && matchSearch;
+    });
+
+    filtered.forEach(p => {
+        const card = document.createElement('div');
+        card.className = "product-card";
+        card.innerHTML = `
+            <div class="product-image"><img src="${p.image}" alt="${p.title}"></div>
+            <div class="product-info">
+                <h3>${p.title}</h3>
+                <p><b>${p.price} ₾</b></p>
+                <button class="button button-dark" onclick="addToCart(${p.id})">კალათაში დამატება</button>
+            </div>
+        `;
+        grid.appendChild(card);
+    });
+}
+
+function addToCart(id) {
+    const product = products.find(p => p.id === id);
+    const existing = cart.find(item => item.id === id);
+    if(existing) {
+        existing.quantity += 1;
+    } else {
+        cart.push({ ...product, quantity: 1 });
+    }
+    updateCart();
+    alert("პროდუქტი დამატებულია კალათაში!");
+}
+
+function updateCart() {
+    localStorage.setItem('feshven_cart', JSON.stringify(cart));
+    const countEl = document.getElementById('cart-count');
+    if(countEl) countEl.textContent = cart.reduce((sum, item) => sum + item.quantity, 0);
+    
+    const container = document.getElementById('cart-items');
+    if(container) {
+        container.innerHTML = "";
+        let total = 0;
+        cart.forEach(item => {
+            total += item.price * item.quantity;
+            container.innerHTML += `<div class="cart-item"><span>${item.title} (${item.quantity} ც)</span> <b>${item.price * item.quantity} ₾</b></div>`;
+        });
+        document.getElementById('cart-total').textContent = total + " ₾";
+    }
+}
+
+// რეგისტრაცია და ავტორიზაციის ტაბები
+function switchAuthTab(tab) {
+    const loginForm = document.getElementById('login-form');
+    const regForm = document.getElementById('register-form');
+    const tabs = document.querySelectorAll('.tab-btn');
+    if(!tabs.length) return;
+    tabs.forEach(t => t.classList.remove('active'));
+    
+    if(tab === 'login') {
+        loginForm.style.display = 'block';
+        regForm.style.display = 'none';
+        event.target.classList.add('active');
+    } else {
+        loginForm.style.display = 'none';
+        regForm.style.display = 'block';
+        event.target.classList.add('active');
+    }
+}
+
+document.addEventListener('submit', async function(e) {
+    if(e.target && e.target.id === 'register-form') {
+        e.preventDefault();
+        const fd = new FormData(e.target);
+        try {
+            const cred = await auth.createUserWithEmailAndPassword(fd.get('regEmail'), fd.get('regPassword'));
+            await db.collection('users').doc(cred.user.uid).set({
+                name: fd.get('regName'),
+                email: fd.get('regEmail'),
+                createdAt: new Date().toISOString()
+            });
+            alert('რეგისტრაცია წარმატებით დასრულდა!');
+            document.getElementById('auth-dialog').close();
+        } catch(err) {
+            document.getElementById('reg-error').textContent = err.message;
+        }
+    }
+
+    if(e.target && e.target.id === 'login-form') {
+        e.preventDefault();
+        const fd = new FormData(e.target);
+        try {
+            await auth.signInWithEmailAndPassword(fd.get('loginEmail'), fd.get('loginPassword'));
+            alert('წარმატებული ავტორიზაცია!');
+            document.getElementById('auth-dialog').close();
+        } catch(err) {
+            document.getElementById('login-error').textContent = 'არასწორი მონაცემები!';
+        }
+    }
+
+    if(e.target && e.target.id === 'checkout-form') {
+        e.preventDefault();
+        const fd = new FormData(e.target);
+        const orderData = {
+            customerName: fd.get('customerName'),
+            phone: fd.get('phone'),
+            address: fd.get('address'),
+            delivery: fd.get('delivery'),
+            items: cart,
+            total: document.getElementById('cart-total').textContent,
+            createdAt: firebase.firestore.FieldValue.serverTimestamp()
+        };
+        try {
+            await db.collection('orders').add(orderData);
+            alert('შეკვეთა წარმატებით გაფორმდა!');
+            cart = [];
+            updateCart();
+            document.getElementById('checkout-dialog').close();
+        } catch(err) {
+            alert('შეცდომა შეკვეთისას.');
+        }
+    }
+});
+
+function updateAuthUI() {
+    const btn = document.getElementById('account-toggle');
+    if(btn) {
+        if(currentUser) {
+            btn.textContent = currentUser.name;
+            btn.onclick = () => { if(confirm('გსურთ გასვლა?')) auth.signOut().then(() => location.reload()); }
+        } else {
+            btn.textContent = 'შესვლა';
+            btn.onclick = () => document.getElementById('auth-dialog').showModal();
+        }
+    }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    renderProducts();
+    updateCart();
+    
+    // ძებნის და ფილტრების ლოგიკა
+    const searchInput = document.getElementById('search-input');
+    if(searchInput) {
+        searchInput.addEventListener('input', (e) => renderProducts("ყველა", e.target.value));
+    }
+
+    document.querySelectorAll('.filter').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            document.querySelectorAll('.filter').forEach(b => b.classList.remove('active'));
+            e.target.classList.add('active');
+            renderProducts(e.target.dataset.category);
+        });
+    });
+
+    const cartToggle = document.getElementById('cart-toggle');
+    const cartPanel = document.getElementById('cart-panel');
+    if(cartToggle && cartPanel) {
+        cartToggle.onclick = () => cartPanel.classList.toggle('open');
+    }
+    
+    const checkoutBtn = document.getElementById('checkout');
+    if(checkoutBtn) {
+        checkoutBtn.onclick = () => {
+            if(cart.length === 0) { alert('კალათა ცარიელია!'); return; }
+            document.getElementById('checkout-dialog').showModal();
+            document.getElementById('cart-panel').classList.remove('open');
+        };
+    }
+
+    document.querySelectorAll('.dialog-close').forEach(b => {
+        b.onclick = (e) => e.target.closest('dialog').close();
+    });
+});
