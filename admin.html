@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="ka">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Feshven Bags — ადმინ პანელი</title>
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    body { background: #f9f9f9; padding: 20px; font-family: 'Noto Sans Georgian', sans-serif; }
+    .admin-container { max-width: 1000px; margin: 0 auto; background: #fff; padding: 30px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
+    .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-bottom: 30px; }
+    .stat-card { background: #f4f4f4; padding: 20px; border-radius: 8px; text-align: center; }
+    .stat-card h3 { font-size: 24px; margin-bottom: 5px; color: #111; }
+    table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+    th, td { padding: 12px; text-align: left; border-bottom: 1px solid #eee; font-size: 14px; }
+    th { background: #111; color: #fff; }
+    .back-link { display: inline-block; margin-bottom: 20px; color: #111; text-decoration: none; font-weight: 600; }
+  </style>
+</head>
+<body>
+  <div class="admin-container">
+    <a href="index.html" class="back-link">← საიტზე დაბრუნება</a>
+    <h1>ადმინისტრატორის პანელი</h1>
+    
+    <div class="stats-grid">
+      <div class="stat-card">
+        <h3 id="total-orders">0</h3>
+        <p>სულ შეკვეთა</p>
+      </div>
+      <div class="stat-card">
+        <h3 id="total-revenue">0 ₾</h3>
+        <p>ჯამური შემოსავალი</p>
+      </div>
+      <div class="stat-card">
+        <h3 id="total-users">0</h3>
+        <p>რეგისტრირებული მომხმარებელი</p>
+      </div>
+    </div>
+
+    <h2>შეკვეთების სია</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>№</th>
+          <th>მომხმარებელი</th>
+          <th>ტელეფონი</th>
+          <th>მისამართი</th>
+          <th>თანხა</th>
+          <th>თარიღი</th>
+        </tr>
+      </thead>
+      <tbody id="admin-orders-list">
+        <tr><td colspan="6" style="text-align:center;">იტვირთება...</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Firebase ბიბლიოთეკები -->
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+
+  <script>
+    const firebaseConfig = {
+      apiKey: "შენი_api_key",
+      authDomain: "შენი_პროექტი.firebaseapp.com",
+      projectId: "შენი_პროექტის_id",
+      storageBucket: "შენი_პროექტი.appspot.com",
+      messagingSenderId: "შენი_sender_id",
+      appId: "შენი_app_id"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+
+    async function loadAdminData() {
+        try {
+            const ordersSnap = await db.collection('orders').get();
+            const usersSnap = await db.collection('users').get();
+            
+            const orders = [];
+            ordersSnap.forEach(doc => orders.push(doc.data()));
+
+            document.getElementById('total-orders').textContent = orders.length;
+            document.getElementById('total-users').textContent = usersSnap.size;
+
+            let totalRev = 0;
+            orders.forEach(ord => {
+                const num = parseFloat(ord.total) || 0;
+                totalRev += num;
+            });
+            document.getElementById('total-revenue').textContent = totalRev + ' ₾';
+
+            const tbody = document.getElementById('admin-orders-list');
+            tbody.innerHTML = '';
+            
+            if(orders.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="6" style="text-align:center;">შეკვეთები ჯერ არ არის</td></tr>`;
+            } else {
+                orders.forEach((ord, index) => {
+                    const dateStr = ord.createdAt ? new Date(ord.createdAt.toDate()).toLocaleString() : 'ახალი';
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                      <td>${index + 1}</td>
+                      <td>${ord.customerName}</td>
+                      <td>${ord.phone}</td>
+                      <td>${ord.address}</td>
+                      <td><b>${ord.total}</b></td>
+                      <td>${dateStr}</td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+            }
+        } catch (err) {
+            console.error(err);
+            alert("მონაცემების ჩატვირთვის შეცდომა");
+        }
+    }
+
+    loadAdminData();
+  </script>
+</body>
+</html>
