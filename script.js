@@ -15,14 +15,7 @@ if (!firebase.apps.length) {
 const db = firebase.firestore();
 const auth = firebase.auth();
 
-// პროდუქტების მონაცემთა ბაზა
-const products = [
-  { id: 1, name: "მინიმალისტური შავი ჩანთა", category: "ყოველდღიური", price: 120, image: "https://images.unsplash.com/photo-1584917865442-de89df76afd3?auto=format&fit=crop&w=600&q=80" },
-  { id: 2, name: "ელეგანტური საღამოს კლატჩი", category: "საღამოს", price: 95, image: "https://images.unsplash.com/photo-1566150905458-1bf1fc113f0d?auto=format&fit=crop&w=600&q=80" },
-  { id: 3, name: "ტყავის ზურგჩანთა", category: "ზურგჩანთა", price: 160, image: "https://images.unsplash.com/photo-1548036328-c9fa89d128fa?auto=format&fit=crop&w=600&q=80" },
-  { id: 4, name: "ყოველდღიური კრემისფერი შოპერი", category: "ყოველდღიური", price: 85, image: "https://images.unsplash.com/photo-1590874103328-eac38a683ce7?auto=format&fit=crop&w=600&q=80" }
-];
-
+let products = []; // პროდუქტები იტვირთება Firestore ბაზიდან
 let cart = JSON.parse(localStorage.getItem('makasia_cart')) || [];
 let activeCategory = "ყველა";
 let searchQuery = "";
@@ -38,12 +31,26 @@ const toast = document.getElementById('toast');
 
 // ინიციალიზაცია
 document.addEventListener('DOMContentLoaded', () => {
-    renderProducts();
+    loadProductsFromDB();
     updateCartUI();
     initEvents();
 });
 
-// პროდუქტების გამოტანა
+// პროდუქტების წამოღება Firestore-დან რეალურ დროში
+function loadProductsFromDB() {
+    db.collection("products").onSnapshot((snapshot) => {
+        products = [];
+        snapshot.forEach((doc) => {
+            products.push({ id: doc.id, ...doc.data() });
+        });
+        renderProducts();
+    }, (error) => {
+        console.error("პროდუქტების ჩატვირთვის შეცდომა: ", error);
+        productGrid.innerHTML = `<p style="grid-column: 1/-1; text-align: center; color: #d32f2f; padding: 40px;">ვერ მოხერხდა პროდუქტების ჩატვირთვა ბაზიდან.</p>`;
+    });
+}
+
+// პროდუქტების გამოტანა ეკრანზე
 function renderProducts() {
     productGrid.innerHTML = "";
     
@@ -69,7 +76,7 @@ function renderProducts() {
             <h3 style="font-size: 16px; font-weight: 600; margin: 4px 0 8px 0;">${product.name}</h3>
             <div style="display: flex; justify-content: space-between; align-items: center;">
                 <strong>${product.price} ₾</strong>
-                <button onclick="addToCart(${product.id})" class="button button-dark" style="padding: 8px 14px; font-size: 13px;">დამატება</button>
+                <button onclick="addToCart('${product.id}')" class="button button-dark" style="padding: 8px 14px; font-size: 13px;">დამატება</button>
             </div>
         `;
         productGrid.appendChild(card);
@@ -79,6 +86,7 @@ function renderProducts() {
 // კალათაში დამატება
 window.addToCart = function(productId) {
     const product = products.find(p => p.id === productId);
+    if (!product) return;
     const existing = cart.find(item => item.id === productId);
 
     if (existing) {
@@ -121,7 +129,7 @@ function updateCartUI() {
                     <div style="font-size: 13px; color: #666;">${item.price} ₾ x ${item.quantity}</div>
                 </div>
             </div>
-            <button onclick="removeFromCart(${item.id})" style="background: none; border: none; color: #d32f2f; cursor: pointer; font-size: 18px;">×</button>
+            <button onclick="removeFromCart('${item.id}')" style="background: none; border: none; color: #d32f2f; cursor: pointer; font-size: 18px;">×</button>
         `;
         cartItemsContainer.appendChild(div);
     });
@@ -141,6 +149,33 @@ function showToast(msg) {
     setTimeout(() => toast.classList.remove('show'), 2500);
 }
 
+// მიწოდების თანხის დაანგარიშება (150 ლარზე ზევით უფასოა)
+function calculateCheckout() {
+    const subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+    
+    const deliverySelect = document.querySelector('[name="delivery"]');
+    let deliveryBasePrice = 8; // თბილისი ნაგულისხმევად
+    
+    if (deliverySelect) {
+        const val = deliverySelect.value || '';
+        if (val.includes('რეგიონ') || val.includes('ფოსტა')) {
+            deliveryBasePrice = 12;
+        }
+    }
+
+    // თუ ჯამი >= 150-ს, მიწოდება უფასოა
+    const deliveryCost = subtotal >= 150 ? 0 : deliveryBasePrice;
+    const finalTotal = subtotal + deliveryCost;
+
+    const subtotalEl = document.getElementById('checkout-subtotal');
+    const deliveryEl = document.getElementById('checkout-delivery');
+    const totalEl = document.getElementById('checkout-total');
+
+    if (subtotalEl) subtotalEl.textContent = subtotal + " ₾";
+    if (deliveryEl) deliveryEl.textContent = deliveryCost === 0 ? "უფასო (0 ₾)" : deliveryCost + " ₾";
+    if (totalEl) totalEl.textContent = finalTotal + " ₾";
+}
+
 // ღონისძიებების მართვა
 function initEvents() {
     document.getElementById('cart-toggle').addEventListener('click', () => {
@@ -152,15 +187,20 @@ function initEvents() {
         el.addEventListener('click', () => {
             cartPanel.classList.remove('open');
             overlay.classList.remove('show');
-            document.getElementById('auth-dialog').close();
-            document.getElementById('checkout-dialog').close();
+            const authDialog = document.getElementById('auth-dialog');
+            const checkoutDialog = document.getElementById('checkout-dialog');
+            if(authDialog) authDialog.close();
+            if(checkoutDialog) checkoutDialog.close();
         });
     });
 
-    document.getElementById('search-input').addEventListener('input', (e) => {
-        searchQuery = e.target.value;
-        renderProducts();
-    });
+    const searchInput = document.getElementById('search-input');
+    if (searchInput) {
+        searchInput.addEventListener('input', (e) => {
+            searchQuery = e.target.value;
+            renderProducts();
+        });
+    }
 
     document.querySelectorAll('.filter').forEach(btn => {
         btn.addEventListener('click', (e) => {
@@ -171,66 +211,81 @@ function initEvents() {
         });
     });
 
-    document.getElementById('account-toggle').addEventListener('click', () => {
-        document.getElementById('auth-dialog').showModal();
-        overlay.classList.add('show');
-    });
+    const accountToggle = document.getElementById('account-toggle');
+    if (accountToggle) {
+        accountToggle.addEventListener('click', () => {
+            document.getElementById('auth-dialog').showModal();
+            overlay.classList.add('show');
+        });
+    }
 
     // შეკვეთის გაფორმების ფანჯრის გახსნა
-    document.getElementById('checkout').addEventListener('click', () => {
-        if (cart.length === 0) {
-            alert("კალათა ცარიელია!");
-            return;
-        }
-        cartPanel.classList.remove('open');
-        const subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-        document.getElementById('checkout-subtotal').textContent = subtotal + " ₾";
-        document.getElementById('checkout-delivery').textContent = "8 ₾";
-        document.getElementById('checkout-total').textContent = (subtotal + 8) + " ₾";
-        document.getElementById('checkout-dialog').showModal();
-    });
-
-    // შეკვეთის გაგზავნა ბაზაში (სურათებით და დეტალებით)
-    document.getElementById('checkout-form').addEventListener('submit', (e) => {
-        e.preventDefault();
-        const formData = new FormData(e.target);
-        
-        const subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-        const deliveryCost = formData.get('delivery').includes('თბილისში') ? 8 : 12;
-        const totalFinal = subtotal + deliveryCost;
-
-        // თითოეული პროდუქტის ფორმატირება პრევიუ ფოტოთი და დეტალებით ადმინისთვის
-        const itemsFormatted = cart.map(item => `
-            <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 6px;">
-                <img src="${item.image}" alt="" style="width: 40px; height: 40px; object-fit: cover; border-radius: 4px;">
-                <div>
-                    <div style="font-weight: 600;">${item.name}</div>
-                    <div style="font-size: 12px; color: #666;">რაოდენობა: ${item.quantity} x ${item.price} ₾</div>
-                </div>
-            </div>
-        `).join('');
-
-        db.collection("orders").add({
-            customerName: formData.get('customerName'),
-            phone: formData.get('phone'),
-            address: formData.get('address'),
-            delivery: formData.get('delivery'),
-            totalPrice: totalFinal + ' ₾',
-            productDetails: itemsFormatted, // სურათებიანი დეტალური სტრუქტურა
-            createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-            status: "ახალი"
-        }).then(() => {
-            alert("შეკვეთა წარმატებით გაფორმდა!");
-            cart = [];
-            saveCart();
-            updateCartUI();
-            document.getElementById('checkout-dialog').close();
-            overlay.classList.remove('show');
-            e.target.reset();
-        }).catch(err => {
-            document.getElementById('checkout-error').textContent = "შეცდომა შეკვეთის გაფორმებისას.";
+    const checkoutBtn = document.getElementById('checkout');
+    if (checkoutBtn) {
+        checkoutBtn.addEventListener('click', () => {
+            if (cart.length === 0) {
+                alert("კალათა ცარიელია!");
+                return;
+            }
+            cartPanel.classList.remove('open');
+            calculateCheckout();
+            document.getElementById('checkout-dialog').showModal();
         });
-    });
+    }
+
+    const deliveryInput = document.querySelector('[name="delivery"]');
+    if (deliveryInput) {
+        deliveryInput.addEventListener('change', calculateCheckout);
+    }
+
+    // შეკვეთის გაგზავნა ბაზაში
+    const checkoutForm = document.getElementById('checkout-form');
+    if (checkoutForm) {
+        checkoutForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const formData = new FormData(e.target);
+            
+            const subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+            const deliveryType = formData.get('delivery') || '';
+            
+            let deliveryBasePrice = deliveryType.includes('რეგიონ') || deliveryType.includes('ფოსტა') ? 12 : 8;
+            const deliveryCost = subtotal >= 150 ? 0 : deliveryBasePrice;
+            const totalFinal = subtotal + deliveryCost;
+
+            // თითოეული პროდუქტის ფორმატირება პრევიუ ფოტოთი და დეტალებით ადმინისთვის
+            const itemsFormatted = cart.map(item => `
+                <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 6px;">
+                    <img src="${item.image}" alt="" style="width: 40px; height: 40px; object-fit: cover; border-radius: 4px;">
+                    <div>
+                        <div style="font-weight: 600;">${item.name}</div>
+                        <div style="font-size: 12px; color: #666;">რაოდენობა: ${item.quantity} x ${item.price} ₾</div>
+                    </div>
+                </div>
+            `).join('');
+
+            db.collection("orders").add({
+                customerName: formData.get('customerName'),
+                phone: formData.get('phone'),
+                address: formData.get('address'),
+                delivery: deliveryType + (deliveryCost === 0 ? ' (უფასო)' : ''),
+                totalPrice: totalFinal + ' ₾',
+                productDetails: itemsFormatted,
+                createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                status: "ახალი"
+            }).then(() => {
+                alert("შეკვეთა წარმატებით გაფორმდა!");
+                cart = [];
+                saveCart();
+                updateCartUI();
+                document.getElementById('checkout-dialog').close();
+                overlay.classList.remove('show');
+                e.target.reset();
+            }).catch(err => {
+                const errEl = document.getElementById('checkout-error');
+                if(errEl) errEl.textContent = "შეცდომა შეკვეთის გაფორმებისას.";
+            });
+        });
+    }
 
     // ავტორიზაციის ტაბების გადართვა
     window.switchAuthTab = function(tab) {
@@ -247,38 +302,44 @@ function initEvents() {
     };
 
     // მომხმარებლის შესვლა
-    document.getElementById('login-form').addEventListener('submit', (e) => {
-        e.preventDefault();
-        const email = e.target.loginEmail.value;
-        const password = e.target.loginPassword.value;
-        auth.signInWithEmailAndPassword(email, password)
-            .then(() => {
-                document.getElementById('auth-dialog').close();
-                overlay.classList.remove('show');
-                showToast("წარმატებით შეხვედით სისტემაში");
-            })
-            .catch(() => {
-                document.getElementById('login-error').textContent = "არასწორი მეილი ან პაროლი";
-            });
-    });
+    const loginForm = document.getElementById('login-form');
+    if (loginForm) {
+        loginForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const email = e.target.loginEmail.value;
+            const password = e.target.loginPassword.value;
+            auth.signInWithEmailAndPassword(email, password)
+                .then(() => {
+                    document.getElementById('auth-dialog').close();
+                    overlay.classList.remove('show');
+                    showToast("წარმატებით შეხვედით სისტემაში");
+                })
+                .catch(() => {
+                    document.getElementById('login-error').textContent = "არასწორი მეილი ან პაროლი";
+                });
+        });
+    }
 
     // მომხმარებლის რეგისტრაცია
-    document.getElementById('register-form').addEventListener('submit', (e) => {
-        e.preventDefault();
-        const name = e.target.regName.value;
-        const email = e.target.regEmail.value;
-        const password = e.target.regPassword.value;
-        auth.createUserWithEmailAndPassword(email, password)
-            .then((cred) => {
-                return db.collection("users").doc(cred.user.uid).set({ name, email, role: "user" });
-            })
-            .then(() => {
-                document.getElementById('auth-dialog').close();
-                overlay.classList.remove('show');
-                showToast("რეგისტრაცია წარმატებულია");
-            })
-            .catch((err) => {
-                document.getElementById('reg-error').textContent = "შეცდომა რეგისტრაციისას";
-            });
-    });
+    const registerForm = document.getElementById('register-form');
+    if (registerForm) {
+        registerForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const name = e.target.regName.value;
+            const email = e.target.regEmail.value;
+            const password = e.target.regPassword.value;
+            auth.createUserWithEmailAndPassword(email, password)
+                .then((cred) => {
+                    return db.collection("users").doc(cred.user.uid).set({ name, email, role: "user" });
+                })
+                .then(() => {
+                    document.getElementById('auth-dialog').close();
+                    overlay.classList.remove('show');
+                    showToast("რეგისტრაცია წარმატებულია");
+                })
+                .catch(() => {
+                    document.getElementById('reg-error').textContent = "შეცდომა რეგისტრაციისას";
+                });
+        });
+    }
 }
