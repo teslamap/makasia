@@ -75,6 +75,7 @@
       border-radius: 24px; 
       box-shadow: 0 20px 40px -15px rgba(124, 58, 237, 0.4); 
       color: white;
+      gap: 20px;
     }
     .admin-header h1 { font-size: 28px; font-weight: 800; letter-spacing: -0.5px; text-shadow: 0 2px 4px rgba(0,0,0,0.1); }
     
@@ -105,7 +106,7 @@
 
     /* ცხრილები */
     .table-responsive { width: 100%; overflow-x: auto; border-radius: 16px; border: 1px solid #e0e7ff; }
-    table { width: 100%; border-collapse: collapse; background: white; }
+    table { width: 100%; border-collapse: collapse; background: white; min-width: 650px; }
     th, td { padding: 18px; text-align: left; border-bottom: 1px solid #f1f5f9; font-size: 14px; }
     th { background: #eef2ff; font-weight: 700; color: #4338ca; text-transform: uppercase; font-size: 12px; letter-spacing: 0.8px; }
     tr:hover td { background: #faf5ff; }
@@ -133,6 +134,41 @@
     .toast.show { transform: translateY(0); opacity: 1; }
 
     dialog.catalog-match { max-width: 950px; }
+
+    /* 📱 მობილური რესპონსივობის ოპტიმიზაცია */
+    @media (max-width: 768px) {
+      .admin-container { padding: 20px 12px; }
+      .admin-header {
+        flex-direction: column;
+        align-items: stretch;
+        padding: 24px 20px;
+        text-align: center;
+        border-radius: 20px;
+      }
+      .admin-header h1 { font-size: 22px; margin-bottom: 15px; }
+      .header-actions { flex-direction: column; width: 100%; gap: 10px; }
+      .header-actions .btn { width: 100% !important; }
+
+      .admin-section { padding: 20px 15px; border-radius: 20px; margin-bottom: 25px; }
+      .admin-section h2 { font-size: 18px; }
+
+      dialog.admin-modal {
+        max-width: 95% !important;
+        margin: auto;
+        border-radius: 20px;
+      }
+      .modal-content { padding: 20px 16px; }
+      .modal-header h3 { font-size: 18px; }
+      
+      .toast {
+        bottom: 20px;
+        right: 20px;
+        left: 20px;
+        text-align: center;
+        padding: 14px 20px;
+        font-size: 14px;
+      }
+    }
   </style>
 </head>
 <body>
@@ -223,7 +259,7 @@
   </dialog>
 
   <!-- პროდუქტების კატალოგის პოპაპი -->
-  <dialog id="catalogModal" class="admin-modal catalog-match" style="max-width: 950px;">
+  <dialog id="catalogModal" class="admin-modal catalog-match">
     <div class="modal-content">
       <div class="modal-header">
         <h3>🛍️ პროდუქტების კატალოგი და მართვა</h3>
