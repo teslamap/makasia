@@ -79,6 +79,16 @@
 
     .header-actions { display: flex; gap: 12px; align-items: center; position: relative; }
 
+    /* მობილური ბურგერ მენიუს ღილაკი */
+    .mobile-menu-btn {
+      display: none;
+      background: none;
+      border: none;
+      font-size: 26px;
+      color: #1e1b4b;
+      cursor: pointer;
+    }
+
     /* ღილაკების სტილები */
     .button {
       background: var(--primary-gradient);
@@ -472,6 +482,58 @@
       z-index: 2000;
     }
     .toast.show { transform: translateY(0); opacity: 1; }
+
+    /* 📱 მობილური რესპონსივ მედია ქვერები */
+    @media (max-width: 900px) {
+      .site-header nav {
+        display: none; /* დესკტოპ ნავაგია იფარება მობილურზე */
+        position: absolute;
+        top: 100%;
+        left: 0;
+        width: 100%;
+        background: white;
+        flex-direction: column;
+        padding: 20px;
+        box-shadow: 0 15px 30px rgba(0,0,0,0.1);
+        border-radius: 0 0 20px 20px;
+        border-top: 1px solid #e2e8f0;
+        text-align: center;
+        gap: 15px;
+      }
+      .site-header nav.active { display: flex; }
+      .mobile-menu-btn { display: block; }
+      
+      .hero {
+        grid-template-columns: 1fr;
+        padding: 30px 20px;
+        text-align: center;
+        border-radius: 24px;
+      }
+      .hero-copy h1 { font-size: 32px; }
+      .hero-image { display: none; } /* მობილურზე რომ არ გადატვირთოს სურათმა */
+
+      .story {
+        grid-template-columns: 1fr;
+        padding: 30px 20px;
+        margin: 40px 0;
+      }
+
+      .newsletter {
+        flex-direction: column;
+        padding: 30px 20px;
+        text-align: center;
+      }
+      #newsletterForm { max-width: 100%; flex-direction: column; }
+
+      footer {
+        flex-direction: column;
+        gap: 15px;
+      }
+
+      .shop-section { padding: 20px; border-radius: 20px; }
+      .toolbar { flex-direction: column; align-items: stretch; }
+      .search-field { max-width: 100%; }
+    }
   </style>
 </head>
 <body>
@@ -479,11 +541,12 @@
   <div class="announcement">უფასო მიწოდება 150 ლარზე ზემოთ მთელი საქართველოს მასშტაბით</div>
 
   <header class="site-header">
+    <button class="mobile-menu-btn" id="mobileMenuBtn">☰</button>
     <a href="#" class="brand">Maka<span>sia</span></a>
-    <nav>
-      <a href="#shop">კოლექცია</a>
-      <a href="#story">ჩვენ შესახებ</a>
-      <a href="#contact">კონტაქტი</a>
+    <nav id="mainNav">
+      <a href="#shop" class="nav-link">კოლექცია</a>
+      <a href="#story" class="nav-link">ჩვენ შესახებ</a>
+      <a href="#contact" class="nav-link">კონტაქტი</a>
     </nav>
     <div class="header-actions">
       <!-- პროფილის / ავტორიზაციის ღილაკი და პოაპი -->
@@ -679,6 +742,27 @@
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+
+  <!-- მობილური მენიუს სკრიპტი -->
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+      const mainNav = document.getElementById('mainNav');
+      
+      if (mobileMenuBtn && mainNav) {
+        mobileMenuBtn.addEventListener('click', () => {
+          mainNav.classList.toggle('active');
+        });
+
+        // ლინკზე დაჭერისას მენიუ ავტომატურად დაიხუროს მობილურზე
+        mainNav.querySelectorAll('a').forEach(link => {
+          link.addEventListener('click', () => {
+            mainNav.classList.remove('active');
+          });
+        });
+      }
+    });
+  </script>
 
   <!-- მთავარი სკრიპტი -->
   <script src="./script.js"></script>
