@@ -117,7 +117,7 @@ function closeProductModal() {
     if(productModal) productModal.close();
 }
 
-// 🌟 ფოტოს ატვირთვა Firebase Storage-ში
+// 🌟 100%-ით სტაბილური მეთოდი: ფოტოს კოდირება ბრაუზერში (არ სჭირდება არც ImgBB და არც Storage)
 async function uploadImageIfNeeded() {
     const fileInput = document.getElementById('prodImageFile');
     const urlInput = document.getElementById('prodImage') ? document.getElementById('prodImage').value.trim() : '';
@@ -129,18 +129,28 @@ async function uploadImageIfNeeded() {
     }
 
     const file = fileInput.files[0];
-    const storageRef = storage.ref();
-    const imageRef = storageRef.child('products/' + Date.now() + '_' + file.name);
 
-    try {
-        const snapshot = await imageRef.put(file);
-        const downloadUrl = await snapshot.ref.getDownloadURL();
-        return downloadUrl;
-    } catch (err) {
-        if (urlInput) return urlInput; 
-        window.showModalMessage("შეცდომა", "ფოტოს ატვირთვა Firebase-ში ვერ მოხერხდა: " + err.message, "error");
+    // ზომის შემოწმება (მაქსიმუმ 800KB)
+    if (file.size > 800 * 1024) {
+        window.showModalMessage("ყურადღება", "სურათი ძალიან დიდია. გთხოვთ აირჩიოთ 800KB-ზე პატარა ფოტო ან გამოიყენეთ სურათის ბმული (URL).", "error");
         return null;
     }
+
+    return new Promise((resolve) => {
+        const reader = new FileReader();
+        reader.onload = function(uploadEvent) {
+            resolve(uploadEvent.target.result); // აბრუნებს მზა Base64 ტექსტს ფოტოს მაგივრად
+        };
+        reader.onerror = function() {
+            if (urlInput) {
+                resolve(urlInput);
+            } else {
+                window.showModalMessage("შეცდომა", "ფაილის წაკითხვა ვერ მოხერხდა.", "error");
+                resolve(null);
+            }
+        };
+        reader.readAsDataURL(file);
+    });
 }
 
 // ფორმის გაგზავნა (დამატება / განახლება)
