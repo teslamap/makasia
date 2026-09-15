@@ -141,10 +141,9 @@
   <div id="loginSection" class="login-wrapper" style="display: none;">
     <div class="login-card">
       <h2>🔐 ადმინ პანელი</h2>
-      <input type="password" id="adminPassword" placeholder="შეიყვანეთ პაროლი">
+      <input type="password" id="adminPassword" placeholder="შეიყვანეთ ადმინის პაროლი">
       <button id="loginBtn" class="btn btn-glow-blue" style="margin-bottom: 15px;">შესვლა</button>
       <p id="loginError" style="color: red; font-size: 13px; margin-bottom: 12px; min-height: 18px;"></p>
-      <a href="#" onclick="resetAdminPassword(); return false;" style="color: #6366f1; font-size: 13px; font-weight: 600; text-decoration: none;">დაგავიწყდა პაროლი? აღდგენა</a>
     </div>
   </div>
 
@@ -173,10 +172,11 @@
               <th>დეტალები</th>
               <th>თანხა</th>
               <th>სტატუსი</th>
+              <th>მოქმედება</th>
             </tr>
           </thead>
           <tbody id="adminOrdersTable">
-            <tr><td colspan="6" style="text-align:center; color: #818cf8; font-weight: 600;">მონაცემები იტვირთება...</td></tr>
+            <tr><td colspan="7" style="text-align:center; color: #818cf8; font-weight: 600;">მონაცემები იტვირთება...</td></tr>
           </tbody>
         </table>
       </div>
@@ -253,9 +253,8 @@
 
   <div class="toast" id="toast">✨ ოპერაცია წარმატებით დასრულდა!</div>
 
-  <!-- Firebase SDK-ები -->
+  <!-- Firebase SDK-ები (მხოლოდ Firestore-სთვის) -->
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
 
   <script>
@@ -273,8 +272,9 @@
     }
 
     const db = firebase.firestore();
-    const auth = firebase.auth();
-    const ADMIN_EMAIL = "suloanani1@gmail.com";
+
+    // 🔑 აქ შეგიძლია ნებისმიერ დროს შეცვალო ადმინის ფიქსირებული პაროლი:
+    const ADMIN_SECRET_PASSWORD = "MakasiaAdmin2026!";
 
     const loginSection = document.getElementById('loginSection');
     const adminSection = document.getElementById('adminSection');
@@ -282,68 +282,47 @@
     const adminLogout = document.getElementById('adminLogout');
     const loginError = document.getElementById('loginError');
 
-    // ადმინად შესვლა მხოლოდ პაროლით
+    // გვერდის ჩატვირთვისას შემოწმება (იუზერების სესიას არ ეხება)
+    window.addEventListener('DOMContentLoaded', () => {
+        if (sessionStorage.getItem('isAdminLoggedIn') === 'true') {
+            loginSection.style.display = 'none';
+            adminSection.style.display = 'block';
+            loadOrders();
+            loadProducts();
+        } else {
+            loginSection.style.display = 'flex';
+            adminSection.style.display = 'none';
+        }
+    });
+
+    // შესვლის ღილაკის ლოგიკა
     if (loginBtn) {
         loginBtn.addEventListener('click', () => {
             const passwordInput = document.getElementById('adminPassword');
             const password = passwordInput ? passwordInput.value : '';
 
-            if (!password) {
-                if(loginError) loginError.textContent = "გთხოვთ შეიყვანოთ პაროლი!";
-                return;
+            if (password === ADMIN_SECRET_PASSWORD) {
+                sessionStorage.setItem('isAdminLoggedIn', 'true');
+                if(loginError) loginError.textContent = "";
+                loginSection.style.display = 'none';
+                adminSection.style.display = 'block';
+                loadOrders();
+                loadProducts();
+            } else {
+                if(loginError) loginError.textContent = "არასწორი პაროლი!";
             }
-
-            auth.signInWithEmailAndPassword(ADMIN_EMAIL, password)
-                .then(() => {
-                    if(loginError) loginError.textContent = "";
-                })
-                .catch((error) => {
-                    if(loginError) loginError.textContent = "არასწორი პაროლი!";
-                    console.error(error);
-                });
         });
     }
 
-    // პაროლის აღდგენა
-    window.resetAdminPassword = function() {
-        auth.sendPasswordResetEmail(ADMIN_EMAIL)
-            .then(() => {
-                if(loginError) {
-                    loginError.style.color = "green";
-                    loginError.textContent = "აღდგენის ლინკი გაიგზავნა მეილზე!";
-                }
-            })
-            .catch((error) => {
-                if(loginError) {
-                    loginError.style.color = "red";
-                    loginError.textContent = "შეცდომა აღდგენის მოთხოვნისას.";
-                }
-                console.error(error);
-            });
-    };
-
-    // გამოსვლა
+    // გასვლა პანელიდან
     if (adminLogout) {
         adminLogout.addEventListener('click', () => {
-            auth.signOut();
+            sessionStorage.removeItem('isAdminLoggedIn');
+            adminSection.style.display = 'none';
+            loginSection.style.display = 'flex';
+            document.getElementById('adminPassword').value = '';
         });
     }
-
-    // ავტორიზაციის სტატუსის კონტროლი
-    auth.onAuthStateChanged((user) => {
-        if (user && user.email === ADMIN_EMAIL) {
-            if(loginSection) loginSection.style.display = 'none';
-            if(adminSection) adminSection.style.display = 'block';
-            loadOrders();
-            loadProducts();
-        } else {
-            if(loginSection) loginSection.style.display = 'flex';
-            if(adminSection) adminSection.style.display = 'none';
-            if(user && user.email !== ADMIN_EMAIL) {
-                auth.signOut();
-            }
-        }
-    });
 
     const productModal = document.getElementById('productModal');
     const catalogModal = document.getElementById('catalogModal');
@@ -479,7 +458,7 @@
         db.collection("orders").orderBy("createdAt", "desc").onSnapshot((snapshot) => {
             adminOrdersTable.innerHTML = "";
             if(snapshot.empty) {
-                adminOrdersTable.innerHTML = `<tr><td colspan="6" style="text-align:center; color: #818cf8; font-weight: 600;">შეკვეთები ჯერ არ არის</td></tr>`;
+                adminOrdersTable.innerHTML = `<tr><td colspan="7" style="text-align:center; color: #818cf8; font-weight: 600;">შეკვეთები ჯერ არ არის</td></tr>`;
                 return;
             }
             snapshot.forEach((doc) => {
@@ -493,11 +472,25 @@
                     <td><div style="max-height: 80px; overflow-y: auto; font-size: 13px;">${o.productDetails}</div><span style="font-size: 11px; color: #7c3aed; font-weight: 700;">მიწოდება: ${o.delivery}</span></td>
                     <td><strong style="color: #059669; font-size: 15px;">${o.totalPrice} ₾</strong></td>
                     <td><span style="background: linear-gradient(135deg, #fef08a, #fde047); color: #854d0e; padding: 6px 14px; border-radius: 20px; font-size: 12px; font-weight: 800; box-shadow: 0 2px 5px rgba(0,0,0,0.05);">${o.status || 'ახალი'}</span></td>
+                    <td>
+                      <button class="btn btn-glow-red" style="padding: 6px 12px; font-size: 12px; box-shadow: none; width: auto;" onclick="deleteOrder('${doc.id}')">🗑️ წაშლა</button>
+                    </td>
                 `;
                 adminOrdersTable.appendChild(tr);
             });
         });
     }
+
+    // შეკვეთის წაშლის ფუნქცია
+    window.deleteOrder = function(id) {
+        if(confirm("ნამდვილად გსურთ ამ შეკვეთის წაშლა?")) {
+            db.collection("orders").doc(id).delete().then(() => {
+                showToast("შეკვეთა წარმატებით წაიშალა!");
+            }).catch((error) => {
+                alert("შეცდომა წაშლისას: " + error.message);
+            });
+        }
+    };
 
     function showToast(msg) {
         const toast = document.getElementById('toast');
