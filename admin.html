@@ -6,109 +6,136 @@
   <title>Makasia — ადმინ პანელი</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400..800;1,9..40,400..800&family=Noto+Sans+Georgian:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="./style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Noto+Sans+Georgian:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
-    body { background-color: #f8f9fa; font-family: 'Noto Sans Georgian', 'DM Sans', sans-serif; }
-    .admin-container { max-width: 1200px; margin: 40px auto; padding: 0 20px; }
-    .admin-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; background: white; padding: 20px 24px; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
-    .admin-header h1 { font-size: 22px; margin: 0; }
-    .admin-section { background: white; padding: 24px; border-radius: 12px; margin-bottom: 30px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
-    .section-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-    .admin-section h2 { margin: 0; font-size: 18px; }
-    table { width: 100%; border-collapse: collapse; margin-top: 10px; }
-    th, td { padding: 12px; text-align: left; border-bottom: 1px solid #eee; font-size: 14px; vertical-align: middle; }
-    th { background: #f1f3f5; font-weight: 600; color: #333; }
+    :root {
+      --primary: #0f172a;
+      --primary-hover: #1e293b;
+      --accent: #6366f1;
+      --bg-color: #f8fafc;
+      --card-bg: #ffffff;
+      --text-main: #1e293b;
+      --text-muted: #64748b;
+      --border: #e2e8f0;
+      --danger: #ef4444;
+      --danger-bg: #fee2e2;
+      --success: #22c55e;
+      --success-bg: #dcfce7;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { background-color: var(--bg-color); font-family: 'Noto Sans Georgian', 'Plus Jakarta Sans', sans-serif; color: var(--text-main); line-height: 1.5; }
+
+    .admin-container { max-width: 1300px; margin: 0 auto; padding: 40px 24px; }
+
+    /* ჰედერი */
+    .admin-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 32px; background: var(--card-bg); padding: 24px 32px; border-radius: 16px; box-shadow: 0 4px 20px rgba(0,0,0,0.03); border: 1px solid var(--border); }
+    .admin-header h1 { font-size: 24px; font-weight: 700; color: var(--primary); letter-spacing: -0.5px; }
     
-    /* მოდალური ფანჯრის სტილები */
-    .admin-modal { border: none; border-radius: 12px; padding: 0; width: 100%; max-width: 450px; box-shadow: 0 10px 25px rgba(0,0,0,0.2); }
-    .admin-modal::backdrop { background: rgba(0,0,0,0.5); }
-    .modal-content { padding: 24px; position: relative; }
-    .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-    .modal-header h3 { margin: 0; font-size: 18px; }
-    .close-modal-btn { background: none; border: none; font-size: 22px; cursor: pointer; color: #666; }
+    .header-actions { display: flex; gap: 12px; align-items: center; }
+
+    /* ღილაკების ზოგადი სტილები */
+    .btn { padding: 10px 20px; border-radius: 10px; font-size: 14px; font-weight: 600; cursor: pointer; transition: all 0.2s ease; border: none; display: inline-flex; align-items: center; gap: 8px; text-decoration: none; }
+    .btn-dark { background: var(--primary); color: white; }
+    .btn-dark:hover { background: var(--primary-hover); transform: translateY(-1px); }
+    .btn-outline { background: white; color: var(--text-main); border: 1px solid var(--border); }
+    .btn-outline:hover { background: #f1f5f9; }
+    .btn-danger { background: var(--danger-bg); color: var(--danger); }
+    .btn-danger:hover { background: #fecaca; }
+    .btn-accent { background: #e0e7ff; color: #4338ca; }
+    .btn-accent:hover { background: #c7d2fe; }
+
+    /* სექციები */
+    .admin-section { background: var(--card-bg); padding: 32px; border-radius: 16px; box-shadow: 0 4px 20px rgba(0,0,0,0.03); border: 1px solid var(--border); margin-bottom: 32px; }
+    .section-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; }
+    .admin-section h2 { font-size: 20px; font-weight: 700; color: var(--primary); }
+
+    /* ცხრილები */
+    .table-responsive { width: 100%; overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; margin-top: 8px; }
+    th, td { padding: 16px; text-align: left; border-bottom: 1px solid var(--border); font-size: 14px; }
+    th { background: #f8fafc; font-weight: 600; color: var(--text-muted); text-transform: uppercase; font-size: 12px; letter-spacing: 0.5px; }
+    tr:hover td { background: #fafafa; }
+
+    /* მოდალური ფანჯრები (Dialog) */
+    dialog.admin-modal { border: none; border-radius: 20px; padding: 0; width: 100%; max-width: 520px; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25); margin: auto; background: white; }
+    dialog.admin-modal::backdrop { background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(4px); }
     
-    .form-group { margin-bottom: 15px; }
-    .form-group label { display: block; font-size: 13px; font-weight: 500; margin-bottom: 5px; color: #444; }
-    .form-group input, .form-group select { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px; font-size: 14px; box-sizing: border-box; }
-    
-    .btn-group { display: flex; gap: 10px; margin-top: 20px; }
-    .btn-primary { background: #111; color: white; border: none; padding: 10px 16px; border-radius: 6px; cursor: pointer; font-size: 14px; flex: 1; }
-    .btn-primary:hover { background: #333; }
-    .btn-secondary { background: #eee; color: #333; border: none; padding: 10px 16px; border-radius: 6px; cursor: pointer; font-size: 14px; }
-    
-    .action-btns { display: flex; gap: 8px; }
-    .edit-btn { background: #e7f5ff; color: #1971c2; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 13px; font-weight: 500; }
-    .edit-btn:hover { background: #d0ebff; }
-    .danger-btn { background: #ffe3e3; color: #c92a2a; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 13px; font-weight: 500; }
-    .danger-btn:hover { background: #ffc9c9; }
+    .modal-content { padding: 32px; }
+    .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; }
+    .modal-header h3 { font-size: 20px; font-weight: 700; color: var(--primary); }
+    .close-modal-btn { background: none; border: none; font-size: 24px; cursor: pointer; color: var(--text-muted); transition: color 0.2s; }
+    .close-modal-btn:hover { color: var(--primary); }
+
+    .form-group { margin-bottom: 20px; }
+    .form-group label { display: block; font-size: 13px; font-weight: 600; margin-bottom: 8px; color: var(--text-main); }
+    .form-group input, .form-group select { width: 100%; padding: 12px 16px; border: 1px solid var(--border); border-radius: 10px; font-size: 14px; background: #f8fafc; color: var(--text-main); transition: all 0.2s; }
+    .form-group input:focus, .form-group select:focus { outline: none; border-color: var(--accent); background: white; box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1); }
+
+    .file-upload-box { border: 2px dashed var(--border); padding: 20px; text-align: center; border-radius: 10px; cursor: pointer; background: #f8fafc; transition: 0.2s; }
+    .file-upload-box:hover { border-color: var(--accent); background: #f1f5f9; }
+
+    .modal-actions { display: flex; gap: 12px; margin-top: 32px; }
+    .modal-actions button { flex: 1; padding: 12px; }
+
+    /* ტოსტ შეტყობინება */
+    .toast { position: fixed; bottom: 30px; right: 30px; background: var(--primary); color: white; padding: 14px 24px; border-radius: 12px; font-weight: 600; box-shadow: 0 10px 25px rgba(0,0,0,0.15); transform: translateY(100px); opacity: 0; transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1); z-index: 1000; }
+    .toast.show { transform: translateY(0); opacity: 1; }
+
+    /* დიდი მოდალი პროდუქტების სიისთვის */
+    dialog.catalog-modal { max-width: 900px; }
   </style>
 </head>
 <body>
 
   <div class="admin-container">
+    <!-- ჰედერი -->
     <div class="admin-header">
-      <h1>Makasia — ადმინისტრაცია</h1>
-      <button id="adminLogout" class="danger-btn" style="padding: 10px 18px; font-size: 14px;">სისტემიდან გასვლა</button>
-    </div>
-
-    <!-- პროდუქტების სექცია -->
-    <div class="admin-section">
-      <div class="section-top">
-        <h2>კატალოგი და პროდუქტები</h2>
-        <button class="btn-primary" id="openAddModalBtn" style="flex: unset; width: auto;">+ ახალი პროდუქტი</button>
+      <h1>Makasia — ადმინ პანელი</h1>
+      <div class="header-actions">
+        <button class="btn btn-accent" id="openAddProductModal">+ ახალი პროდუქტი</button>
+        <button class="btn btn-outline" id="openCatalogModal">📦 პროდუქციის მართვა</button>
+        <button class="btn btn-danger" id="adminLogout">სისტემიდან გასვლა</button>
       </div>
-      <table>
-        <thead>
-          <tr>
-            <th>სურათი</th>
-            <th>სახელწოდება</th>
-            <th>კატეგორია</th>
-            <th>ფასი</th>
-            <th>მოქმედება</th>
-          </tr>
-        </thead>
-        <tbody id="adminProductTable">
-          <tr><td colspan="5" style="text-align:center;">იტვირთება...</td></tr>
-        </tbody>
-      </table>
     </div>
 
-    <!-- შეკვეთების სექცია -->
+    <!-- შეკვეთების სექცია (მთავარი გვერდი) -->
     <div class="admin-section">
       <div class="section-top">
         <h2>შემოსული შეკვეთები</h2>
       </div>
-      <table>
-        <thead>
-          <tr>
-            <th>თარიღი / ID</th>
-            <th>მომხმარებელი</th>
-            <th>ტელეფონი / მისამართი</th>
-            <th>დეტალები</th>
-            <th>თანხა</th>
-            <th>სტატუსი</th>
-          </tr>
-        </thead>
-        <tbody id="adminOrdersTable">
-          <tr><td colspan="6" style="text-align:center;">იტვირთება...</td></tr>
-        </tbody>
-      </table>
+      <div class="table-responsive">
+        <table>
+          <thead>
+            <tr>
+              <th>თარიღი / ID</th>
+              <th>მომხმარებელი</th>
+              <th>ტელეფონი / მისამართი</th>
+              <th>დეტალები</th>
+              <th>თანხა</th>
+              <th>სტატუსი</th>
+            </tr>
+          </thead>
+          <tbody id="adminOrdersTable">
+            <tr><td colspan="6" style="text-align:center; color: var(--text-muted);">იტვირთება...</td></tr>
+          </tbody>
+        </table>
+      </div>
     </div>
   </div>
 
-  <!-- პროდუქტის დამატების/რედაქტირების მოდალური ფანჯარა -->
+  <!-- 1. ახალი პროდუქტის დამატების / რედაქტირების პოპაპი -->
   <dialog id="productModal" class="admin-modal">
     <div class="modal-content">
       <div class="modal-header">
         <h3 id="modalTitle">ახალი პროდუქტის დამატება</h3>
-        <button class="close-modal-btn" id="closeModalBtn">&times;</button>
+        <button class="close-modal-btn" onclick="closeProductModal()">&times;</button>
       </div>
       <form id="productForm">
         <input type="hidden" id="editProductId">
         <div class="form-group">
           <label>პროდუქტის დასახელება</label>
-          <input type="text" id="prodName" required placeholder="მაგ: ტყავის კლასიკური ჩანთა">
+          <input type="text" id="prodName" required placeholder="მაგ: ტყავის ჩანთა">
         </div>
         <div class="form-group">
           <label>ფასი (₾)</label>
@@ -124,14 +151,44 @@
           </select>
         </div>
         <div class="form-group">
-          <label>სურათის ბმული (URL)</label>
-          <input type="url" id="prodImage" required placeholder="https://...">
+          <label>სურათი (აირჩიეთ ფაილი კომპიუტერიდან ან ჩასვით ბმული)</label>
+          <input type="file" id="prodImageFile" accept="image/*" style="margin-bottom: 8px;">
+          <input type="url" id="prodImage" placeholder="ან ჩასვით სურათის ბმული (URL)">
         </div>
-        <div class="btn-group">
-          <button type="button" class="btn-secondary" id="cancelModalBtn">გაუქმება</button>
-          <button type="submit" class="btn-primary" id="saveProductBtn">შენახვა</button>
+        <div class="modal-actions">
+          <button type="button" class="btn btn-outline" onclick="closeProductModal()">გაუქმება</button>
+          <button type="submit" class="btn btn-dark">შენახვა</button>
         </div>
       </form>
+    </div>
+  </dialog>
+
+  <!-- 2. არსებული პროდუქტების მართვის (სიის) პოპაპი -->
+  <dialog id="catalogModal" class="admin-modal catalog-modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>პროდუქტების კატალოგი და მართვა</h3>
+        <button class="close-modal-btn" onclick="document.getElementById('catalogModal').close()">&times;</button>
+      </div>
+      <div class="table-responsive" style="max-height: 450px; overflow-y: auto;">
+        <table>
+          <thead>
+            <tr>
+              <th>სურათი</th>
+              <th>სახელწოდება</th>
+              <th>კატეგორია</th>
+              <th>ფასი</th>
+              <th>მოქმედება</th>
+            </tr>
+          </thead>
+          <tbody id="adminProductTable">
+            <tr><td colspan="5" style="text-align:center; color: var(--text-muted);">იტვირთება...</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div style="margin-top: 24px; text-align: right;">
+        <button class="btn btn-outline" onclick="document.getElementById('catalogModal').close()">დახურვა</button>
+      </div>
     </div>
   </dialog>
 
@@ -142,7 +199,6 @@
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
 
-  <!-- ადმინის სკრიპტი -->
   <script>
     const firebaseConfig = {
       apiKey: "AIzaSyDuZpWaZFY18eyJNOMjFap2XVTr6D0cMyE",
@@ -174,49 +230,106 @@
         });
     });
 
-    // მოდალური ფანჯრის ელემენტები
+    // მოდალების მართვის ფუნქციები
     const productModal = document.getElementById('productModal');
-    const openAddModalBtn = document.getElementById('openAddModalBtn');
-    const closeModalBtn = document.getElementById('closeModalBtn');
-    const cancelModalBtn = document.getElementById('cancelModalBtn');
+    const catalogModal = document.getElementById('catalogModal');
     const productForm = document.getElementById('productForm');
     const modalTitle = document.getElementById('modalTitle');
     const editProductId = document.getElementById('editProductId');
 
-    openAddModalBtn.addEventListener('click', () => {
+    document.getElementById('openAddProductModal').addEventListener('click', () => {
         modalTitle.textContent = "ახალი პროდუქტის დამატება";
         editProductId.value = "";
         productForm.reset();
         productModal.showModal();
     });
 
-    function closeModal() {
+    document.getElementById('openCatalogModal').addEventListener('click', () => {
+        catalogModal.showModal();
+    });
+
+    function closeProductModal() {
         productModal.close();
     }
 
-    closeModalBtn.addEventListener('click', closeModal);
-    cancelModalBtn.addEventListener('click', closeModal);
+    // ფაილის ატვირთვა ImgBB-ზე ავტომატურად (ან ბმულის გამოყენება)
+    async function uploadImageIfNeeded() {
+        const fileInput = document.getElementById('prodImageFile');
+        const urlInput = document.getElementById('prodImage').value;
 
-    // პროდუქტების გამოტანა და ცხრილი
+        if (fileInput.files && fileInput.files[0]) {
+            const formData = new FormData();
+            formData.append("image", fileInput.files[0]);
+            
+            try {
+                // ვიყენებთ საჯარო თავისუფალ კლევს სურათების დროებით ასატვირთად
+                const response = await fetch("https://api.imgbb.com/1/upload?key=6d207e44de2184ad52cf5d568bc1d52a", {
+                    method: "POST",
+                    body: formData
+                });
+                const data = await response.json();
+                if (data.success) {
+                    return data.data.url;
+                } else {
+                    throw new Error("ფოტოს ატვირთვა ვერ მოხერხდა");
+                }
+            } catch (err) {
+                alert("შეცდომა სურათის ატვირთვისას: " + err.message);
+                return null;
+            }
+        }
+        return urlInput;
+    }
+
+    // პროდუქტის დამატება ან განახლება
+    productForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const id = editProductId.value;
+        const name = document.getElementById('prodName').value;
+        const price = Number(document.getElementById('prodPrice').value);
+        const category = document.getElementById('prodCategory').value;
+        
+        const imageUrl = await uploadImageIfNeeded();
+        if (!imageUrl) return;
+
+        if (id) {
+            db.collection("products").doc(id).update({ name, price, category, image: imageUrl })
+            .then(() => {
+                showToast("პროდუქტი წარმატებით განახლდა!");
+                closeProductModal();
+            });
+        } else {
+            db.collection("products").add({ 
+                name, price, category, image: imageUrl, 
+                createdAt: firebase.firestore.FieldValue.serverTimestamp() 
+            })
+            .then(() => {
+                showToast("პროდუქტი წარმატებით დაემატა!");
+                closeProductModal();
+            });
+        }
+    });
+
+    // პროდუქტების გამოტანა კატალოგის ცხრილში
     const adminProductTable = document.getElementById('adminProductTable');
     db.collection("products").onSnapshot((snapshot) => {
         adminProductTable.innerHTML = "";
         if(snapshot.empty) {
-            adminProductTable.innerHTML = `<tr><td colspan="5" style="text-align:center;">პროდუქტები არ მოიძებნა</td></tr>`;
+            adminProductTable.innerHTML = `<tr><td colspan="5" style="text-align:center; color: var(--text-muted);">პროდუქტები არ მოიძებნა</td></tr>`;
             return;
         }
         snapshot.forEach((doc) => {
             const p = doc.data();
             const tr = document.createElement('tr');
             tr.innerHTML = `
-                <td><img src="${p.image}" style="width: 40px; height: 40px; object-fit: cover; border-radius: 4px;"></td>
+                <td><img src="${p.image}" style="width: 44px; height: 44px; object-fit: cover; border-radius: 8px; border: 1px solid var(--border);"></td>
                 <td><strong>${p.name}</strong></td>
                 <td>${p.category}</td>
                 <td>${p.price} ₾</td>
                 <td>
-                  <div class="action-btns">
-                    <button class="edit-btn" onclick="openEditModal('${doc.id}', '${escapeHtml(p.name)}', ${p.price}, '${p.category}', '${p.image}')">რედაქტირება</button>
-                    <button class="danger-btn" onclick="deleteProduct('${doc.id}')">წაშლა</button>
+                  <div style="display: flex; gap: 6px;">
+                    <button class="btn btn-outline" style="padding: 6px 12px; font-size: 12px;" onclick="openEditModal('${doc.id}', '${escapeHtml(p.name)}', ${p.price}, '${p.category}', '${p.image}')">რედაქტირება</button>
+                    <button class="btn btn-danger" style="padding: 6px 12px; font-size: 12px;" onclick="deleteProduct('${doc.id}')">წაშლა</button>
                   </div>
                 </td>
             `;
@@ -228,7 +341,6 @@
         return text.replace(/'/g, "&apos;").replace(/"/g, "&quot;");
     }
 
-    // რედაქტირების ფანჯრის გახსნა
     window.openEditModal = function(id, name, price, category, image) {
         modalTitle.textContent = "პროდუქტის რედაქტირება";
         editProductId.value = id;
@@ -236,36 +348,10 @@
         document.getElementById('prodPrice').value = price;
         document.getElementById('prodCategory').value = category;
         document.getElementById('prodImage').value = image;
+        document.getElementById('prodImageFile').value = "";
+        catalogModal.close();
         productModal.showModal();
     }
-
-    // პროდუქტის დამატება ან განახლება ფორმიდან
-    productForm.addEventListener('submit', (e) => {
-        e.preventDefault();
-        const id = editProductId.value;
-        const name = document.getElementById('prodName').value;
-        const price = Number(document.getElementById('prodPrice').value);
-        const category = document.getElementById('prodCategory').value;
-        const image = document.getElementById('prodImage').value;
-
-        if (id) {
-            // განახლება (Update)
-            db.collection("products").doc(id).update({ name, price, category, image })
-            .then(() => {
-                showToast("პროდუქტი წარმატებით განახლდა!");
-                closeModal();
-            })
-            .catch(err => alert("შეცდომა: " + err.message));
-        } else {
-            // ახლის დამატება (Create)
-            db.collection("products").add({ name, price, category, image, createdAt: firebase.firestore.FieldValue.serverTimestamp() })
-            .then(() => {
-                showToast("პროდუქტი წარმატებით დაემატა!");
-                closeModal();
-            })
-            .catch(err => alert("შეცდომა: " + err.message));
-        }
-    });
 
     window.deleteProduct = function(id) {
         if(confirm("ნამდვილად გსურთ პროდუქტის წაშლა?")) {
@@ -275,12 +361,12 @@
         }
     };
 
-    // შეკვეთების გამოტანა
+    // შეკვეთების ცხრილი
     const adminOrdersTable = document.getElementById('adminOrdersTable');
     db.collection("orders").orderBy("createdAt", "desc").onSnapshot((snapshot) => {
         adminOrdersTable.innerHTML = "";
         if(snapshot.empty) {
-            adminOrdersTable.innerHTML = `<tr><td colspan="6" style="text-align:center;">შეკვეთები ჯერ არ არის</td></tr>`;
+            adminOrdersTable.innerHTML = `<tr><td colspan="6" style="text-align:center; color: var(--text-muted);">შეკვეთები ჯერ არ არის</td></tr>`;
             return;
         }
         snapshot.forEach((doc) => {
@@ -288,12 +374,12 @@
             const dateStr = o.createdAt ? new Date(o.createdAt.seconds * 1000).toLocaleString() : 'ახლახანს';
             const tr = document.createElement('tr');
             tr.innerHTML = `
-                <td><small>${dateStr}</small></td>
+                <td><span style="font-size: 12px; color: var(--text-muted);">${dateStr}</span></td>
                 <td><strong>${o.customerName}</strong></td>
-                <td>${o.phone}<br><small>${o.address}</small></td>
-                <td><div style="max-height: 100px; overflow-y: auto;">${o.productDetails}</div><small>მიწოდება: ${o.delivery}</small></td>
-                <td><strong>${o.totalPrice}</strong></td>
-                <td><span style="background: #e7f5ff; color: #1971c2; padding: 4px 8px; border-radius: 4px; font-size: 12px;">${o.status || 'ახალი'}</span></td>
+                <td>${o.phone}<br><span style="font-size: 12px; color: var(--text-muted);">${o.address}</span></td>
+                <td><div style="max-height: 80px; overflow-y: auto; font-size: 13px;">${o.productDetails}</div><span style="font-size: 11px; color: var(--text-muted);">მიწოდება: ${o.delivery}</span></td>
+                <td><strong>${o.totalPrice} ₾</strong></td>
+                <td><span style="background: #e0e7ff; color: #4338ca; padding: 4px 10px; border-radius: 20px; font-size: 12px; font-weight: 600;">${o.status || 'ახალი'}</span></td>
             `;
             adminOrdersTable.appendChild(tr);
         });
@@ -303,7 +389,7 @@
         const toast = document.getElementById('toast');
         toast.textContent = msg;
         toast.classList.add('show');
-        setTimeout(() => toast.classList.remove('show'), 2500);
+        setTimeout(() => toast.classList.remove('show'), 3000);
     }
   </script>
 </body>
