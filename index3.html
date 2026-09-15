@@ -1,0 +1,5699 @@
+<!DOCTYPE html>
+<html lang="ka">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Makasia — ონლაინ მაღაზია</title>
+
+<meta name="description"
+      content="Makasia — შენი საყვარელი ნივთები ერთ სივრცეში.">
+
+<!-- Firebase -->
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+
+<style>
+
+/* =========================================================
+   RESET
+========================================================= */
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+html{
+    scroll-behavior:smooth;
+}
+
+body{
+    font-family:
+        Inter,
+        system-ui,
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        sans-serif;
+
+    color:#352532;
+
+    background:
+        radial-gradient(
+            circle at 10% 10%,
+            rgba(255,188,216,.22),
+            transparent 25%
+        ),
+        linear-gradient(
+            180deg,
+            #fff8fb 0%,
+            #ffffff 38%,
+            #fff7fa 100%
+        );
+
+    min-height:100vh;
+}
+
+button,
+input,
+textarea,
+select{
+    font:inherit;
+}
+
+button{
+    cursor:pointer;
+}
+
+a{
+    text-decoration:none;
+    color:inherit;
+}
+
+
+/* =========================================================
+   VARIABLES
+========================================================= */
+
+:root{
+
+    --pink:#ff6fa9;
+    --pink-dark:#d84f85;
+    --pink-light:#fff0f6;
+    --pink-soft:#ffd8e8;
+    --pink-border:#f1d8e4;
+
+    --dark:#392833;
+    --text:#352532;
+    --muted:#8c7380;
+
+    --white:#ffffff;
+
+    --shadow:
+        0 20px 60px rgba(190,75,125,.13);
+
+    --radius:24px;
+
+}
+
+
+/* =========================================================
+   TOP BAR
+========================================================= */
+
+.topbar{
+
+    background:
+        linear-gradient(
+            90deg,
+            #3b2934,
+            #503441,
+            #3b2934
+        );
+
+    color:#fff;
+
+    text-align:center;
+
+    padding:9px 15px;
+
+    font-size:13px;
+
+    letter-spacing:.2px;
+}
+
+
+/* =========================================================
+   NAVIGATION
+========================================================= */
+
+.nav{
+
+    position:sticky;
+
+    top:0;
+
+    z-index:100;
+
+    background:
+        rgba(255,255,255,.91);
+
+    backdrop-filter:
+        blur(18px);
+
+    border-bottom:
+        1px solid var(--pink-border);
+}
+
+.nav-inner{
+
+    max-width:1280px;
+
+    min-height:76px;
+
+    margin:auto;
+
+    padding:10px 20px;
+
+    display:flex;
+
+    align-items:center;
+
+    gap:18px;
+}
+
+
+/* LOGO */
+
+.logo{
+
+    font-size:29px;
+
+    font-weight:950;
+
+    letter-spacing:-2px;
+
+    color:#30232a;
+
+    white-space:nowrap;
+}
+
+.logo span{
+    color:var(--pink);
+}
+
+
+/* SEARCH */
+
+.search-box{
+
+    flex:1;
+
+    position:relative;
+}
+
+.search-box input{
+
+    width:100%;
+
+    padding:
+        14px
+        48px
+        14px
+        18px;
+
+    border:
+        1px solid var(--pink-border);
+
+    border-radius:18px;
+
+    outline:none;
+
+    background:#fff;
+
+    color:var(--text);
+
+    transition:.2s;
+}
+
+.search-box input:focus{
+
+    border-color:#ff8fba;
+
+    box-shadow:
+        0 0 0 4px #ffe7f0;
+}
+
+.search-icon{
+
+    position:absolute;
+
+    right:17px;
+
+    top:11px;
+
+    font-size:23px;
+
+    color:#a47c8e;
+}
+
+
+/* NAV BUTTONS */
+
+.nav-actions{
+
+    display:flex;
+
+    gap:9px;
+}
+
+.icon-button{
+
+    position:relative;
+
+    width:46px;
+
+    height:46px;
+
+    border:0;
+
+    border-radius:15px;
+
+    background:#fff1f6;
+
+    color:#75495e;
+
+    font-size:20px;
+
+    transition:.2s;
+}
+
+.icon-button:hover{
+
+    background:#ffdce9;
+
+    transform:
+        translateY(-2px);
+}
+
+.counter{
+
+    position:absolute;
+
+    right:-3px;
+
+    top:-4px;
+
+    min-width:19px;
+
+    height:19px;
+
+    padding:0 5px;
+
+    display:grid;
+
+    place-items:center;
+
+    border-radius:99px;
+
+    background:var(--pink);
+
+    color:#fff;
+
+    font-size:10px;
+
+    font-weight:900;
+}
+
+
+/* =========================================================
+   HERO
+========================================================= */
+
+.hero{
+
+    max-width:1280px;
+
+    margin:
+        25px auto
+        35px;
+
+    padding:
+        0 20px;
+}
+
+.hero-card{
+
+    position:relative;
+
+    overflow:hidden;
+
+    min-height:430px;
+
+    padding:
+        70px
+        clamp(28px,6vw,80px);
+
+    border-radius:38px;
+
+    background:
+
+        radial-gradient(
+            circle at 90% 15%,
+            #fff 0 8%,
+            transparent 9%
+        ),
+
+        radial-gradient(
+            circle at 85% 75%,
+            #ffb9d5 0 12%,
+            transparent 13%
+        ),
+
+        linear-gradient(
+            135deg,
+            #ffd7e7,
+            #fff0f6 53%,
+            #ffe7c8
+        );
+
+    box-shadow:
+        0 25px 80px rgba(198,80,130,.14);
+}
+
+.hero-card::before{
+
+    content:"";
+
+    position:absolute;
+
+    width:300px;
+    height:300px;
+
+    right:-70px;
+    top:-100px;
+
+    border-radius:50%;
+
+    background:
+        rgba(255,255,255,.7);
+}
+
+.hero-card::after{
+
+    content:"✦";
+
+    position:absolute;
+
+    right:14%;
+
+    top:27%;
+
+    font-size:80px;
+
+    color:
+        rgba(255,255,255,.85);
+
+    transform:
+        rotate(15deg);
+}
+
+.hero-content{
+
+    position:relative;
+
+    z-index:2;
+
+    max-width:700px;
+}
+
+.hero-label{
+
+    color:#ca4b7d;
+
+    font-size:14px;
+
+    font-weight:900;
+
+    letter-spacing:.5px;
+}
+
+.hero h1{
+
+    margin:
+        13px 0
+        18px;
+
+    font-size:
+        clamp(43px,6vw,72px);
+
+    line-height:.96;
+
+    letter-spacing:-4px;
+
+    color:#35242d;
+}
+
+.hero p{
+
+    max-width:610px;
+
+    color:#725866;
+
+    font-size:16px;
+
+    line-height:1.75;
+}
+
+.hero-buttons{
+
+    display:flex;
+
+    gap:12px;
+
+    flex-wrap:wrap;
+
+    margin-top:28px;
+}
+
+
+/* =========================================================
+   BUTTONS
+========================================================= */
+
+.primary-btn{
+
+    border:0;
+
+    padding:
+        14px
+        22px;
+
+    border-radius:16px;
+
+    color:#fff;
+
+    background:
+        linear-gradient(
+            135deg,
+            #ff6fa9,
+            #ff91bb
+        );
+
+    font-weight:900;
+
+    box-shadow:
+        0 12px 30px rgba(255,111,169,.3);
+
+    transition:.2s;
+}
+
+.primary-btn:hover{
+
+    transform:
+        translateY(-2px);
+
+    box-shadow:
+        0 16px 35px rgba(255,111,169,.38);
+}
+
+.secondary-btn{
+
+    border:
+        1px solid var(--pink-border);
+
+    padding:
+        13px
+        21px;
+
+    border-radius:16px;
+
+    color:#704b5e;
+
+    background:#fff;
+
+    font-weight:800;
+
+    transition:.2s;
+}
+
+.secondary-btn:hover{
+
+    background:#fff0f6;
+}
+
+
+/* =========================================================
+   SECTIONS
+========================================================= */
+
+.section{
+
+    max-width:1280px;
+
+    margin:
+        38px auto;
+
+    padding:
+        0 20px;
+}
+
+.section-head{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:end;
+
+    gap:15px;
+
+    margin-bottom:18px;
+}
+
+.section-head h2{
+
+    font-size:29px;
+
+    letter-spacing:-1.2px;
+}
+
+.section-head p{
+
+    color:var(--muted);
+
+    font-size:13px;
+
+    margin-top:5px;
+}
+
+
+/* =========================================================
+   CATEGORIES
+========================================================= */
+
+.category-list{
+
+    display:flex;
+
+    gap:9px;
+
+    overflow:auto;
+
+    padding-bottom:4px;
+}
+
+.category-list::-webkit-scrollbar{
+    display:none;
+}
+
+.category-btn{
+
+    flex:none;
+
+    border:
+        1px solid var(--pink-border);
+
+    background:#fff;
+
+    color:#795568;
+
+    padding:
+        10px
+        17px;
+
+    border-radius:99px;
+
+    font-weight:800;
+
+    transition:.2s;
+}
+
+.category-btn:hover,
+.category-btn.active{
+
+    background:
+        linear-gradient(
+            135deg,
+            #ff6fa9,
+            #ff88b5
+        );
+
+    color:#fff;
+
+    border-color:transparent;
+}
+
+
+/* =========================================================
+   TOOLBAR
+========================================================= */
+
+.toolbar{
+
+    display:flex;
+
+    gap:10px;
+
+    align-items:center;
+
+    flex-wrap:wrap;
+}
+
+.sort-select{
+
+    border:
+        1px solid var(--pink-border);
+
+    border-radius:13px;
+
+    background:#fff;
+
+    color:#694859;
+
+    padding:
+        11px
+        14px;
+
+    outline:none;
+}
+
+
+/* =========================================================
+   PRODUCTS GRID
+========================================================= */
+
+.products-grid{
+
+    display:grid;
+
+    grid-template-columns:
+        repeat(4,1fr);
+
+    gap:18px;
+}
+
+
+/* =========================================================
+   PRODUCT CARD
+========================================================= */
+
+.product-card{
+
+    position:relative;
+
+    overflow:hidden;
+
+    background:#fff;
+
+    border:
+        1px solid var(--pink-border);
+
+    border-radius:24px;
+
+    box-shadow:
+        0 9px 30px rgba(150,65,100,.06);
+
+    transition:.25s;
+}
+
+.product-card:hover{
+
+    transform:
+        translateY(-7px);
+
+    box-shadow:
+        var(--shadow);
+}
+
+
+/* PRODUCT IMAGE */
+
+.product-image{
+
+    height:245px;
+
+    position:relative;
+
+    overflow:hidden;
+
+    display:grid;
+
+    place-items:center;
+
+    background:
+        radial-gradient(
+            circle at 20% 20%,
+            #fff,
+            transparent 20%
+        ),
+        linear-gradient(
+            145deg,
+            #fff0f6,
+            #ffe0ec
+        );
+}
+
+.product-image img{
+
+    width:100%;
+
+    height:100%;
+
+    object-fit:cover;
+
+    position:relative;
+
+    z-index:1;
+}
+
+.product-placeholder{
+
+    font-size:67px;
+
+    filter:
+        drop-shadow(
+            0 10px 15px
+            rgba(195,91,136,.22)
+        );
+}
+
+.product-sale{
+
+    position:absolute;
+
+    left:12px;
+
+    top:12px;
+
+    z-index:3;
+
+    background:#3c2935;
+
+    color:#fff;
+
+    padding:
+        7px
+        10px;
+
+    border-radius:10px;
+
+    font-size:11px;
+
+    font-weight:900;
+}
+
+.wishlist-card-btn{
+
+    position:absolute;
+
+    right:11px;
+
+    top:11px;
+
+    z-index:4;
+
+    width:40px;
+
+    height:40px;
+
+    border:0;
+
+    border-radius:13px;
+
+    background:#fff;
+
+    color:#98667c;
+
+    font-size:20px;
+
+    box-shadow:
+        0 7px 20px rgba(60,30,45,.1);
+}
+
+.wishlist-card-btn.active{
+
+    color:#ff4e91;
+}
+
+
+/* PRODUCT BODY */
+
+.product-body{
+
+    padding:16px;
+}
+
+.product-category{
+
+    color:#b56b89;
+
+    font-size:10px;
+
+    font-weight:950;
+
+    text-transform:uppercase;
+
+    letter-spacing:1px;
+}
+
+.product-name{
+
+    margin:
+        6px 0;
+
+    font-size:17px;
+
+    white-space:nowrap;
+
+    overflow:hidden;
+
+    text-overflow:ellipsis;
+}
+
+.product-description{
+
+    color:#907783;
+
+    font-size:12px;
+
+    line-height:1.5;
+
+    min-height:36px;
+}
+
+.price-row{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:8px;
+
+    margin:
+        12px 0;
+}
+
+.current-price{
+
+    font-size:20px;
+
+    font-weight:950;
+}
+
+.old-price{
+
+    color:#bdaab4;
+
+    font-size:13px;
+
+    text-decoration:line-through;
+}
+
+.card-add-btn{
+
+    width:100%;
+
+    border:0;
+
+    padding:12px;
+
+    border-radius:14px;
+
+    background:#fff0f6;
+
+    color:#cf4f82;
+
+    font-weight:900;
+
+    transition:.2s;
+}
+
+.card-add-btn:hover{
+
+    background:var(--pink);
+
+    color:#fff;
+}
+
+.card-details-btn{
+
+    width:100%;
+
+    margin-top:8px;
+
+    padding:10px;
+
+    border:
+        1px solid var(--pink-border);
+
+    border-radius:13px;
+
+    background:#fff;
+
+    color:#805568;
+
+    font-weight:800;
+}
+
+
+/* EMPTY */
+
+.empty-box{
+
+    grid-column:1/-1;
+
+    text-align:center;
+
+    padding:65px 20px;
+
+    background:#fff;
+
+    border:
+        1px dashed #efc8da;
+
+    border-radius:25px;
+
+    color:#8d7381;
+}
+
+.empty-icon{
+
+    font-size:55px;
+
+    margin-bottom:10px;
+}
+
+
+/* =========================================================
+   DRAWERS
+========================================================= */
+
+.drawer{
+
+    position:fixed;
+
+    inset:0;
+
+    z-index:1000;
+
+    display:none;
+}
+
+.drawer.show{
+    display:block;
+}
+
+.drawer-backdrop{
+
+    position:absolute;
+
+    inset:0;
+
+    background:
+        rgba(40,20,30,.62);
+
+    backdrop-filter:
+        blur(4px);
+}
+
+.drawer-panel{
+
+    position:absolute;
+
+    right:0;
+
+    top:0;
+
+    width:
+        min(480px,100%);
+
+    height:100%;
+
+    background:#fff;
+
+    display:flex;
+
+    flex-direction:column;
+
+    box-shadow:
+        -20px 0 70px rgba(0,0,0,.18);
+
+    animation:
+        drawerSlide .25s ease;
+}
+
+@keyframes drawerSlide{
+
+    from{
+        transform:translateX(100%);
+    }
+
+    to{
+        transform:translateX(0);
+    }
+
+}
+
+.drawer-header{
+
+    padding:
+        22px;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:space-between;
+
+    border-bottom:
+        1px solid var(--pink-border);
+}
+
+.drawer-header h2{
+    font-size:22px;
+}
+
+.close-btn{
+
+    width:40px;
+
+    height:40px;
+
+    border:0;
+
+    border-radius:13px;
+
+    background:#fff0f6;
+
+    color:#a34e70;
+
+    font-size:24px;
+}
+
+.drawer-content{
+
+    flex:1;
+
+    overflow:auto;
+
+    padding:
+        20px;
+}
+
+
+/* =========================================================
+   CART
+========================================================= */
+
+.cart-item{
+
+    display:grid;
+
+    grid-template-columns:
+        65px 1fr auto;
+
+    gap:12px;
+
+    align-items:center;
+
+    padding:
+        14px 0;
+
+    border-bottom:
+        1px solid #f3e4ea;
+}
+
+.cart-image{
+
+    width:65px;
+
+    height:65px;
+
+    border-radius:15px;
+
+    background:#fff0f6;
+
+    display:grid;
+
+    place-items:center;
+
+    overflow:hidden;
+
+    font-size:28px;
+}
+
+.cart-image img{
+
+    width:100%;
+
+    height:100%;
+
+    object-fit:cover;
+}
+
+.cart-name{
+
+    font-size:14px;
+
+    font-weight:850;
+}
+
+.cart-price{
+
+    margin-top:3px;
+
+    color:#8d7480;
+
+    font-size:12px;
+}
+
+.quantity{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:8px;
+
+    margin-top:8px;
+}
+
+.quantity button{
+
+    width:27px;
+
+    height:27px;
+
+    border:0;
+
+    border-radius:8px;
+
+    background:#fff0f6;
+
+    color:#bd4e7b;
+
+    font-weight:900;
+}
+
+.cart-bottom{
+
+    padding:
+        18px 20px;
+
+    background:#fff9fc;
+
+    border-top:
+        1px solid var(--pink-border);
+}
+
+.total-row{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    margin-bottom:12px;
+}
+
+.total-row strong{
+    font-size:22px;
+}
+
+
+/* =========================================================
+   MODALS
+========================================================= */
+
+.modal{
+
+    position:fixed;
+
+    inset:0;
+
+    z-index:2000;
+
+    display:none;
+
+    place-items:center;
+
+    padding:18px;
+
+    background:
+        rgba(45,24,38,.66);
+
+    backdrop-filter:
+        blur(9px);
+}
+
+.modal.show{
+    display:grid;
+}
+
+.modal-box{
+
+    width:
+        min(650px,100%);
+
+    max-height:92vh;
+
+    overflow:auto;
+
+    background:#fff;
+
+    border-radius:29px;
+
+    box-shadow:
+        0 30px 100px rgba(30,10,20,.28);
+
+    animation:
+        modalPop .25s ease;
+}
+
+@keyframes modalPop{
+
+    from{
+        opacity:0;
+        transform:
+            translateY(15px)
+            scale(.96);
+    }
+
+    to{
+        opacity:1;
+        transform:
+            translateY(0)
+            scale(1);
+    }
+}
+
+.modal-header{
+
+    padding:
+        22px 24px;
+
+    border-bottom:
+        1px solid var(--pink-border);
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:space-between;
+}
+
+.modal-header h2{
+    font-size:22px;
+}
+
+.form{
+
+    padding:22px;
+
+    display:grid;
+
+    gap:13px;
+}
+
+.form label{
+
+    font-size:12px;
+
+    font-weight:850;
+
+    color:#735365;
+}
+
+.form input,
+.form textarea,
+.form select{
+
+    width:100%;
+
+    border:
+        1px solid var(--pink-border);
+
+    border-radius:14px;
+
+    padding:
+        13px 14px;
+
+    outline:none;
+
+    background:#fff;
+
+    color:var(--text);
+}
+
+.form input:focus,
+.form textarea:focus,
+.form select:focus{
+
+    border-color:#ff8eb9;
+
+    box-shadow:
+        0 0 0 4px #ffe7f0;
+}
+
+.form textarea{
+    resize:vertical;
+}
+
+
+/* =========================================================
+   AUTH
+========================================================= */
+
+.auth-box{
+
+    width:
+        min(470px,100%);
+}
+
+.auth-logo{
+
+    text-align:center;
+
+    font-size:35px;
+
+    font-weight:950;
+
+    letter-spacing:-2px;
+
+    margin:
+        4px 0 24px;
+}
+
+.auth-logo span{
+    color:var(--pink);
+}
+
+.auth-tabs{
+
+    display:flex;
+
+    gap:6px;
+
+    padding:6px;
+
+    background:#fff0f6;
+
+    border-radius:16px;
+
+    margin-bottom:24px;
+}
+
+.auth-tab{
+
+    flex:1;
+
+    padding:11px;
+
+    border:0;
+
+    border-radius:12px;
+
+    background:transparent;
+
+    color:#87576c;
+
+    font-weight:850;
+}
+
+.auth-tab.active{
+
+    background:#fff;
+
+    color:#d14e81;
+
+    box-shadow:
+        0 5px 15px rgba(120,50,80,.08);
+}
+
+.auth-form h2{
+
+    font-size:24px;
+
+    margin-bottom:6px;
+}
+
+.auth-subtitle{
+
+    color:#927583;
+
+    font-size:13px;
+
+    line-height:1.6;
+
+    margin-bottom:17px;
+}
+
+.auth-error{
+
+    display:none;
+
+    padding:11px;
+
+    border-radius:12px;
+
+    background:#fff0f4;
+
+    color:#d43f72;
+
+    font-size:12px;
+
+    line-height:1.5;
+}
+
+.auth-error.show{
+    display:block;
+}
+
+.forgot-btn{
+
+    border:0;
+
+    background:transparent;
+
+    color:#c55480;
+
+    font-size:12px;
+
+    margin:auto;
+
+    padding:8px;
+}
+
+.guest-button{
+
+    width:100%;
+
+    margin-top:9px;
+
+    padding:13px;
+
+    border:
+        1px solid var(--pink-border);
+
+    border-radius:15px;
+
+    background:#fff;
+
+    color:#755265;
+
+    font-weight:800;
+}
+
+
+/* =========================================================
+   PROFILE
+========================================================= */
+
+.profile-card{
+
+    padding:20px;
+
+    border-radius:21px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #ffe0ec,
+            #fff
+        );
+
+    margin-bottom:16px;
+}
+
+.avatar{
+
+    width:65px;
+
+    height:65px;
+
+    border-radius:21px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #ff6fa9,
+            #ff9bc0
+        );
+
+    color:#fff;
+
+    display:grid;
+
+    place-items:center;
+
+    font-size:25px;
+
+    font-weight:900;
+
+    margin-bottom:11px;
+}
+
+.profile-email{
+
+    color:#8b7180;
+
+    font-size:13px;
+}
+
+.order-card{
+
+    border:
+        1px solid var(--pink-border);
+
+    border-radius:17px;
+
+    padding:14px;
+
+    margin-bottom:10px;
+
+    background:#fffafd;
+}
+
+.order-top{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    gap:10px;
+
+    margin-bottom:7px;
+}
+
+.status{
+
+    display:inline-block;
+
+    padding:
+        6px 9px;
+
+    border-radius:9px;
+
+    background:#fff0f6;
+
+    color:#c64d7d;
+
+    font-size:10px;
+
+    font-weight:900;
+}
+
+.small-note{
+
+    color:#907783;
+
+    font-size:12px;
+
+    line-height:1.6;
+}
+
+
+/* =========================================================
+   PRODUCT DETAIL
+========================================================= */
+
+.detail-image{
+
+    width:100%;
+
+    height:320px;
+
+    border-radius:20px;
+
+    overflow:hidden;
+
+    display:grid;
+
+    place-items:center;
+
+    background:
+        linear-gradient(
+            145deg,
+            #fff0f6,
+            #ffe0ec
+        );
+
+    font-size:75px;
+}
+
+.detail-image img{
+
+    width:100%;
+
+    height:100%;
+
+    object-fit:cover;
+}
+
+.detail-info h2{
+
+    font-size:28px;
+
+    margin:
+        12px 0 7px;
+}
+
+.detail-description{
+
+    color:#856e7a;
+
+    line-height:1.7;
+
+    font-size:14px;
+}
+
+.detail-meta{
+
+    display:grid;
+
+    gap:5px;
+
+    margin-top:13px;
+
+    color:#795b6c;
+
+    font-size:13px;
+}
+
+
+/* =========================================================
+   SUCCESS
+========================================================= */
+
+.success{
+
+    text-align:center;
+
+    padding:
+        40px 20px;
+}
+
+.success-icon{
+
+    font-size:70px;
+
+    margin-bottom:15px;
+}
+
+.success h2{
+
+    font-size:27px;
+
+    margin-bottom:10px;
+}
+
+
+/* =========================================================
+   TOAST
+========================================================= */
+
+.toast{
+
+    position:fixed;
+
+    right:20px;
+
+    bottom:20px;
+
+    z-index:99999;
+
+    max-width:350px;
+
+    padding:
+        14px 18px;
+
+    border-radius:15px;
+
+    background:#392833;
+
+    color:#fff;
+
+    box-shadow:
+        0 15px 40px rgba(0,0,0,.2);
+
+    opacity:0;
+
+    transform:
+        translateY(100px);
+
+    pointer-events:none;
+
+    transition:.3s;
+}
+
+.toast.show{
+
+    opacity:1;
+
+    transform:
+        translateY(0);
+}
+
+
+/* =========================================================
+   FOOTER
+========================================================= */
+
+footer{
+
+    margin-top:75px;
+
+    padding:
+        50px 20px;
+
+    background:#3a2833;
+
+    color:#fff;
+}
+
+.footer-inner{
+
+    max-width:1280px;
+
+    margin:auto;
+
+    display:grid;
+
+    grid-template-columns:
+        2fr 1fr 1fr;
+
+    gap:35px;
+}
+
+.footer-logo{
+
+    font-size:30px;
+
+    font-weight:950;
+
+    letter-spacing:-2px;
+}
+
+.footer-logo span{
+    color:#ff8db8;
+}
+
+footer h3{
+    margin-bottom:10px;
+}
+
+footer p,
+footer li{
+
+    color:#d9c7cf;
+
+    font-size:13px;
+
+    line-height:1.9;
+
+    list-style:none;
+}
+
+
+/* =========================================================
+   MOBILE NAV
+========================================================= */
+
+.mobile-nav{
+
+    display:none;
+
+    position:fixed;
+
+    left:0;
+
+    right:0;
+
+    bottom:0;
+
+    z-index:500;
+
+    background:#fff;
+
+    border-top:
+        1px solid var(--pink-border);
+
+    padding:
+        8px;
+
+    justify-content:space-around;
+}
+
+.mobile-nav button{
+
+    border:0;
+
+    background:transparent;
+
+    color:#795468;
+
+    font-size:10px;
+}
+
+.mobile-nav span{
+
+    display:block;
+
+    font-size:20px;
+
+    margin-bottom:2px;
+}
+
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+@media(max-width:1050px){
+
+    .products-grid{
+        grid-template-columns:
+            repeat(3,1fr);
+    }
+
+}
+
+@media(max-width:760px){
+
+    .nav-inner{
+
+        flex-wrap:wrap;
+
+        padding:
+            10px 14px;
+    }
+
+    .logo{
+        margin-right:auto;
+    }
+
+    .search-box{
+
+        order:5;
+
+        flex-basis:100%;
+    }
+
+    .hero{
+
+        padding:
+            0 13px;
+    }
+
+    .section{
+
+        padding:
+            0 13px;
+    }
+
+    .hero-card{
+
+        padding:
+            45px 25px;
+
+        min-height:370px;
+
+        border-radius:29px;
+    }
+
+    .hero h1{
+
+        font-size:45px;
+
+        letter-spacing:-3px;
+    }
+
+    .products-grid{
+
+        grid-template-columns:
+            repeat(2,1fr);
+
+        gap:12px;
+    }
+
+    .product-image{
+        height:190px;
+    }
+
+    .product-body{
+        padding:12px;
+    }
+
+    .footer-inner{
+        grid-template-columns:1fr;
+    }
+
+    .mobile-nav{
+        display:flex;
+    }
+
+    body{
+        padding-bottom:67px;
+    }
+
+}
+
+@media(max-width:450px){
+
+    .nav-actions .icon-button:nth-child(2){
+        display:none;
+    }
+
+    .products-grid{
+        grid-template-columns:
+            repeat(2,1fr);
+    }
+
+    .product-image{
+        height:165px;
+    }
+
+    .product-name{
+        font-size:14px;
+    }
+
+    .product-description{
+        font-size:11px;
+    }
+
+    .current-price{
+        font-size:17px;
+    }
+
+    .hero h1{
+        font-size:39px;
+    }
+
+}
+
+</style>
+</head>
+
+<body>
+
+
+<!-- ======================================================
+     TOP BAR
+====================================================== -->
+
+<div class="topbar">
+    🌸 უფასო მიწოდება შერჩეულ შეკვეთებზე • Makasia-ს ახალი კოლექცია უკვე აქაა
+</div>
+
+
+<!-- ======================================================
+     NAVBAR
+====================================================== -->
+
+<nav class="nav">
+
+    <div class="nav-inner">
+
+        <a href="#" class="logo">
+            maka<span>sia</span>
+        </a>
+
+        <div class="search-box">
+
+            <input
+                id="searchInput"
+                type="search"
+                placeholder="მოძებნე პროდუქტი..."
+                autocomplete="off">
+
+            <span class="search-icon">⌕</span>
+
+        </div>
+
+        <div class="nav-actions">
+
+            <button
+                class="icon-button"
+                id="userButton"
+                onclick="openProfile()"
+                title="პროფილი">
+                ♙
+            </button>
+
+            <button
+                class="icon-button"
+                onclick="openWishlist()"
+                title="რჩეულები">
+
+                ♡
+
+                <span
+                    class="counter"
+                    id="wishlistCount">
+                    0
+                </span>
+
+            </button>
+
+            <button
+                class="icon-button"
+                onclick="openCart()"
+                title="კალათა">
+
+                🛍
+
+                <span
+                    class="counter"
+                    id="cartCount">
+                    0
+                </span>
+
+            </button>
+
+        </div>
+
+    </div>
+
+</nav>
+
+
+<!-- ======================================================
+     HERO
+====================================================== -->
+
+<section class="hero">
+
+    <div class="hero-card">
+
+        <div class="hero-content">
+
+            <div class="hero-label">
+                ✦ MADE FOR YOUR EVERYDAY
+            </div>
+
+            <h1>
+                პატარა დეტალები,
+                <br>
+                დიდი განწყობა.
+            </h1>
+
+            <p>
+                აღმოაჩინე Makasia-ს შერჩეული პროდუქტები —
+                მარტივი შოპინგი, ლამაზი დიზაინი და ყველაფერი
+                ერთ სივრცეში.
+            </p>
+
+            <div class="hero-buttons">
+
+                <button
+                    class="primary-btn"
+                    onclick="scrollToProducts()">
+                    შოპინგის დაწყება →
+                </button>
+
+                <button
+                    class="secondary-btn"
+                    onclick="openAuth()">
+                    შექმენი ანგარიში
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- ======================================================
+     CATEGORIES
+====================================================== -->
+
+<section class="section">
+
+    <div class="section-head">
+
+        <div>
+
+            <h2>
+                კატეგორიები
+            </h2>
+
+            <p>
+                იპოვე შენი ფავორიტი
+            </p>
+
+        </div>
+
+    </div>
+
+    <div
+        class="category-list"
+        id="categoryList">
+    </div>
+
+</section>
+
+
+<!-- ======================================================
+     PRODUCTS
+====================================================== -->
+
+<section
+    class="section"
+    id="productsSection">
+
+    <div class="section-head">
+
+        <div>
+
+            <h2>
+                ყველა პროდუქტი
+            </h2>
+
+            <p id="productMeta">
+                იტვირთება...
+            </p>
+
+        </div>
+
+        <div class="toolbar">
+
+            <select
+                class="sort-select"
+                id="sortSelect">
+
+                <option value="new">
+                    ახალი
+                </option>
+
+                <option value="low">
+                    ფასი: დაბლიდან
+                </option>
+
+                <option value="high">
+                    ფასი: მაღლიდან
+                </option>
+
+                <option value="sale">
+                    ფასდაკლება
+                </option>
+
+            </select>
+
+        </div>
+
+    </div>
+
+    <div
+        class="products-grid"
+        id="productsGrid">
+    </div>
+
+</section>
+
+
+<!-- ======================================================
+     FOOTER
+====================================================== -->
+
+<footer>
+
+    <div class="footer-inner">
+
+        <div>
+
+            <div class="footer-logo">
+                maka<span>sia</span>
+            </div>
+
+            <p style="margin-top:10px">
+                შოპინგი, რომელიც მარტივია,
+                საყვარელია და შენზეა მორგებული.
+            </p>
+
+        </div>
+
+        <div>
+
+            <h3>
+                Makasia
+            </h3>
+
+            <ul>
+
+                <li>ჩვენ შესახებ</li>
+                <li>მიწოდება</li>
+                <li>დაბრუნება</li>
+
+            </ul>
+
+        </div>
+
+        <div>
+
+            <h3>
+                დახმარება
+            </h3>
+
+            <ul>
+
+                <li>ხშირად დასმული კითხვები</li>
+                <li>კონტაქტი</li>
+                <li>შეკვეთის სტატუსი</li>
+
+            </ul>
+
+        </div>
+
+    </div>
+
+</footer>
+
+
+<!-- ======================================================
+     MOBILE NAV
+====================================================== -->
+
+<div class="mobile-nav">
+
+    <button onclick="goHome()">
+        <span>⌂</span>
+        მთავარი
+    </button>
+
+    <button onclick="scrollToProducts()">
+        <span>⌕</span>
+        შოპინგი
+    </button>
+
+    <button onclick="openWishlist()">
+        <span>♡</span>
+        რჩეულები
+    </button>
+
+    <button onclick="openCart()">
+        <span>🛍</span>
+        კალათა
+    </button>
+
+    <button onclick="openProfile()">
+        <span>♙</span>
+        პროფილი
+    </button>
+
+</div>
+
+
+<!-- ======================================================
+     CART DRAWER
+====================================================== -->
+
+<div
+    class="drawer"
+    id="cartDrawer">
+
+    <div
+        class="drawer-backdrop"
+        onclick="closeCart()">
+    </div>
+
+    <aside class="drawer-panel">
+
+        <div class="drawer-header">
+
+            <h2>
+                შენი კალათა 🛍
+            </h2>
+
+            <button
+                class="close-btn"
+                onclick="closeCart()">
+                ×
+            </button>
+
+        </div>
+
+        <div
+            class="drawer-content"
+            id="cartContent">
+        </div>
+
+        <div
+            class="cart-bottom"
+            id="cartBottom">
+        </div>
+
+    </aside>
+
+</div>
+
+
+<!-- ======================================================
+     WISHLIST DRAWER
+====================================================== -->
+
+<div
+    class="drawer"
+    id="wishlistDrawer">
+
+    <div
+        class="drawer-backdrop"
+        onclick="closeWishlist()">
+    </div>
+
+    <aside class="drawer-panel">
+
+        <div class="drawer-header">
+
+            <h2>
+                შენი რჩეულები ♡
+            </h2>
+
+            <button
+                class="close-btn"
+                onclick="closeWishlist()">
+                ×
+            </button>
+
+        </div>
+
+        <div
+            class="drawer-content"
+            id="wishlistContent">
+        </div>
+
+    </aside>
+
+</div>
+
+
+<!-- ======================================================
+     AUTH MODAL
+====================================================== -->
+
+<div
+    class="modal"
+    id="authModal">
+
+    <div class="modal-box auth-box">
+
+        <div class="modal-header">
+
+            <h2>
+                ანგარიში
+            </h2>
+
+            <button
+                class="close-btn"
+                onclick="closeAuth()">
+                ×
+            </button>
+
+        </div>
+
+        <div class="form">
+
+            <div class="auth-logo">
+                maka<span>sia</span>
+            </div>
+
+
+            <!-- TABS -->
+
+            <div class="auth-tabs">
+
+                <button
+                    id="loginTab"
+                    class="auth-tab active"
+                    onclick="switchAuth('login')">
+
+                    შესვლა
+
+                </button>
+
+                <button
+                    id="registerTab"
+                    class="auth-tab"
+                    onclick="switchAuth('register')">
+
+                    რეგისტრაცია
+
+                </button>
+
+            </div>
+
+
+            <!-- LOGIN -->
+
+            <div
+                id="loginForm"
+                class="auth-form">
+
+                <h2>
+                    კეთილი იყოს შენი დაბრუნება 💗
+                </h2>
+
+                <p class="auth-subtitle">
+                    შედი შენს Makasia ანგარიშზე
+                    და მართე შენი შეკვეთები.
+                </p>
+
+                <label>
+                    ელფოსტა
+                </label>
+
+                <input
+                    id="loginEmail"
+                    type="email"
+                    placeholder="example@gmail.com">
+
+                <label>
+                    პაროლი
+                </label>
+
+                <input
+                    id="loginPassword"
+                    type="password"
+                    placeholder="••••••••">
+
+                <div
+                    id="loginError"
+                    class="auth-error">
+                </div>
+
+                <button
+                    class="primary-btn"
+                    style="width:100%"
+                    onclick="loginUser()">
+
+                    შესვლა
+
+                </button>
+
+                <button
+                    class="forgot-btn"
+                    onclick="resetPassword()">
+
+                    დაგავიწყდა პაროლი?
+
+                </button>
+
+                <button
+                    class="guest-button"
+                    onclick="closeAuth()">
+
+                    გაგრძელება სტუმრად
+
+                </button>
+
+            </div>
+
+
+            <!-- REGISTER -->
+
+            <div
+                id="registerForm"
+                class="auth-form"
+                style="display:none">
+
+                <h2>
+                    შექმენი ანგარიში 🌸
+                </h2>
+
+                <p class="auth-subtitle">
+                    დარეგისტრირდი და შეინახე
+                    შენი პროფილი და შეკვეთები.
+                </p>
+
+                <label>
+                    სახელი
+                </label>
+
+                <input
+                    id="registerName"
+                    type="text"
+                    placeholder="შენი სახელი">
+
+                <label>
+                    ელფოსტა
+                </label>
+
+                <input
+                    id="registerEmail"
+                    type="email"
+                    placeholder="example@gmail.com">
+
+                <label>
+                    პაროლი
+                </label>
+
+                <input
+                    id="registerPassword"
+                    type="password"
+                    placeholder="მინიმუმ 6 სიმბოლო">
+
+                <label>
+                    გაიმეორე პაროლი
+                </label>
+
+                <input
+                    id="registerPassword2"
+                    type="password"
+                    placeholder="გაიმეორე პაროლი">
+
+                <div
+                    id="registerError"
+                    class="auth-error">
+                </div>
+
+                <button
+                    class="primary-btn"
+                    style="width:100%"
+                    onclick="registerUser()">
+
+                    რეგისტრაცია 💗
+
+                </button>
+
+                <button
+                    class="guest-button"
+                    onclick="closeAuth()">
+
+                    გაგრძელება სტუმრად
+
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- ======================================================
+     PROFILE MODAL
+====================================================== -->
+
+<div
+    class="modal"
+    id="profileModal">
+
+    <div class="modal-box">
+
+        <div class="modal-header">
+
+            <h2>
+                ჩემი პროფილი
+            </h2>
+
+            <button
+                class="close-btn"
+                onclick="closeModal('profileModal')">
+                ×
+            </button>
+
+        </div>
+
+        <div
+            class="form"
+            id="profileContent">
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- ======================================================
+     CHECKOUT MODAL
+====================================================== -->
+
+<div
+    class="modal"
+    id="checkoutModal">
+
+    <div class="modal-box">
+
+        <div class="modal-header">
+
+            <h2>
+                შეკვეთის გაფორმება
+            </h2>
+
+            <button
+                class="close-btn"
+                onclick="closeModal('checkoutModal')">
+                ×
+            </button>
+
+        </div>
+
+        <div class="form">
+
+            <label>
+                სახელი და გვარი
+            </label>
+
+            <input
+                id="checkoutName"
+                placeholder="სახელი გვარი">
+
+            <label>
+                ტელეფონი
+            </label>
+
+            <input
+                id="checkoutPhone"
+                placeholder="+995 5XX XX XX XX">
+
+            <label>
+                მისამართი
+            </label>
+
+            <textarea
+                id="checkoutAddress"
+                rows="3"
+                placeholder="ქალაქი, ქუჩა, ბინა..."></textarea>
+
+            <label>
+                მიწოდება
+            </label>
+
+            <select id="checkoutDelivery">
+
+                <option value="კურიერი">
+                    კურიერი
+                </option>
+
+                <option value="თვითგატანა">
+                    თვითგატანა
+                </option>
+
+            </select>
+
+            <div
+                id="checkoutError"
+                class="auth-error">
+            </div>
+
+            <button
+                class="primary-btn"
+                onclick="placeOrder()">
+
+                შეკვეთის დადასტურება 💗
+
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- ======================================================
+     PRODUCT DETAIL MODAL
+====================================================== -->
+
+<div
+    class="modal"
+    id="detailModal">
+
+    <div class="modal-box">
+
+        <div class="modal-header">
+
+            <h2>
+                პროდუქტი
+            </h2>
+
+            <button
+                class="close-btn"
+                onclick="closeModal('detailModal')">
+                ×
+            </button>
+
+        </div>
+
+        <div
+            class="form"
+            id="detailContent">
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- ======================================================
+     TOAST
+====================================================== -->
+
+<div
+    class="toast"
+    id="toast">
+</div>
+
+
+<script>
+
+/* =========================================================
+   FIREBASE CONFIG
+========================================================= */
+
+const firebaseConfig = {
+
+    apiKey:
+        "AIzaSyDuZpWaZFY18eyJNOMJfap2XVTr6D0cMyE",
+
+    authDomain:
+        "makasia.firebaseapp.com",
+
+    projectId:
+        "makasia",
+
+    storageBucket:
+        "makasia.firebasestorage.app",
+
+    messagingSenderId:
+        "51102698357",
+
+    appId:
+        "1:51102698357:web:59f62a3c8e76663947a13c",
+
+    measurementId:
+        "G-PJM63G16X4"
+
+};
+
+
+/* =========================================================
+   INIT FIREBASE
+========================================================= */
+
+if(!firebase.apps.length){
+    firebase.initializeApp(firebaseConfig);
+}
+
+const db =
+    firebase.firestore();
+
+const auth =
+    firebase.auth();
+
+
+/* =========================================================
+   GLOBAL STATE
+========================================================= */
+
+let products = [];
+
+let filteredProducts = [];
+
+let currentUser = null;
+
+let currentCategory = "ყველა";
+
+let authMode = "login";
+
+
+/* =========================================================
+   LOCAL STORAGE
+========================================================= */
+
+let cart =
+    JSON.parse(
+        localStorage.getItem(
+            "makasia_cart"
+        ) || "[]"
+    );
+
+let wishlist =
+    JSON.parse(
+        localStorage.getItem(
+            "makasia_wishlist"
+        ) || "[]"
+    );
+
+
+let guestId =
+    localStorage.getItem(
+        "makasia_guest_id"
+    );
+
+
+if(!guestId){
+
+    guestId =
+        "guest_" +
+        Date.now() +
+        "_" +
+        Math.random()
+            .toString(36)
+            .slice(2);
+
+    localStorage.setItem(
+        "makasia_guest_id",
+        guestId
+    );
+
+}
+
+
+/* =========================================================
+   HELPERS
+========================================================= */
+
+function escapeHTML(value){
+
+    return String(value ?? "")
+        .replace(
+            /[&<>"']/g,
+            char => ({
+                "&":"&amp;",
+                "<":"&lt;",
+                ">":"&gt;",
+                '"':"&quot;",
+                "'":"&#039;"
+            }[char])
+        );
+
+}
+
+
+function money(value){
+
+    let number =
+        parseFloat(
+            String(value ?? 0)
+                .replace(/[^\d.,-]/g,"")
+                .replace(",",".")
+        );
+
+    return isNaN(number)
+        ? 0
+        : number;
+
+}
+
+
+function formatMoney(value){
+
+    return (
+        Number(value)
+            .toFixed(2)
+            .replace(".00","")
+        + " ₾"
+    );
+
+}
+
+
+function dateValue(value){
+
+    if(
+        value &&
+        typeof value.toMillis === "function"
+    ){
+        return value.toMillis();
+    }
+
+    if(
+        value &&
+        value.seconds
+    ){
+        return value.seconds * 1000;
+    }
+
+    return 0;
+
+}
+
+
+function saveLocal(){
+
+    localStorage.setItem(
+        "makasia_cart",
+        JSON.stringify(cart)
+    );
+
+    localStorage.setItem(
+        "makasia_wishlist",
+        JSON.stringify(wishlist)
+    );
+
+    updateCounters();
+
+}
+
+
+/* =========================================================
+   TOAST
+========================================================= */
+
+function showToast(message){
+
+    const toast =
+        document.getElementById("toast");
+
+    toast.textContent = message;
+
+    toast.classList.add("show");
+
+    clearTimeout(
+        window.toastTimer
+    );
+
+    window.toastTimer =
+        setTimeout(
+            () => {
+                toast.classList.remove("show");
+            },
+            2300
+        );
+
+}
+
+
+/* =========================================================
+   MODALS
+========================================================= */
+
+function openModal(id){
+
+    document
+        .getElementById(id)
+        .classList.add("show");
+
+}
+
+
+function closeModal(id){
+
+    document
+        .getElementById(id)
+        .classList.remove("show");
+
+}
+
+
+/* =========================================================
+   AUTH
+========================================================= */
+
+function openAuth(){
+
+    openModal("authModal");
+
+}
+
+
+function closeAuth(){
+
+    closeModal("authModal");
+
+}
+
+
+function switchAuth(type){
+
+    authMode = type;
+
+    const loginForm =
+        document.getElementById(
+            "loginForm"
+        );
+
+    const registerForm =
+        document.getElementById(
+            "registerForm"
+        );
+
+    const loginTab =
+        document.getElementById(
+            "loginTab"
+        );
+
+    const registerTab =
+        document.getElementById(
+            "registerTab"
+        );
+
+    if(type === "login"){
+
+        loginForm.style.display =
+            "block";
+
+        registerForm.style.display =
+            "none";
+
+        loginTab.classList.add(
+            "active"
+        );
+
+        registerTab.classList.remove(
+            "active"
+        );
+
+    }else{
+
+        loginForm.style.display =
+            "none";
+
+        registerForm.style.display =
+            "block";
+
+        loginTab.classList.remove(
+            "active"
+        );
+
+        registerTab.classList.add(
+            "active"
+        );
+
+    }
+
+    clearAuthErrors();
+
+}
+
+
+function clearAuthErrors(){
+
+    document
+        .getElementById("loginError")
+        .classList.remove("show");
+
+    document
+        .getElementById("registerError")
+        .classList.remove("show");
+
+}
+
+
+function showError(element,message){
+
+    element.textContent = message;
+
+    element.classList.add("show");
+
+}
+
+
+function translateFirebaseError(error){
+
+    const code =
+        error.code || "";
+
+    if(
+        code.includes(
+            "email-already-in-use"
+        )
+    ){
+        return "ეს ელფოსტა უკვე რეგისტრირებულია.";
+    }
+
+    if(
+        code.includes(
+            "invalid-email"
+        )
+    ){
+        return "ელფოსტის ფორმატი არასწორია.";
+    }
+
+    if(
+        code.includes(
+            "weak-password"
+        )
+    ){
+        return "პაროლი მინიმუმ 6 სიმბოლო უნდა იყოს.";
+    }
+
+    if(
+        code.includes(
+            "invalid-credential"
+        ) ||
+        code.includes(
+            "wrong-password"
+        ) ||
+        code.includes(
+            "user-not-found"
+        )
+    ){
+        return "ელფოსტა ან პაროლი არასწორია.";
+    }
+
+    if(
+        code.includes(
+            "too-many-requests"
+        )
+    ){
+        return "ძალიან ბევრი მცდელობაა. ცოტა ხანში სცადე თავიდან.";
+    }
+
+    return (
+        error.message ||
+        "დაფიქსირდა შეცდომა."
+    );
+
+}
+
+
+/* =========================================================
+   LOGIN
+========================================================= */
+
+async function loginUser(){
+
+    const email =
+        document
+            .getElementById(
+                "loginEmail"
+            )
+            .value
+            .trim();
+
+    const password =
+        document
+            .getElementById(
+                "loginPassword"
+            )
+            .value;
+
+    const errorBox =
+        document.getElementById(
+            "loginError"
+        );
+
+    errorBox.classList.remove(
+        "show"
+    );
+
+    if(!email){
+
+        showError(
+            errorBox,
+            "შეიყვანე ელფოსტა."
+        );
+
+        return;
+    }
+
+    if(!password){
+
+        showError(
+            errorBox,
+            "შეიყვანე პაროლი."
+        );
+
+        return;
+    }
+
+
+    try{
+
+        await auth
+            .signInWithEmailAndPassword(
+                email,
+                password
+            );
+
+        closeAuth();
+
+        showToast(
+            "კეთილი იყოს შენი დაბრუნება 🌸"
+        );
+
+        document
+            .getElementById(
+                "loginPassword"
+            )
+            .value = "";
+
+    }catch(error){
+
+        showError(
+            errorBox,
+            translateFirebaseError(error)
+        );
+
+    }
+
+}
+
+
+/* =========================================================
+   REGISTER
+========================================================= */
+
+async function registerUser(){
+
+    const name =
+        document
+            .getElementById(
+                "registerName"
+            )
+            .value
+            .trim();
+
+    const email =
+        document
+            .getElementById(
+                "registerEmail"
+            )
+            .value
+            .trim();
+
+    const password =
+        document
+            .getElementById(
+                "registerPassword"
+            )
+            .value;
+
+    const password2 =
+        document
+            .getElementById(
+                "registerPassword2"
+            )
+            .value;
+
+    const errorBox =
+        document.getElementById(
+            "registerError"
+        );
+
+    errorBox.classList.remove(
+        "show"
+    );
+
+
+    if(!name){
+
+        showError(
+            errorBox,
+            "შეიყვანე შენი სახელი."
+        );
+
+        return;
+    }
+
+
+    if(!email){
+
+        showError(
+            errorBox,
+            "შეიყვანე ელფოსტა."
+        );
+
+        return;
+    }
+
+
+    if(password.length < 6){
+
+        showError(
+            errorBox,
+            "პაროლი მინიმუმ 6 სიმბოლო უნდა იყოს."
+        );
+
+        return;
+    }
+
+
+    if(password !== password2){
+
+        showError(
+            errorBox,
+            "პაროლები ერთმანეთს არ ემთხვევა."
+        );
+
+        return;
+    }
+
+
+    try{
+
+        const credential =
+            await auth
+                .createUserWithEmailAndPassword(
+                    email,
+                    password
+                );
+
+
+        const user =
+            credential.user;
+
+
+        await db
+            .collection("users")
+            .doc(user.uid)
+            .set({
+
+                name:name,
+
+                email:email,
+
+                phone:"",
+
+                address:"",
+
+                createdAt:
+                    firebase
+                        .firestore
+                        .FieldValue
+                        .serverTimestamp()
+
+            },{
+                merge:true
+            });
+
+
+        closeAuth();
+
+        showToast(
+            "ანგარიში წარმატებით შეიქმნა 💗"
+        );
+
+
+        document
+            .getElementById(
+                "registerName"
+            )
+            .value = "";
+
+        document
+            .getElementById(
+                "registerEmail"
+            )
+            .value = "";
+
+        document
+            .getElementById(
+                "registerPassword"
+            )
+            .value = "";
+
+        document
+            .getElementById(
+                "registerPassword2"
+            )
+            .value = "";
+
+
+    }catch(error){
+
+        showError(
+            errorBox,
+            translateFirebaseError(error)
+        );
+
+    }
+
+}
+
+
+/* =========================================================
+   RESET PASSWORD
+========================================================= */
+
+async function resetPassword(){
+
+    const email =
+        document
+            .getElementById(
+                "loginEmail"
+            )
+            .value
+            .trim();
+
+    const errorBox =
+        document.getElementById(
+            "loginError"
+        );
+
+
+    if(!email){
+
+        showError(
+            errorBox,
+            "ჯერ შეიყვანე ელფოსტა."
+        );
+
+        return;
+    }
+
+
+    try{
+
+        await auth
+            .sendPasswordResetEmail(
+                email
+            );
+
+        showToast(
+            "პაროლის აღდგენის წერილი გაიგზავნა 📩"
+        );
+
+    }catch(error){
+
+        showError(
+            errorBox,
+            translateFirebaseError(error)
+        );
+
+    }
+
+}
+
+
+/* =========================================================
+   AUTH STATE
+========================================================= */
+
+auth.onAuthStateChanged(
+    async user => {
+
+        currentUser = user;
+
+        const button =
+            document.getElementById(
+                "userButton"
+            );
+
+        if(user){
+
+            button.innerHTML = "☺";
+
+            button.title =
+                "ჩემი პროფილი";
+
+        }else{
+
+            button.innerHTML = "♙";
+
+            button.title =
+                "შესვლა / რეგისტრაცია";
+
+        }
+
+    }
+);
+
+
+/* =========================================================
+   PRODUCTS
+========================================================= */
+
+async function loadProducts(){
+
+    const grid =
+        document.getElementById(
+            "productsGrid"
+        );
+
+    grid.innerHTML = `
+        <div class="empty-box">
+            <div class="empty-icon">
+                ⏳
+            </div>
+            პროდუქტები იტვირთება...
+        </div>
+    `;
+
+
+    try{
+
+        const snapshot =
+            await db
+                .collection("products")
+                .get();
+
+
+        products =
+            snapshot.docs
+                .map(doc => ({
+                    id:doc.id,
+                    ...doc.data()
+                }))
+                .filter(
+                    product =>
+                        product.status !== "დამალული" &&
+                        product.status !== "draft"
+                );
+
+
+        renderCategories();
+
+        applyFilters();
+
+
+    }catch(error){
+
+        console.error(error);
+
+        grid.innerHTML = `
+            <div class="empty-box">
+
+                <div class="empty-icon">
+                    ⚠️
+                </div>
+
+                <b>
+                    პროდუქტების ჩატვირთვა ვერ მოხერხდა
+                </b>
+
+                <p style="margin-top:8px">
+                    შეამოწმე Firebase Firestore Rules.
+                </p>
+
+            </div>
+        `;
+
+    }
+
+}
+
+
+/* =========================================================
+   CATEGORIES
+========================================================= */
+
+function getCategories(){
+
+    const categories =
+        [
+            ...new Set(
+                products
+                    .map(
+                        product =>
+                            product.category
+                    )
+                    .filter(Boolean)
+            )
+        ];
+
+    return [
+        "ყველა",
+        ...categories
+    ];
+
+}
+
+
+function renderCategories(){
+
+    const list =
+        document.getElementById(
+            "categoryList"
+        );
+
+    list.innerHTML =
+        getCategories()
+            .map(
+                category => `
+                    <button
+                        class="category-btn
+                        ${
+                            category === currentCategory
+                                ? "active"
+                                : ""
+                        }"
+                        onclick='setCategory(${JSON.stringify(category)})'>
+
+                        ${escapeHTML(category)}
+
+                    </button>
+                `
+            )
+            .join("");
+
+}
+
+
+function setCategory(category){
+
+    currentCategory =
+        category;
+
+    renderCategories();
+
+    applyFilters();
+
+}
+
+
+/* =========================================================
+   FILTER / SORT
+========================================================= */
+
+function applyFilters(){
+
+    const search =
+        document
+            .getElementById(
+                "searchInput"
+            )
+            .value
+            .toLowerCase()
+            .trim();
+
+    const sort =
+        document
+            .getElementById(
+                "sortSelect"
+            )
+            .value;
+
+
+    filteredProducts =
+        products.filter(
+            product => {
+
+                const matchesCategory =
+                    currentCategory === "ყველა" ||
+                    product.category ===
+                        currentCategory;
+
+
+                const searchable =
+                    `
+                    ${product.name || ""}
+                    ${product.description || ""}
+                    ${product.category || ""}
+                    ${product.color || ""}
+                    ${product.size || ""}
+                    `
+                    .toLowerCase();
+
+
+                const matchesSearch =
+                    searchable.includes(
+                        search
+                    );
+
+
+                return (
+                    matchesCategory &&
+                    matchesSearch
+                );
+
+            }
+        );
+
+
+    if(sort === "low"){
+
+        filteredProducts.sort(
+            (a,b) =>
+                money(a.price) -
+                money(b.price)
+        );
+
+    }
+
+
+    if(sort === "high"){
+
+        filteredProducts.sort(
+            (a,b) =>
+                money(b.price) -
+                money(a.price)
+        );
+
+    }
+
+
+    if(sort === "sale"){
+
+        filteredProducts.sort(
+            (a,b) => {
+
+                const saleA =
+                    money(a.oldPrice) -
+                    money(a.price);
+
+                const saleB =
+                    money(b.oldPrice) -
+                    money(b.price);
+
+                return saleB - saleA;
+
+            }
+        );
+
+    }
+
+
+    if(sort === "new"){
+
+        filteredProducts.sort(
+            (a,b) =>
+                dateValue(b.createdAt) -
+                dateValue(a.createdAt)
+        );
+
+    }
+
+
+    renderProducts();
+
+}
+
+
+/* =========================================================
+   PRODUCT IMAGE
+========================================================= */
+
+function productImage(product){
+
+    if(product.image){
+
+        return `
+            <img
+                src="${escapeHTML(product.image)}"
+                alt="${escapeHTML(product.name || "პროდუქტი")}"
+                onerror="
+                    this.style.display='none';
+                    this.parentElement
+                        .querySelector('.product-placeholder')
+                        .style.display='block';
+                "
+            >
+
+            <span
+                class="product-placeholder"
+                style="display:none">
+                🛍️
+            </span>
+        `;
+
+    }
+
+
+    return `
+        <span class="product-placeholder">
+            🛍️
+        </span>
+    `;
+
+}
+
+
+/* =========================================================
+   RENDER PRODUCTS
+========================================================= */
+
+function renderProducts(){
+
+    const grid =
+        document.getElementById(
+            "productsGrid"
+        );
+
+    const meta =
+        document.getElementById(
+            "productMeta"
+        );
+
+
+    meta.textContent =
+        `${filteredProducts.length} პროდუქტი`;
+
+
+    if(!filteredProducts.length){
+
+        grid.innerHTML = `
+            <div class="empty-box">
+
+                <div class="empty-icon">
+                    🌸
+                </div>
+
+                <b>
+                    პროდუქტი ვერ მოიძებნა
+                </b>
+
+                <p style="margin-top:8px">
+                    სცადე სხვა საძიებო სიტყვა
+                    ან კატეგორია.
+                </p>
+
+            </div>
+        `;
+
+        return;
+    }
+
+
+    grid.innerHTML =
+        filteredProducts
+            .map(product => {
+
+                const price =
+                    money(product.price);
+
+                const oldPrice =
+                    money(product.oldPrice);
+
+                const discount =
+                    oldPrice > price &&
+                    oldPrice > 0
+                        ? Math.round(
+                            (1 - price / oldPrice)
+                            * 100
+                        )
+                        : 0;
+
+
+                const isWishlisted =
+                    wishlist.includes(
+                        product.id
+                    );
+
+
+                return `
+
+                    <article
+                        class="product-card">
+
+                        <div
+                            class="product-image">
+
+                            ${productImage(product)}
+
+                            ${
+                                discount
+                                    ? `
+                                        <span
+                                            class="product-sale">
+                                            -${discount}%
+                                        </span>
+                                    `
+                                    : ""
+                            }
+
+                            <button
+                                class="
+                                    wishlist-card-btn
+                                    ${
+                                        isWishlisted
+                                            ? "active"
+                                            : ""
+                                    }
+                                "
+                                onclick="
+                                    toggleWishlist(
+                                        '${product.id}'
+                                    )
+                                ">
+
+                                ${
+                                    isWishlisted
+                                        ? "♥"
+                                        : "♡"
+                                }
+
+                            </button>
+
+                        </div>
+
+
+                        <div
+                            class="product-body">
+
+                            <div
+                                class="product-category">
+
+                                ${escapeHTML(
+                                    product.category ||
+                                    "Makasia"
+                                )}
+
+                            </div>
+
+
+                            <h3
+                                class="product-name">
+
+                                ${escapeHTML(
+                                    product.name ||
+                                    "პროდუქტი"
+                                )}
+
+                            </h3>
+
+
+                            <p
+                                class="product-description">
+
+                                ${escapeHTML(
+                                    product.description ||
+                                    "შერჩეული პროდუქტი შენთვის."
+                                )}
+
+                            </p>
+
+
+                            <div
+                                class="price-row">
+
+                                <strong
+                                    class="current-price">
+
+                                    ${formatMoney(price)}
+
+                                </strong>
+
+                                ${
+                                    oldPrice > price
+                                        ? `
+                                            <span
+                                                class="old-price">
+
+                                                ${formatMoney(
+                                                    oldPrice
+                                                )}
+
+                                            </span>
+                                        `
+                                        : ""
+                                }
+
+                            </div>
+
+
+                            <button
+                                class="card-add-btn"
+                                onclick="
+                                    addToCart(
+                                        '${product.id}'
+                                    )
+                                ">
+
+                                კალათაში დამატება +
+
+                            </button>
+
+
+                            <button
+                                class="card-details-btn"
+                                onclick="
+                                    openProductDetails(
+                                        '${product.id}'
+                                    )
+                                ">
+
+                                სრულად ნახვა
+
+                            </button>
+
+                        </div>
+
+                    </article>
+
+                `;
+
+            })
+            .join("");
+
+}
+
+
+/* =========================================================
+   CART
+========================================================= */
+
+function addToCart(id){
+
+    const product =
+        products.find(
+            item =>
+                item.id === id
+        );
+
+
+    if(!product){
+
+        return;
+
+    }
+
+
+    const existing =
+        cart.find(
+            item =>
+                item.id === id
+        );
+
+
+    if(existing){
+
+        existing.qty++;
+
+    }else{
+
+        cart.push({
+            id:id,
+            qty:1
+        });
+
+    }
+
+
+    saveLocal();
+
+    showToast(
+        "პროდუქტი დაემატა კალათაში 💗"
+    );
+
+}
+
+
+function cartProducts(){
+
+    return cart
+        .map(item => ({
+
+            ...item,
+
+            product:
+                products.find(
+                    product =>
+                        product.id === item.id
+                )
+
+        }))
+        .filter(
+            item =>
+                item.product
+        );
+
+}
+
+
+function cartTotal(){
+
+    return cartProducts()
+        .reduce(
+            (sum,item) =>
+                sum +
+                money(
+                    item.product.price
+                ) *
+                item.qty,
+
+            0
+        );
+
+}
+
+
+function changeCartQuantity(
+    id,
+    amount
+){
+
+    const item =
+        cart.find(
+            cartItem =>
+                cartItem.id === id
+        );
+
+
+    if(!item){
+
+        return;
+
+    }
+
+
+    item.qty += amount;
+
+
+    if(item.qty <= 0){
+
+        cart =
+            cart.filter(
+                cartItem =>
+                    cartItem.id !== id
+            );
+
+    }
+
+
+    saveLocal();
+
+    renderCart();
+
+}
+
+
+function removeFromCart(id){
+
+    cart =
+        cart.filter(
+            item =>
+                item.id !== id
+        );
+
+    saveLocal();
+
+    renderCart();
+
+    showToast(
+        "პროდუქტი წაიშალა კალათიდან"
+    );
+
+}
+
+
+/* =========================================================
+   OPEN CART
+========================================================= */
+
+function openCart(){
+
+    renderCart();
+
+    document
+        .getElementById(
+            "cartDrawer"
+        )
+        .classList.add("show");
+
+}
+
+
+function closeCart(){
+
+    document
+        .getElementById(
+            "cartDrawer"
+        )
+        .classList.remove("show");
+
+}
+
+
+function renderCart(){
+
+    const content =
+        document.getElementById(
+            "cartContent"
+        );
+
+    const bottom =
+        document.getElementById(
+            "cartBottom"
+        );
+
+
+    const items =
+        cartProducts();
+
+
+    if(!items.length){
+
+        content.innerHTML = `
+
+            <div class="empty-box">
+
+                <div class="empty-icon">
+                    🛍
+                </div>
+
+                <b>
+                    კალათა ცარიელია
+                </b>
+
+                <p style="margin-top:8px">
+                    დაამატე შენი საყვარელი პროდუქტი.
+                </p>
+
+            </div>
+
+        `;
+
+        bottom.innerHTML = "";
+
+        return;
+
+    }
+
+
+    content.innerHTML =
+        items
+            .map(item => {
+
+                const product =
+                    item.product;
+
+
+                return `
+
+                    <div
+                        class="cart-item">
+
+                        <div
+                            class="cart-image">
+
+                            ${
+                                product.image
+                                    ? `
+                                        <img
+                                            src="${escapeHTML(
+                                                product.image
+                                            )}"
+                                            alt=""
+                                        >
+                                    `
+                                    : "🛍️"
+                            }
+
+                        </div>
+
+
+                        <div>
+
+                            <div
+                                class="cart-name">
+
+                                ${escapeHTML(
+                                    product.name
+                                )}
+
+                            </div>
+
+                            <div
+                                class="cart-price">
+
+                                ${formatMoney(
+                                    money(
+                                        product.price
+                                    )
+                                )}
+
+                            </div>
+
+
+                            <div
+                                class="quantity">
+
+                                <button
+                                    onclick="
+                                        changeCartQuantity(
+                                            '${item.id}',
+                                            -1
+                                        )
+                                    ">
+                                    −
+                                </button>
+
+                                <b>
+                                    ${item.qty}
+                                </b>
+
+                                <button
+                                    onclick="
+                                        changeCartQuantity(
+                                            '${item.id}',
+                                            1
+                                        )
+                                    ">
+                                    +
+                                </button>
+
+                                <button
+                                    style="
+                                        margin-left:4px;
+                                        color:#c74e7b;
+                                    "
+                                    onclick="
+                                        removeFromCart(
+                                            '${item.id}'
+                                        )
+                                    ">
+                                    ×
+                                </button>
+
+                            </div>
+
+                        </div>
+
+
+                        <strong>
+
+                            ${formatMoney(
+                                money(
+                                    product.price
+                                ) *
+                                item.qty
+                            )}
+
+                        </strong>
+
+                    </div>
+
+                `;
+
+            })
+            .join("");
+
+
+    bottom.innerHTML = `
+
+        <div class="total-row">
+
+            <span>
+                ჯამი
+            </span>
+
+            <strong>
+                ${formatMoney(
+                    cartTotal()
+                )}
+            </strong>
+
+        </div>
+
+
+        <button
+            class="primary-btn"
+            style="width:100%"
+            onclick="checkout()">
+
+            შეკვეთის გაფორმება →
+
+        </button>
+
+    `;
+
+}
+
+
+/* =========================================================
+   WISHLIST
+========================================================= */
+
+function toggleWishlist(id){
+
+    if(
+        wishlist.includes(id)
+    ){
+
+        wishlist =
+            wishlist.filter(
+                item =>
+                    item !== id
+            );
+
+        showToast(
+            "რჩეულებიდან წაიშალა"
+        );
+
+    }else{
+
+        wishlist.push(id);
+
+        showToast(
+            "რჩეულებში დაემატა ♡"
+        );
+
+    }
+
+
+    saveLocal();
+
+    applyFilters();
+
+}
+
+
+function openWishlist(){
+
+    renderWishlist();
+
+    document
+        .getElementById(
+            "wishlistDrawer"
+        )
+        .classList.add("show");
+
+}
+
+
+function closeWishlist(){
+
+    document
+        .getElementById(
+            "wishlistDrawer"
+        )
+        .classList.remove("show");
+
+}
+
+
+function renderWishlist(){
+
+    const content =
+        document.getElementById(
+            "wishlistContent"
+        );
+
+
+    const items =
+        wishlist
+            .map(
+                id =>
+                    products.find(
+                        product =>
+                            product.id === id
+                    )
+            )
+            .filter(Boolean);
+
+
+    if(!items.length){
+
+        content.innerHTML = `
+
+            <div class="empty-box">
+
+                <div class="empty-icon">
+                    ♡
+                </div>
+
+                <b>
+                    რჩეულები ცარიელია
+                </b>
+
+                <p style="margin-top:8px">
+                    დააჭირე გულს პროდუქტზე.
+                </p>
+
+            </div>
+
+        `;
+
+        return;
+
+    }
+
+
+    content.innerHTML =
+        items
+            .map(product => `
+
+                <div
+                    class="cart-item">
+
+                    <div
+                        class="cart-image">
+
+                        ${
+                            product.image
+                                ? `
+                                    <img
+                                        src="${escapeHTML(
+                                            product.image
+                                        )}"
+                                        alt=""
+                                    >
+                                `
+                                : "🛍️"
+                        }
+
+                    </div>
+
+
+                    <div>
+
+                        <div
+                            class="cart-name">
+
+                            ${escapeHTML(
+                                product.name
+                            )}
+
+                        </div>
+
+                        <div
+                            class="cart-price">
+
+                            ${formatMoney(
+                                money(
+                                    product.price
+                                )
+                            )}
+
+                        </div>
+
+                        <button
+                            class="card-add-btn"
+                            style="margin-top:8px"
+                            onclick="
+                                addToCart(
+                                    '${product.id}'
+                                )
+                            ">
+
+                            კალათაში +
+
+                        </button>
+
+                    </div>
+
+
+                    <button
+                        class="close-btn"
+                        onclick="
+                            toggleWishlist(
+                                '${product.id}'
+                            );
+                            renderWishlist();
+                        ">
+
+                        ×
+
+                    </button>
+
+                </div>
+
+            `)
+            .join("");
+
+}
+
+
+/* =========================================================
+   PRODUCT DETAILS
+========================================================= */
+
+function openProductDetails(id){
+
+    const product =
+        products.find(
+            item =>
+                item.id === id
+        );
+
+
+    if(!product){
+
+        return;
+
+    }
+
+
+    const price =
+        money(product.price);
+
+    const oldPrice =
+        money(product.oldPrice);
+
+    const discount =
+        oldPrice > price
+            ? Math.round(
+                (1 - price / oldPrice)
+                * 100
+            )
+            : 0;
+
+
+    document.getElementById(
+        "detailContent"
+    ).innerHTML = `
+
+        <div class="detail-image">
+
+            ${
+                product.image
+                    ? `
+                        <img
+                            src="${escapeHTML(
+                                product.image
+                            )}"
+                            alt="${escapeHTML(
+                                product.name
+                            )}"
+                        >
+                    `
+                    : "🛍️"
+            }
+
+        </div>
+
+
+        <div class="detail-info">
+
+            <div
+                class="product-category">
+
+                ${escapeHTML(
+                    product.category ||
+                    "Makasia"
+                )}
+
+            </div>
+
+
+            <h2>
+                ${escapeHTML(
+                    product.name ||
+                    "პროდუქტი"
+                )}
+            </h2>
+
+
+            <p
+                class="detail-description">
+
+                ${escapeHTML(
+                    product.description ||
+                    "პროდუქტის დეტალური აღწერა."
+                )}
+
+            </p>
+
+
+            <div
+                class="price-row">
+
+                <strong
+                    class="current-price">
+
+                    ${formatMoney(price)}
+
+                </strong>
+
+                ${
+                    oldPrice > price
+                        ? `
+                            <span class="old-price">
+                                ${formatMoney(
+                                    oldPrice
+                                )}
+                            </span>
+
+                            <span class="status">
+                                -${discount}%
+                            </span>
+                        `
+                        : ""
+                }
+
+            </div>
+
+
+            <div class="detail-meta">
+
+                ${
+                    product.color
+                        ? `
+                            <div>
+                                🎨 ფერი:
+                                <b>
+                                    ${escapeHTML(
+                                        product.color
+                                    )}
+                                </b>
+                            </div>
+                        `
+                        : ""
+                }
+
+
+                ${
+                    product.size
+                        ? `
+                            <div>
+                                📏 ზომა:
+                                <b>
+                                    ${escapeHTML(
+                                        product.size
+                                    )}
+                                </b>
+                            </div>
+                        `
+                        : ""
+                }
+
+
+                ${
+                    product.stock !== undefined
+                        ? `
+                            <div>
+                                📦 მარაგი:
+                                <b>
+                                    ${escapeHTML(
+                                        product.stock
+                                    )}
+                                </b>
+                            </div>
+                        `
+                        : ""
+                }
+
+            </div>
+
+
+            <button
+                class="primary-btn"
+                style="
+                    width:100%;
+                    margin-top:20px;
+                "
+                onclick="
+                    addToCart('${product.id}');
+                    closeModal('detailModal');
+                ">
+
+                კალათაში დამატება 💗
+
+            </button>
+
+        </div>
+
+    `;
+
+
+    openModal(
+        "detailModal"
+    );
+
+}
+
+
+/* =========================================================
+   PROFILE
+========================================================= */
+
+async function openProfile(){
+
+    if(!currentUser){
+
+        openAuth();
+
+        return;
+
+    }
+
+
+    let userData = {};
+
+
+    try{
+
+        const snapshot =
+            await db
+                .collection("users")
+                .doc(
+                    currentUser.uid
+                )
+                .get();
+
+
+        if(snapshot.exists){
+
+            userData =
+                snapshot.data();
+
+        }
+
+    }catch(error){
+
+        console.error(error);
+
+    }
+
+
+    let orders = [];
+
+
+    try{
+
+        const snapshot =
+            await db
+                .collection("orders")
+                .where(
+                    "userId",
+                    "==",
+                    currentUser.uid
+                )
+                .get();
+
+
+        orders =
+            snapshot.docs
+                .map(doc => ({
+                    id:doc.id,
+                    ...doc.data()
+                }))
+                .sort(
+                    (a,b) =>
+                        dateValue(
+                            b.createdAt
+                        ) -
+                        dateValue(
+                            a.createdAt
+                        )
+                );
+
+    }catch(error){
+
+        console.error(error);
+
+    }
+
+
+    const name =
+        userData.name ||
+        "Makasia User";
+
+
+    const initial =
+        name
+            .charAt(0)
+            .toUpperCase();
+
+
+    let ordersHTML = "";
+
+
+    if(orders.length){
+
+        ordersHTML =
+            orders
+                .slice(0,10)
+                .map(order => `
+
+                    <div
+                        class="order-card">
+
+                        <div
+                            class="order-top">
+
+                            <b>
+                                #
+                                ${escapeHTML(
+                                    order.orderNumber ||
+                                    order.id.slice(0,8)
+                                )}
+                            </b>
+
+                            <span
+                                class="status">
+
+                                ${escapeHTML(
+                                    order.status ||
+                                    "ახალი"
+                                )}
+
+                            </span>
+
+                        </div>
+
+
+                        <div class="small-note">
+
+                            ჯამი:
+                            <b>
+                                ${escapeHTML(
+                                    order.totalPrice ||
+                                    formatMoney(
+                                        order.totalAmount || 0
+                                    )
+                                )}
+                            </b>
+
+                        </div>
+
+                    </div>
+
+                `)
+                .join("");
+
+    }else{
+
+        ordersHTML = `
+
+            <p class="small-note">
+                ჯერ შეკვეთები არ გაქვს.
+            </p>
+
+        `;
+
+    }
+
+
+    document.getElementById(
+        "profileContent"
+    ).innerHTML = `
+
+        <div class="profile-card">
+
+            <div class="avatar">
+                ${escapeHTML(initial)}
+            </div>
+
+            <h2>
+                ${escapeHTML(name)}
+            </h2>
+
+            <div class="profile-email">
+                ${escapeHTML(
+                    currentUser.email || ""
+                )}
+            </div>
+
+        </div>
+
+
+        <label>
+            სახელი
+        </label>
+
+        <input
+            id="profileName"
+            value="${escapeHTML(
+                userData.name || ""
+            )}">
+
+
+        <label>
+            ტელეფონი
+        </label>
+
+        <input
+            id="profilePhone"
+            value="${escapeHTML(
+                userData.phone || ""
+            )}">
+
+
+        <label>
+            მისამართი
+        </label>
+
+        <textarea
+            id="profileAddress"
+            rows="3">${escapeHTML(
+                userData.address || ""
+            )}</textarea>
+
+
+        <button
+            class="primary-btn"
+            onclick="saveProfile()">
+
+            პროფილის შენახვა 💗
+
+        </button>
+
+
+        <h3 style="margin-top:10px">
+            ჩემი შეკვეთები
+        </h3>
+
+
+        ${ordersHTML}
+
+
+        <button
+            class="secondary-btn"
+            onclick="logoutUser()">
+
+            ანგარიშიდან გასვლა
+
+        </button>
+
+    `;
+
+
+    openModal(
+        "profileModal"
+    );
+
+}
+
+
+/* =========================================================
+   SAVE PROFILE
+========================================================= */
+
+async function saveProfile(){
+
+    if(!currentUser){
+
+        return;
+
+    }
+
+
+    const name =
+        document
+            .getElementById(
+                "profileName"
+            )
+            .value
+            .trim();
+
+    const phone =
+        document
+            .getElementById(
+                "profilePhone"
+            )
+            .value
+            .trim();
+
+    const address =
+        document
+            .getElementById(
+                "profileAddress"
+            )
+            .value
+            .trim();
+
+
+    try{
+
+        await db
+            .collection("users")
+            .doc(
+                currentUser.uid
+            )
+            .set({
+
+                name:name,
+
+                phone:phone,
+
+                address:address,
+
+                email:
+                    currentUser.email,
+
+                updatedAt:
+                    firebase
+                        .firestore
+                        .FieldValue
+                        .serverTimestamp()
+
+            },{
+                merge:true
+            });
+
+
+        showToast(
+            "პროფილი განახლდა 💗"
+        );
+
+
+        openProfile();
+
+
+    }catch(error){
+
+        console.error(error);
+
+        showToast(
+            "პროფილის შენახვა ვერ მოხერხდა"
+        );
+
+    }
+
+}
+
+
+/* =========================================================
+   LOGOUT
+========================================================= */
+
+async function logoutUser(){
+
+    try{
+
+        await auth.signOut();
+
+        closeModal(
+            "profileModal"
+        );
+
+        showToast(
+            "ანგარიშიდან გამოხვედი 🌸"
+        );
+
+    }catch(error){
+
+        console.error(error);
+
+    }
+
+}
+
+
+/* =========================================================
+   CHECKOUT
+========================================================= */
+
+async function checkout(){
+
+    if(!cartProducts().length){
+
+        showToast(
+            "კალათა ცარიელია"
+        );
+
+        return;
+
+    }
+
+
+    if(currentUser){
+
+        try{
+
+            const snapshot =
+                await db
+                    .collection("users")
+                    .doc(
+                        currentUser.uid
+                    )
+                    .get();
+
+
+            if(snapshot.exists){
+
+                const data =
+                    snapshot.data();
+
+                document.getElementById(
+                    "checkoutName"
+                ).value =
+                    data.name || "";
+
+                document.getElementById(
+                    "checkoutPhone"
+                ).value =
+                    data.phone || "";
+
+                document.getElementById(
+                    "checkoutAddress"
+                ).value =
+                    data.address || "";
+
+            }
+
+        }catch(error){
+
+            console.error(error);
+
+        }
+
+    }else{
+
+        document.getElementById(
+            "checkoutName"
+        ).value = "";
+
+        document.getElementById(
+            "checkoutPhone"
+        ).value = "";
+
+        document.getElementById(
+            "checkoutAddress"
+        ).value = "";
+
+    }
+
+
+    closeCart();
+
+    openModal(
+        "checkoutModal"
+    );
+
+}
+
+
+/* =========================================================
+   PLACE ORDER
+========================================================= */
+
+async function placeOrder(){
+
+    const name =
+        document
+            .getElementById(
+                "checkoutName"
+            )
+            .value
+            .trim();
+
+    const phone =
+        document
+            .getElementById(
+                "checkoutPhone"
+            )
+            .value
+            .trim();
+
+    const address =
+        document
+            .getElementById(
+                "checkoutAddress"
+            )
+            .value
+            .trim();
+
+    const delivery =
+        document
+            .getElementById(
+                "checkoutDelivery"
+            )
+            .value;
+
+    const errorBox =
+        document.getElementById(
+            "checkoutError"
+        );
+
+
+    errorBox.classList.remove(
+        "show"
+    );
+
+
+    if(!name){
+
+        showError(
+            errorBox,
+            "შეიყვანე სახელი და გვარი."
+        );
+
+        return;
+
+    }
+
+
+    if(!phone){
+
+        showError(
+            errorBox,
+            "შეიყვანე ტელეფონის ნომერი."
+        );
+
+        return;
+
+    }
+
+
+    if(!address){
+
+        showError(
+            errorBox,
+            "შეიყვანე მისამართი."
+        );
+
+        return;
+
+    }
+
+
+    const items =
+        cartProducts();
+
+
+    const total =
+        cartTotal();
+
+
+    const orderNumber =
+        "MK-" +
+        Date.now()
+            .toString()
+            .slice(-8);
+
+
+    const productDetails =
+        items
+            .map(
+                item => `
+
+                    <div>
+                        ${escapeHTML(
+                            item.product.name
+                        )}
+                        ×
+                        ${item.qty}
+                        —
+                        ${formatMoney(
+                            money(
+                                item.product.price
+                            ) *
+                            item.qty
+                        )}
+                    </div>
+
+                `
+            )
+            .join("");
+
+
+    const orderItems =
+        items.map(
+            item => ({
+
+                id:item.id,
+
+                name:item.product.name,
+
+                price:
+                    money(
+                        item.product.price
+                    ),
+
+                qty:item.qty
+
+            })
+        );
+
+
+    try{
+
+        await db
+            .collection("orders")
+            .add({
+
+                userId:
+                    currentUser
+                        ? currentUser.uid
+                        : guestId,
+
+                userEmail:
+                    currentUser
+                        ? currentUser.email
+                        : "guest",
+
+                customerName:
+                    name,
+
+                phone:
+                    phone,
+
+                address:
+                    address,
+
+                delivery:
+                    delivery,
+
+                totalPrice:
+                    formatMoney(total),
+
+                totalAmount:
+                    total,
+
+                orderNumber:
+                    orderNumber,
+
+                items:
+                    orderItems,
+
+                productDetails:
+                    productDetails,
+
+                createdAt:
+                    firebase
+                        .firestore
+                        .FieldValue
+                        .serverTimestamp(),
+
+                status:
+                    "ახალი"
+
+            });
+
+
+        if(currentUser){
+
+            await db
+                .collection("users")
+                .doc(
+                    currentUser.uid
+                )
+                .set({
+
+                    name:name,
+
+                    phone:phone,
+
+                    address:address,
+
+                    email:
+                        currentUser.email
+
+                },{
+                    merge:true
+                });
+
+        }
+
+
+        cart = [];
+
+        saveLocal();
+
+        closeModal(
+            "checkoutModal"
+        );
+
+
+        showOrderSuccess(
+            orderNumber
+        );
+
+
+    }catch(error){
+
+        console.error(error);
+
+        showError(
+            errorBox,
+            "შეკვეთა ვერ შეინახა. შეამოწმე Firebase Firestore Rules."
+        );
+
+    }
+
+}
+
+
+/* =========================================================
+   ORDER SUCCESS
+========================================================= */
+
+function showOrderSuccess(
+    orderNumber
+){
+
+    document.getElementById(
+        "detailContent"
+    ).innerHTML = `
+
+        <div class="success">
+
+            <div class="success-icon">
+                💗
+            </div>
+
+            <h2>
+                შეკვეთა მიღებულია!
+            </h2>
+
+            <p
+                class="small-note">
+
+                შენი შეკვეთის ნომერია:
+
+                <br>
+
+                <b>
+                    #${escapeHTML(
+                        orderNumber
+                    )}
+                </b>
+
+                <br><br>
+
+                სტატუსი:
+
+                <b>
+                    ახალი
+                </b>
+
+            </p>
+
+
+            <button
+                class="primary-btn"
+                style="
+                    width:100%;
+                    margin-top:22px;
+                "
+                onclick="
+                    closeModal(
+                        'detailModal'
+                    )
+                ">
+
+                მშვენიერია ✨
+
+            </button>
+
+        </div>
+
+    `;
+
+
+    openModal(
+        "detailModal"
+    );
+
+}
+
+
+/* =========================================================
+   COUNTERS
+========================================================= */
+
+function updateCounters(){
+
+    const cartCount =
+        cart.reduce(
+            (sum,item) =>
+                sum + item.qty,
+            0
+        );
+
+
+    document.getElementById(
+        "cartCount"
+    ).textContent =
+        cartCount;
+
+
+    document.getElementById(
+        "wishlistCount"
+    ).textContent =
+        wishlist.length;
+
+}
+
+
+/* =========================================================
+   NAV
+========================================================= */
+
+function scrollToProducts(){
+
+    document
+        .getElementById(
+            "productsSection"
+        )
+        .scrollIntoView({
+            behavior:"smooth"
+        });
+
+}
+
+
+function goHome(){
+
+    window.scrollTo({
+        top:0,
+        behavior:"smooth"
+    });
+
+}
+
+
+/* =========================================================
+   EVENTS
+========================================================= */
+
+document
+    .getElementById(
+        "searchInput"
+    )
+    .addEventListener(
+        "input",
+        applyFilters
+    );
+
+
+document
+    .getElementById(
+        "sortSelect"
+    )
+    .addEventListener(
+        "change",
+        applyFilters
+    );
+
+
+/* close modal when clicking outside */
+
+document
+    .querySelectorAll(".modal")
+    .forEach(modal => {
+
+        modal.addEventListener(
+            "click",
+            event => {
+
+                if(
+                    event.target === modal
+                ){
+
+                    modal.classList.remove(
+                        "show"
+                    );
+
+                }
+
+            }
+        );
+
+    });
+
+
+/* ESC closes */
+
+document.addEventListener(
+    "keydown",
+    event => {
+
+        if(event.key === "Escape"){
+
+            document
+                .querySelectorAll(
+                    ".modal.show"
+                )
+                .forEach(modal =>
+                    modal.classList.remove(
+                        "show"
+                    )
+                );
+
+            closeCart();
+
+            closeWishlist();
+
+        }
+
+    }
+);
+
+
+/* =========================================================
+   START
+========================================================= */
+
+updateCounters();
+
+loadProducts();
+
+</script>
+
+</body>
+</html>
