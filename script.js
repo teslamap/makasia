@@ -44,7 +44,10 @@ function injectCartPopupStyles() {
     style.id = 'makasia-cart-popup-styles';
 
     style.textContent = `
-        /* Overlay */
+        /* =====================================================
+           OVERLAY
+        ===================================================== */
+
         #overlay {
             position: fixed !important;
             inset: 0 !important;
@@ -67,7 +70,10 @@ function injectCartPopupStyles() {
             pointer-events: auto !important;
         }
 
-        /* მთავარი კალათის popup */
+        /* =====================================================
+           CART POPUP
+        ===================================================== */
+
         #cart-panel {
             position: fixed !important;
             top: 50% !important;
@@ -77,10 +83,12 @@ function injectCartPopupStyles() {
 
             width: min(92vw, 520px) !important;
             max-width: 520px !important;
+
             height: min(82vh, 720px) !important;
             max-height: 720px !important;
 
             transform: translate(-50%, -46%) scale(0.94) !important;
+
             opacity: 0 !important;
             visibility: hidden !important;
             pointer-events: none !important;
@@ -113,7 +121,6 @@ function injectCartPopupStyles() {
             pointer-events: auto !important;
         }
 
-        /* ზედა ნაწილი */
         #cart-panel .panel-header {
             flex-shrink: 0 !important;
             margin-bottom: 18px !important;
@@ -127,7 +134,6 @@ function injectCartPopupStyles() {
             font-weight: 800 !important;
         }
 
-        /* დახურვის ღილაკი */
         #cart-panel .close-btn {
             width: 40px !important;
             height: 40px !important;
@@ -142,7 +148,6 @@ function injectCartPopupStyles() {
             background: #fecaca !important;
         }
 
-        /* პროდუქტების ნაწილი */
         #cart-panel .cart-items {
             flex: 1 !important;
             overflow-y: auto !important;
@@ -165,7 +170,6 @@ function injectCartPopupStyles() {
             border-radius: 10px;
         }
 
-        /* ქვედა ნაწილი */
         #cart-panel .cart-footer {
             flex-shrink: 0 !important;
             border-top: 2px solid #f1f5f9 !important;
@@ -178,7 +182,10 @@ function injectCartPopupStyles() {
             border-radius: 16px !important;
         }
 
-        /* ცარიელი კალათა */
+        /* =====================================================
+           EMPTY CART
+        ===================================================== */
+
         .makasia-empty-cart {
             display: flex;
             flex-direction: column;
@@ -213,7 +220,10 @@ function injectCartPopupStyles() {
             color: #64748b;
         }
 
-        /* Cart item */
+        /* =====================================================
+           CART ITEM
+        ===================================================== */
+
         .makasia-cart-item {
             display: flex;
             align-items: center;
@@ -267,8 +277,12 @@ function injectCartPopupStyles() {
             transform: scale(1.08);
         }
 
-        /* Mobile */
+        /* =====================================================
+           MOBILE CART
+        ===================================================== */
+
         @media (max-width: 600px) {
+
             #cart-panel {
                 width: calc(100vw - 24px) !important;
                 max-width: none !important;
@@ -310,6 +324,7 @@ function injectCartPopupStyles() {
         }
 
         @media (max-width: 380px) {
+
             #cart-panel {
                 width: calc(100vw - 16px) !important;
                 padding: 16px !important;
@@ -323,9 +338,460 @@ function injectCartPopupStyles() {
             }
         }
 
-        /* გვერდის scroll-ის ჩაკეტვა popup-ის გახსნისას */
         body.makasia-cart-open {
             overflow: hidden !important;
+        }
+
+
+        /* =====================================================
+           FREE DELIVERY WELCOME POPUP
+        ===================================================== */
+
+        #makasia-delivery-overlay {
+            position: fixed;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(15, 23, 42, 0.72);
+            backdrop-filter: blur(9px);
+            -webkit-backdrop-filter: blur(9px);
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            padding: 20px;
+            box-sizing: border-box;
+
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+
+            z-index: 100000;
+
+            transition:
+                opacity 0.35s ease,
+                visibility 0.35s ease;
+        }
+
+        #makasia-delivery-overlay.makasia-delivery-visible {
+            opacity: 1;
+            visibility: visible;
+            pointer-events: auto;
+        }
+
+        #makasia-delivery-popup {
+            position: relative;
+
+            width: min(92vw, 470px);
+
+            background:
+                linear-gradient(
+                    145deg,
+                    #ffffff 0%,
+                    #faf9ff 55%,
+                    #f5f3ff 100%
+                );
+
+            border-radius: 30px;
+
+            padding: 34px 30px 30px;
+
+            box-sizing: border-box;
+
+            text-align: center;
+
+            box-shadow:
+                0 35px 100px rgba(15, 23, 42, 0.35),
+                0 10px 35px rgba(124, 58, 237, 0.18);
+
+            transform: translateY(25px) scale(0.92);
+
+            transition:
+                transform 0.45s cubic-bezier(0.16, 1, 0.3, 1);
+
+            overflow: hidden;
+        }
+
+        #makasia-delivery-overlay.makasia-delivery-visible
+        #makasia-delivery-popup {
+            transform: translateY(0) scale(1);
+        }
+
+        /* ზედა დეკორაცია */
+
+        #makasia-delivery-popup::before {
+            content: "";
+            position: absolute;
+
+            width: 190px;
+            height: 190px;
+
+            top: -95px;
+            left: -70px;
+
+            border-radius: 50%;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    rgba(124, 58, 237, 0.14),
+                    rgba(99, 102, 241, 0.02)
+                );
+
+            pointer-events: none;
+        }
+
+        #makasia-delivery-popup::after {
+            content: "";
+            position: absolute;
+
+            width: 150px;
+            height: 150px;
+
+            right: -75px;
+            bottom: -75px;
+
+            border-radius: 50%;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    rgba(5, 150, 105, 0.13),
+                    rgba(5, 150, 105, 0.01)
+                );
+
+            pointer-events: none;
+        }
+
+        /* X */
+
+        #makasia-delivery-close {
+            position: absolute;
+
+            top: 14px;
+            right: 14px;
+
+            width: 38px;
+            height: 38px;
+
+            border: none;
+            border-radius: 12px;
+
+            background: #f1f5f9;
+            color: #475569;
+
+            font-size: 24px;
+            line-height: 1;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            cursor: pointer;
+
+            transition:
+                transform 0.2s ease,
+                background 0.2s ease,
+                color 0.2s ease;
+
+            z-index: 3;
+        }
+
+        #makasia-delivery-close:hover {
+            transform: rotate(90deg) scale(1.06);
+            background: #ede9fe;
+            color: #6d28d9;
+        }
+
+        /* Icon */
+
+        .makasia-delivery-icon {
+            position: relative;
+            z-index: 2;
+
+            width: 82px;
+            height: 82px;
+
+            margin: 0 auto 18px;
+
+            border-radius: 24px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            font-size: 42px;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    #7c3aed,
+                    #4f46e5
+                );
+
+            box-shadow:
+                0 14px 30px rgba(79, 70, 229, 0.28);
+
+            animation: makasiaDeliveryFloat 3s ease-in-out infinite;
+        }
+
+        @keyframes makasiaDeliveryFloat {
+            0%, 100% {
+                transform: translateY(0);
+            }
+
+            50% {
+                transform: translateY(-5px);
+            }
+        }
+
+        /* პატარა badge */
+
+        .makasia-delivery-badge {
+            position: relative;
+            z-index: 2;
+
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+
+            padding: 7px 12px;
+
+            border-radius: 999px;
+
+            background: #ecfdf5;
+            color: #047857;
+
+            font-size: 12px;
+            font-weight: 800;
+
+            margin-bottom: 13px;
+        }
+
+        /* Title */
+
+        .makasia-delivery-title {
+            position: relative;
+            z-index: 2;
+
+            margin: 0 0 10px;
+
+            color: #1e1b4b;
+
+            font-size: clamp(22px, 5vw, 29px);
+            line-height: 1.2;
+
+            font-weight: 900;
+
+            letter-spacing: -0.5px;
+        }
+
+        .makasia-delivery-highlight {
+            color: #059669;
+        }
+
+        /* Description */
+
+        .makasia-delivery-text {
+            position: relative;
+            z-index: 2;
+
+            margin: 0 auto 22px;
+
+            max-width: 370px;
+
+            color: #64748b;
+
+            font-size: 15px;
+            line-height: 1.65;
+        }
+
+        .makasia-delivery-price {
+            color: #1e1b4b;
+            font-weight: 900;
+        }
+
+        /* Free delivery box */
+
+        .makasia-delivery-offer {
+            position: relative;
+            z-index: 2;
+
+            display: flex;
+            align-items: center;
+            gap: 12px;
+
+            text-align: left;
+
+            padding: 14px 16px;
+
+            margin-bottom: 22px;
+
+            border-radius: 18px;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    #f0fdf4,
+                    #ecfdf5
+                );
+
+            border: 1px solid #bbf7d0;
+        }
+
+        .makasia-delivery-offer-icon {
+            width: 42px;
+            height: 42px;
+            min-width: 42px;
+
+            border-radius: 12px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            background: #dcfce7;
+
+            font-size: 21px;
+        }
+
+        .makasia-delivery-offer-title {
+            color: #166534;
+            font-size: 14px;
+            font-weight: 900;
+            margin-bottom: 2px;
+        }
+
+        .makasia-delivery-offer-subtitle {
+            color: #4b7a5b;
+            font-size: 12px;
+            line-height: 1.4;
+        }
+
+        /* Button */
+
+        #makasia-delivery-ok {
+            position: relative;
+            z-index: 2;
+
+            width: 100%;
+
+            min-height: 52px;
+
+            border: none;
+            border-radius: 16px;
+
+            padding: 14px 20px;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    #1e1b4b,
+                    #312e81
+                );
+
+            color: white;
+
+            font-size: 15px;
+            font-weight: 800;
+
+            cursor: pointer;
+
+            box-shadow:
+                0 10px 25px rgba(30, 27, 75, 0.20);
+
+            transition:
+                transform 0.2s ease,
+                box-shadow 0.2s ease;
+        }
+
+        #makasia-delivery-ok:hover {
+            transform: translateY(-2px);
+
+            box-shadow:
+                0 14px 30px rgba(30, 27, 75, 0.28);
+        }
+
+        #makasia-delivery-ok:active {
+            transform: translateY(0);
+        }
+
+        /* Mobile welcome popup */
+
+        @media (max-width: 600px) {
+
+            #makasia-delivery-overlay {
+                padding: 14px;
+            }
+
+            #makasia-delivery-popup {
+                width: 100%;
+                max-width: 430px;
+
+                padding: 30px 20px 22px;
+
+                border-radius: 26px;
+            }
+
+            #makasia-delivery-close {
+                top: 10px;
+                right: 10px;
+
+                width: 36px;
+                height: 36px;
+            }
+
+            .makasia-delivery-icon {
+                width: 72px;
+                height: 72px;
+
+                border-radius: 21px;
+
+                font-size: 36px;
+
+                margin-bottom: 15px;
+            }
+
+            .makasia-delivery-title {
+                font-size: 23px;
+            }
+
+            .makasia-delivery-text {
+                font-size: 14px;
+                line-height: 1.55;
+                margin-bottom: 18px;
+            }
+
+            .makasia-delivery-offer {
+                padding: 12px;
+                margin-bottom: 18px;
+            }
+
+            #makasia-delivery-ok {
+                min-height: 50px;
+            }
+        }
+
+        @media (max-width: 380px) {
+
+            #makasia-delivery-popup {
+                padding: 27px 16px 18px;
+            }
+
+            .makasia-delivery-icon {
+                width: 66px;
+                height: 66px;
+                font-size: 32px;
+            }
+
+            .makasia-delivery-title {
+                font-size: 21px;
+            }
+
+            .makasia-delivery-text {
+                font-size: 13px;
+            }
         }
     `;
 
@@ -333,17 +799,229 @@ function injectCartPopupStyles() {
 }
 
 // ============================================================
+// FREE DELIVERY WELCOME POPUP
+// ============================================================
+
+function createFreeDeliveryPopup() {
+
+    if (document.getElementById('makasia-delivery-overlay')) {
+        return;
+    }
+
+    const popupWrapper = document.createElement('div');
+
+    popupWrapper.innerHTML = `
+        <div
+            id="makasia-delivery-overlay"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="makasia-delivery-title"
+        >
+
+            <div id="makasia-delivery-popup">
+
+                <button
+                    id="makasia-delivery-close"
+                    type="button"
+                    aria-label="დახურვა"
+                    title="დახურვა"
+                >
+                    ×
+                </button>
+
+                <div class="makasia-delivery-icon">
+                    🚚
+                </div>
+
+                <div class="makasia-delivery-badge">
+                    ✨ სპეციალური შეთავაზება
+                </div>
+
+                <h2
+                    id="makasia-delivery-title"
+                    class="makasia-delivery-title"
+                >
+                    მიწოდება <span class="makasia-delivery-highlight">ჩვენგან საჩუქრად!</span>
+                </h2>
+
+                <p class="makasia-delivery-text">
+                    შეიძინე <span class="makasia-delivery-price">150 ₾-ზე მეტი</span>
+                    და ისარგებლე მთელი საქართველოს მასშტაბით
+                    <strong>სრულიად უფასო მიწოდებით.</strong> 🎁
+                </p>
+
+                <div class="makasia-delivery-offer">
+
+                    <div class="makasia-delivery-offer-icon">
+                        🎁
+                    </div>
+
+                    <div>
+                        <div class="makasia-delivery-offer-title">
+                            150 ₾+ შეკვეთა
+                        </div>
+
+                        <div class="makasia-delivery-offer-subtitle">
+                            მიწოდების საფასური — 0 ₾
+                        </div>
+                    </div>
+
+                </div>
+
+                <button
+                    id="makasia-delivery-ok"
+                    type="button"
+                >
+                    გასაგებია, დავიწყოთ შოპინგი 🛍️
+                </button>
+
+            </div>
+
+        </div>
+    `;
+
+    document.body.appendChild(popupWrapper);
+
+    const deliveryOverlay =
+        document.getElementById('makasia-delivery-overlay');
+
+    const closeButton =
+        document.getElementById('makasia-delivery-close');
+
+    const okButton =
+        document.getElementById('makasia-delivery-ok');
+
+    function closeFreeDeliveryPopup() {
+
+        deliveryOverlay.classList.remove(
+            'makasia-delivery-visible'
+        );
+
+        document.body.style.overflow = '';
+
+        localStorage.setItem(
+            'makasia_delivery_popup_seen',
+            'true'
+        );
+    }
+
+    if (closeButton) {
+        closeButton.addEventListener(
+            'click',
+            closeFreeDeliveryPopup
+        );
+    }
+
+    if (okButton) {
+        okButton.addEventListener(
+            'click',
+            closeFreeDeliveryPopup
+        );
+    }
+
+    deliveryOverlay.addEventListener(
+        'click',
+        (e) => {
+
+            if (e.target === deliveryOverlay) {
+                closeFreeDeliveryPopup();
+            }
+
+        }
+    );
+
+    document.addEventListener(
+        'keydown',
+        (e) => {
+
+            if (
+                e.key === 'Escape' &&
+                deliveryOverlay.classList.contains(
+                    'makasia-delivery-visible'
+                )
+            ) {
+                closeFreeDeliveryPopup();
+            }
+
+        }
+    );
+
+    return {
+        show() {
+
+            deliveryOverlay.classList.add(
+                'makasia-delivery-visible'
+            );
+
+            document.body.style.overflow = 'hidden';
+
+            setTimeout(() => {
+
+                if (closeButton) {
+                    closeButton.focus();
+                }
+
+            }, 100);
+
+        },
+
+        close: closeFreeDeliveryPopup
+    };
+}
+
+// ============================================================
+// SHOW FREE DELIVERY POPUP ON FIRST VISIT
+// ============================================================
+
+function showFreeDeliveryPopupOnFirstVisit() {
+
+    const alreadySeen =
+        localStorage.getItem(
+            'makasia_delivery_popup_seen'
+        );
+
+    if (alreadySeen === 'true') {
+        return;
+    }
+
+    const popup =
+        createFreeDeliveryPopup();
+
+    if (!popup) {
+        return;
+    }
+
+    setTimeout(() => {
+
+        popup.show();
+
+    }, 700);
+}
+
+// ============================================================
 // UNIVERSAL MODAL
 // ============================================================
 
-window.showModalMessage = function(title, text, type = 'info', onConfirm = null) {
-    let modal = document.getElementById('universalModal');
+window.showModalMessage = function(
+    title,
+    text,
+    type = 'info',
+    onConfirm = null
+) {
+
+    let modal =
+        document.getElementById(
+            'universalModal'
+        );
 
     if (!modal) {
-        const div = document.createElement('div');
+
+        const div =
+            document.createElement('div');
 
         div.innerHTML = `
-            <dialog id="universalModal"
+            <dialog
+                id="universalModal"
                 class="admin-modal"
                 style="
                     border:none;
@@ -354,7 +1032,8 @@ window.showModalMessage = function(title, text, type = 'info', onConfirm = null)
                     box-shadow:0 30px 60px rgba(79,70,229,0.3);
                     background:white;
                     margin:auto;
-                ">
+                "
+            >
 
                 <div style="
                     padding:30px;
@@ -362,56 +1041,92 @@ window.showModalMessage = function(title, text, type = 'info', onConfirm = null)
                     font-family:'Noto Sans Georgian',sans-serif;
                 ">
 
-                    <div id="uniModalIcon"
-                        style="font-size:42px;margin-bottom:15px;">
+                    <div
+                        id="uniModalIcon"
+                        style="
+                            font-size:42px;
+                            margin-bottom:15px;
+                        "
+                    >
                         ✨
                     </div>
 
-                    <h3 id="uniModalTitle"
+                    <h3
+                        id="uniModalTitle"
                         style="
                             font-size:20px;
                             font-weight:800;
                             color:#312e81;
                             margin-bottom:10px;
-                        ">
+                        "
+                    >
                         შეტყობინება
                     </h3>
 
-                    <p id="uniModalText"
+                    <p
+                        id="uniModalText"
                         style="
                             color:#64748b;
                             font-size:14px;
                             margin-bottom:25px;
                             line-height:1.5;
-                        ">
+                        "
+                    >
                     </p>
 
-                    <div id="uniModalActions"
+                    <div
+                        id="uniModalActions"
                         style="
                             display:flex;
                             gap:14px;
-                        ">
+                        "
+                    >
                     </div>
 
                 </div>
+
             </dialog>
         `;
 
         document.body.appendChild(div);
-        modal = document.getElementById('universalModal');
+
+        modal =
+            document.getElementById(
+                'universalModal'
+            );
     }
 
-    document.getElementById('uniModalTitle').textContent = title;
-    document.getElementById('uniModalText').textContent = text;
+    document.getElementById(
+        'uniModalTitle'
+    ).textContent = title;
 
-    const iconEl = document.getElementById('uniModalIcon');
-    const actionsEl = document.getElementById('uniModalActions');
+    document.getElementById(
+        'uniModalText'
+    ).textContent = text;
 
-    if (type === 'confirm' || type === 'danger') {
+    const iconEl =
+        document.getElementById(
+            'uniModalIcon'
+        );
+
+    const actionsEl =
+        document.getElementById(
+            'uniModalActions'
+        );
+
+    if (
+        type === 'confirm' ||
+        type === 'danger'
+    ) {
+
         iconEl.textContent = '⚠️';
+
     } else if (type === 'success') {
+
         iconEl.textContent = '✅';
+
     } else {
+
         iconEl.textContent = '✨';
     }
 
@@ -419,7 +1134,8 @@ window.showModalMessage = function(title, text, type = 'info', onConfirm = null)
 
     if (onConfirm) {
 
-        const cancelBtn = document.createElement('button');
+        const cancelBtn =
+            document.createElement('button');
 
         cancelBtn.type = 'button';
 
@@ -435,11 +1151,14 @@ window.showModalMessage = function(title, text, type = 'info', onConfirm = null)
             font-size:14px;
         `;
 
-        cancelBtn.textContent = 'გაუქმება';
+        cancelBtn.textContent =
+            'გაუქმება';
 
-        cancelBtn.onclick = () => modal.close();
+        cancelBtn.onclick =
+            () => modal.close();
 
-        const okBtn = document.createElement('button');
+        const okBtn =
+            document.createElement('button');
 
         okBtn.type = 'button';
 
@@ -452,27 +1171,40 @@ window.showModalMessage = function(title, text, type = 'info', onConfirm = null)
             cursor:pointer;
             color:white;
             font-size:14px;
-            ${type === 'danger'
-                ? 'background:linear-gradient(135deg,#ef4444,#b91c1c);'
-                : 'background:#1e1b4b;'}
+            ${
+                type === 'danger'
+                    ? 'background:linear-gradient(135deg,#ef4444,#b91c1c);'
+                    : 'background:#1e1b4b;'
+            }
         `;
 
-        okBtn.textContent = 'დიახ';
+        okBtn.textContent =
+            'დიახ';
 
         okBtn.onclick = () => {
+
             modal.close();
 
-            if (typeof onConfirm === 'function') {
+            if (
+                typeof onConfirm ===
+                'function'
+            ) {
                 onConfirm();
             }
         };
 
-        actionsEl.appendChild(cancelBtn);
-        actionsEl.appendChild(okBtn);
+        actionsEl.appendChild(
+            cancelBtn
+        );
+
+        actionsEl.appendChild(
+            okBtn
+        );
 
     } else {
 
-        const okBtn = document.createElement('button');
+        const okBtn =
+            document.createElement('button');
 
         okBtn.type = 'button';
 
@@ -488,11 +1220,15 @@ window.showModalMessage = function(title, text, type = 'info', onConfirm = null)
             font-size:14px;
         `;
 
-        okBtn.textContent = 'კარგი';
+        okBtn.textContent =
+            'კარგი';
 
-        okBtn.onclick = () => modal.close();
+        okBtn.onclick =
+            () => modal.close();
 
-        actionsEl.appendChild(okBtn);
+        actionsEl.appendChild(
+            okBtn
+        );
     }
 
     if (!modal.open) {
@@ -505,24 +1241,39 @@ window.showModalMessage = function(title, text, type = 'info', onConfirm = null)
 // ============================================================
 
 window.alert = function(msg) {
-    window.showModalMessage("ყურადღება", msg, "info");
+
+    window.showModalMessage(
+        "ყურადღება",
+        msg,
+        "info"
+    );
 };
 
 // ============================================================
 // INITIALIZATION
 // ============================================================
 
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener(
+    'DOMContentLoaded',
+    () => {
 
-    injectCartPopupStyles();
+        injectCartPopupStyles();
 
-    loadProductsFromDB();
-    updateCartUI();
-    initEvents();
-    checkAuthStatus();
-    setupProfileDropdown();
+        loadProductsFromDB();
 
-});
+        updateCartUI();
+
+        initEvents();
+
+        checkAuthStatus();
+
+        setupProfileDropdown();
+
+        // პირველი ვიზიტის შეთავაზება
+        showFreeDeliveryPopupOnFirstVisit();
+
+    }
+);
 
 // ============================================================
 // PRODUCTS
@@ -530,42 +1281,48 @@ document.addEventListener('DOMContentLoaded', () => {
 
 function loadProductsFromDB() {
 
-    db.collection("products").onSnapshot((snapshot) => {
+    db.collection("products")
+        .onSnapshot(
+            (snapshot) => {
 
-        products = [];
+                products = [];
 
-        snapshot.forEach((doc) => {
+                snapshot.forEach(
+                    (doc) => {
 
-            products.push({
-                id: doc.id,
-                ...doc.data()
-            });
+                        products.push({
+                            id: doc.id,
+                            ...doc.data()
+                        });
 
-        });
+                    }
+                );
 
-        renderProducts();
+                renderProducts();
 
-    }, (error) => {
+            },
+            (error) => {
 
-        console.error(
-            "პროდუქტების ჩატვირთვის შეცდომა:",
-            error
+                console.error(
+                    "პროდუქტების ჩატვირთვის შეცდომა:",
+                    error
+                );
+
+                if (productGrid) {
+
+                    productGrid.innerHTML = `
+                        <p style="
+                            grid-column:1/-1;
+                            text-align:center;
+                            color:#d32f2f;
+                            padding:40px;
+                        ">
+                            ვერ მოხერხდა პროდუქტების ჩატვირთვა ბაზიდან.
+                        </p>
+                    `;
+                }
+            }
         );
-
-        if (productGrid) {
-
-            productGrid.innerHTML = `
-                <p style="
-                    grid-column:1/-1;
-                    text-align:center;
-                    color:#d32f2f;
-                    padding:40px;
-                ">
-                    ვერ მოხერხდა პროდუქტების ჩატვირთვა ბაზიდან.
-                </p>
-            `;
-        }
-    });
 }
 
 // ============================================================
@@ -578,21 +1335,30 @@ function renderProducts() {
 
     productGrid.innerHTML = "";
 
-    const filtered = products.filter((p) => {
+    const filtered =
+        products.filter(
+            (p) => {
 
-        const productName = String(p.name || "");
+                const productName =
+                    String(p.name || "");
 
-        const matchesCategory =
-            activeCategory === "ყველა" ||
-            p.category === activeCategory;
+                const matchesCategory =
+                    activeCategory === "ყველა" ||
+                    p.category === activeCategory;
 
-        const matchesSearch =
-            productName
-                .toLowerCase()
-                .includes(searchQuery.toLowerCase());
+                const matchesSearch =
+                    productName
+                        .toLowerCase()
+                        .includes(
+                            searchQuery.toLowerCase()
+                        );
 
-        return matchesCategory && matchesSearch;
-    });
+                return (
+                    matchesCategory &&
+                    matchesSearch
+                );
+            }
+        );
 
     if (filtered.length === 0) {
 
@@ -610,76 +1376,80 @@ function renderProducts() {
         return;
     }
 
-    filtered.forEach((product) => {
+    filtered.forEach(
+        (product) => {
 
-        const card = document.createElement('div');
+            const card =
+                document.createElement('div');
 
-        card.className = 'product-card';
+            card.className =
+                'product-card';
 
-        card.innerHTML = `
-            <div style="
-                position:relative;
-                overflow:hidden;
-                border-radius:8px;
-                margin-bottom:12px;
-                background:#eee;
-            ">
+            card.innerHTML = `
+                <div style="
+                    position:relative;
+                    overflow:hidden;
+                    border-radius:8px;
+                    margin-bottom:12px;
+                    background:#eee;
+                ">
 
-                <img
-                    src="${product.image || ''}"
-                    alt="${product.name || ''}"
-                    style="
-                        width:100%;
-                        height:260px;
-                        object-fit:cover;
-                        display:block;
-                    "
-                >
+                    <img
+                        src="${product.image || ''}"
+                        alt="${product.name || ''}"
+                        style="
+                            width:100%;
+                            height:260px;
+                            object-fit:cover;
+                            display:block;
+                        "
+                    >
 
-            </div>
+                </div>
 
-            <span style="
-                font-size:12px;
-                color:#666;
-                text-transform:uppercase;
-            ">
-                ${product.category || ''}
-            </span>
+                <span style="
+                    font-size:12px;
+                    color:#666;
+                    text-transform:uppercase;
+                ">
+                    ${product.category || ''}
+                </span>
 
-            <h3 style="
-                font-size:16px;
-                font-weight:600;
-                margin:4px 0 8px 0;
-            ">
-                ${product.name || ''}
-            </h3>
+                <h3 style="
+                    font-size:16px;
+                    font-weight:600;
+                    margin:4px 0 8px 0;
+                ">
+                    ${product.name || ''}
+                </h3>
 
-            <div style="
-                display:flex;
-                justify-content:space-between;
-                align-items:center;
-            ">
+                <div style="
+                    display:flex;
+                    justify-content:space-between;
+                    align-items:center;
+                ">
 
-                <strong>
-                    ${product.price || 0} ₾
-                </strong>
+                    <strong>
+                        ${product.price || 0} ₾
+                    </strong>
 
-                <button
-                    onclick="addToCart('${product.id}')"
-                    class="button button-dark"
-                    style="
-                        padding:8px 14px;
-                        font-size:13px;
-                    "
-                >
-                    დამატება
-                </button>
+                    <button
+                        onclick="addToCart('${product.id}')"
+                        class="button button-dark"
+                        style="
+                            padding:8px 14px;
+                            font-size:13px;
+                        "
+                    >
+                        დამატება
+                    </button>
 
-            </div>
-        `;
+                </div>
+            `;
 
-        productGrid.appendChild(card);
-    });
+            productGrid.appendChild(card);
+        }
+    );
 }
 
 // ============================================================
@@ -688,19 +1458,24 @@ function renderProducts() {
 
 window.addToCart = function(productId) {
 
-    const product = products.find(
-        p => p.id === productId
-    );
+    const product =
+        products.find(
+            p => p.id === productId
+        );
 
     if (!product) return;
 
-    const existing = cart.find(
-        item => item.id === productId
-    );
+    const existing =
+        cart.find(
+            item => item.id === productId
+        );
 
     if (existing) {
+
         existing.quantity += 1;
+
     } else {
+
         cart.push({
             ...product,
             quantity: 1
@@ -708,10 +1483,12 @@ window.addToCart = function(productId) {
     }
 
     saveCart();
+
     updateCartUI();
 
-    showToast("პროდუქტი დაემატა კალათაში");
-
+    showToast(
+        "პროდუქტი დაემატა კალათაში"
+    );
 };
 
 // ============================================================
@@ -732,21 +1509,29 @@ function saveCart() {
 
 function updateCartUI() {
 
-    if (!cartCount ||
+    if (
+        !cartCount ||
         !cartItemsContainer ||
-        !cartTotal) {
+        !cartTotal
+    ) {
         return;
     }
 
-    const totalCount = cart.reduce(
-        (sum, item) =>
-            sum + (Number(item.quantity) || 0),
-        0
-    );
+    const totalCount =
+        cart.reduce(
+            (sum, item) =>
+                sum +
+                (
+                    Number(item.quantity) || 0
+                ),
+            0
+        );
 
-    cartCount.textContent = totalCount;
+    cartCount.textContent =
+        totalCount;
 
-    cartItemsContainer.innerHTML = "";
+    cartItemsContainer.innerHTML =
+        "";
 
     if (cart.length === 0) {
 
@@ -768,70 +1553,75 @@ function updateCartUI() {
             </div>
         `;
 
-        cartTotal.textContent = "0 ₾";
+        cartTotal.textContent =
+            "0 ₾";
 
         return;
     }
 
     let totalPrice = 0;
 
-    cart.forEach((item) => {
+    cart.forEach(
+        (item) => {
 
-        const itemPrice =
-            Number(item.price) || 0;
+            const itemPrice =
+                Number(item.price) || 0;
 
-        const itemQty =
-            Number(item.quantity) || 1;
+            const itemQty =
+                Number(item.quantity) || 1;
 
-        totalPrice +=
-            itemPrice * itemQty;
+            totalPrice +=
+                itemPrice * itemQty;
 
-        const div =
-            document.createElement('div');
+            const div =
+                document.createElement('div');
 
-        div.className =
-            'makasia-cart-item';
+            div.className =
+                'makasia-cart-item';
 
-        div.innerHTML = `
+            div.innerHTML = `
 
-            <img
-                src="${item.image || ''}"
-                class="makasia-cart-item-image"
-                alt="${item.name || ''}"
-            >
+                <img
+                    src="${item.image || ''}"
+                    class="makasia-cart-item-image"
+                    alt="${item.name || ''}"
+                >
 
-            <div class="makasia-cart-item-info">
+                <div class="makasia-cart-item-info">
 
-                <div class="makasia-cart-item-name">
-                    ${item.name || ''}
+                    <div class="makasia-cart-item-name">
+                        ${item.name || ''}
+                    </div>
+
+                    <div class="makasia-cart-item-price">
+                        ${itemPrice} ₾ × ${itemQty}
+                    </div>
+
+                    <div style="
+                        color:#059669;
+                        font-weight:800;
+                        font-size:14px;
+                        margin-top:3px;
+                    ">
+                        ${itemPrice * itemQty} ₾
+                    </div>
+
                 </div>
 
-                <div class="makasia-cart-item-price">
-                    ${itemPrice} ₾ × ${itemQty}
-                </div>
+                <button
+                    class="makasia-cart-remove"
+                    onclick="removeFromCart('${item.id}')"
+                    aria-label="წაშლა"
+                >
+                    ×
+                </button>
+            `;
 
-                <div style="
-                    color:#059669;
-                    font-weight:800;
-                    font-size:14px;
-                    margin-top:3px;
-                ">
-                    ${itemPrice * itemQty} ₾
-                </div>
-
-            </div>
-
-            <button
-                class="makasia-cart-remove"
-                onclick="removeFromCart('${item.id}')"
-                aria-label="წაშლა"
-            >
-                ×
-            </button>
-        `;
-
-        cartItemsContainer.appendChild(div);
-    });
+            cartItemsContainer.appendChild(
+                div
+            );
+        }
+    );
 
     cartTotal.textContent =
         totalPrice + " ₾";
@@ -843,13 +1633,14 @@ function updateCartUI() {
 
 window.removeFromCart = function(productId) {
 
-    cart = cart.filter(
-        item => item.id !== productId
-    );
+    cart =
+        cart.filter(
+            item => item.id !== productId
+        );
 
     saveCart();
-    updateCartUI();
 
+    updateCartUI();
 };
 
 // ============================================================
@@ -860,15 +1651,23 @@ function showToast(msg) {
 
     if (!toast) return;
 
-    toast.textContent = msg;
+    toast.textContent =
+        msg;
 
-    toast.classList.add('show');
+    toast.classList.add(
+        'show'
+    );
 
-    setTimeout(() => {
+    setTimeout(
+        () => {
 
-        toast.classList.remove('show');
+            toast.classList.remove(
+                'show'
+            );
 
-    }, 2500);
+        },
+        2500
+    );
 }
 
 // ============================================================
@@ -879,19 +1678,24 @@ function openCart() {
 
     if (!cartPanel) return;
 
-    cartPanel.classList.add('open');
+    cartPanel.classList.add(
+        'open'
+    );
 
     if (overlay) {
 
-        overlay.classList.add('open');
-        overlay.classList.add('show');
+        overlay.classList.add(
+            'open'
+        );
 
+        overlay.classList.add(
+            'show'
+        );
     }
 
     document.body.classList.add(
         'makasia-cart-open'
     );
-
 }
 
 // ============================================================
@@ -902,15 +1706,20 @@ function closeCart() {
 
     if (cartPanel) {
 
-        cartPanel.classList.remove('open');
-
+        cartPanel.classList.remove(
+            'open'
+        );
     }
 
     if (overlay) {
 
-        overlay.classList.remove('open');
-        overlay.classList.remove('show');
+        overlay.classList.remove(
+            'open'
+        );
 
+        overlay.classList.remove(
+            'show'
+        );
     }
 
     document.body.classList.remove(
@@ -924,20 +1733,24 @@ function closeCart() {
 
 function calculateCheckout() {
 
-    const subtotal = cart.reduce(
-        (sum, item) =>
-            sum +
-            (
-                (Number(item.price) || 0) *
-                (Number(item.quantity) || 1)
-            ),
-        0
-    );
+    const subtotal =
+        cart.reduce(
+            (sum, item) =>
+                sum +
+                (
+                    (Number(item.price) || 0) *
+                    (Number(item.quantity) || 1)
+                ),
+            0
+        );
 
     const deliverySelect =
-        document.querySelector('[name="delivery"]');
+        document.querySelector(
+            '[name="delivery"]'
+        );
 
-    let deliveryBasePrice = 8;
+    let deliveryBasePrice =
+        8;
 
     if (deliverySelect) {
 
@@ -948,7 +1761,9 @@ function calculateCheckout() {
             val.includes('რეგიონ') ||
             val.includes('ფოსტა')
         ) {
-            deliveryBasePrice = 12;
+
+            deliveryBasePrice =
+                12;
         }
     }
 
@@ -976,6 +1791,7 @@ function calculateCheckout() {
         );
 
     if (subtotalEl) {
+
         subtotalEl.textContent =
             subtotal + " ₾";
     }
@@ -1001,28 +1817,31 @@ function calculateCheckout() {
 
 function checkAuthStatus() {
 
-    auth.onAuthStateChanged((user) => {
+    auth.onAuthStateChanged(
+        (user) => {
 
-        const accountToggle =
-            document.getElementById(
-                'account-toggle'
-            );
+            const accountToggle =
+                document.getElementById(
+                    'account-toggle'
+                );
 
-        if (!accountToggle) return;
+            if (!accountToggle) return;
 
-        if (user) {
+            if (user) {
 
-            accountToggle.textContent =
-                user.email === "suloanani1@gmail.com"
-                    ? "ადმინი ▼"
-                    : "პროფილი ▼";
+                accountToggle.textContent =
+                    user.email ===
+                    "suloanani1@gmail.com"
+                        ? "ადმინი ▼"
+                        : "პროფილი ▼";
 
-        } else {
+            } else {
 
-            accountToggle.textContent =
-                "შესვლა";
+                accountToggle.textContent =
+                    "შესვლა";
+            }
         }
-    });
+    );
 }
 
 // ============================================================
@@ -1041,8 +1860,10 @@ function setupProfileDropdown() {
             'profilePopup'
         );
 
-    if (!accountToggle ||
-        !profilePopup) {
+    if (
+        !accountToggle ||
+        !profilePopup
+    ) {
         return;
     }
 
@@ -1084,7 +1905,8 @@ function setupProfileDropdown() {
                 e.stopPropagation();
 
                 profilePopup.style.display =
-                    profilePopup.style.display === 'block'
+                    profilePopup.style.display ===
+                    'block'
                         ? 'none'
                         : 'block';
             }
@@ -1096,9 +1918,14 @@ function setupProfileDropdown() {
         (e) => {
 
             if (
-                !accountToggle.contains(e.target) &&
-                !profilePopup.contains(e.target)
+                !accountToggle.contains(
+                    e.target
+                ) &&
+                !profilePopup.contains(
+                    e.target
+                )
             ) {
+
                 profilePopup.style.display =
                     'none';
             }
@@ -1216,72 +2043,76 @@ function setupProfileDropdown() {
 
                     let html = '';
 
-                    snapshot.forEach((doc) => {
+                    snapshot.forEach(
+                        (doc) => {
 
-                        const order =
-                            doc.data();
+                            const order =
+                                doc.data();
 
-                        const date =
-                            order.createdAt
-                                ? order.createdAt
-                                    .toDate()
-                                    .toLocaleString(
-                                        'ka-GE'
-                                    )
-                                : 'ახალი';
+                            const date =
+                                order.createdAt
+                                    ? order.createdAt
+                                        .toDate()
+                                        .toLocaleString(
+                                            'ka-GE'
+                                        )
+                                    : 'ახალი';
 
-                        html += `
-                            <div style="
-                                border:1px solid #eee;
-                                border-radius:6px;
-                                padding:8px;
-                                margin-bottom:8px;
-                                background:#fafafa;
-                                font-size:12px;
-                            ">
-
+                            html += `
                                 <div style="
-                                    display:flex;
-                                    justify-content:space-between;
-                                    color:#666;
-                                    margin-bottom:4px;
-                                ">
-
-                                    <span>
-                                        ${date}
-                                    </span>
-
-                                    <strong style="
-                                        color:#2e7d32;
-                                    ">
-                                        ${order.status}
-                                    </strong>
-
-                                </div>
-
-                                <div style="
-                                    margin-bottom:4px;
-                                ">
-                                    <strong>
-                                        თანხა:
-                                    </strong>
-                                    ${order.totalPrice}
-                                </div>
-
-                                <div style="
-                                    background:white;
-                                    padding:6px;
-                                    border-radius:4px;
                                     border:1px solid #eee;
+                                    border-radius:6px;
+                                    padding:8px;
+                                    margin-bottom:8px;
+                                    background:#fafafa;
+                                    font-size:12px;
                                 ">
-                                    ${order.productDetails}
+
+                                    <div style="
+                                        display:flex;
+                                        justify-content:space-between;
+                                        color:#666;
+                                        margin-bottom:4px;
+                                    ">
+
+                                        <span>
+                                            ${date}
+                                        </span>
+
+                                        <strong style="
+                                            color:#2e7d32;
+                                        ">
+                                            ${order.status}
+                                        </strong>
+
+                                    </div>
+
+                                    <div style="
+                                        margin-bottom:4px;
+                                    ">
+                                        <strong>
+                                            თანხა:
+                                        </strong>
+                                        ${order.totalPrice}
+                                    </div>
+
+                                    <div style="
+                                        background:white;
+                                        padding:6px;
+                                        border-radius:4px;
+                                        border:1px solid #eee;
+                                    ">
+                                        ${order.productDetails}
+                                    </div>
+
                                 </div>
+                            `;
+                        }
+                    );
 
-                            </div>
-                        `;
-                    });
-
-                    if (ordersListContainer) {
+                    if (
+                        ordersListContainer
+                    ) {
 
                         ordersListContainer.innerHTML =
                             html;
@@ -1335,17 +2166,20 @@ function setupProfileDropdown() {
                     'none';
 
                 auth.signOut()
-                    .then(() => {
+                    .then(
+                        () => {
 
-                        showToast(
-                            "წარმატებით გავედით სისტემიდან"
-                        );
+                            showToast(
+                                "წარმატებით გავედით სისტემიდან"
+                            );
 
-                        setTimeout(
-                            () => location.reload(),
-                            1000
-                        );
-                    });
+                            setTimeout(
+                                () =>
+                                    location.reload(),
+                                1000
+                            );
+                        }
+                    );
             }
         );
     }
@@ -1373,6 +2207,7 @@ function initEvents() {
             () => {
 
                 updateCartUI();
+
                 openCart();
 
             }
@@ -1493,9 +2328,9 @@ function initEvents() {
                     'close-modal'
                 )
             ) {
+
                 closeAllModals();
             }
-
         }
     );
 
@@ -1510,7 +2345,6 @@ function initEvents() {
             if (e.key === 'Escape') {
 
                 closeAllModals();
-
             }
         }
     );
@@ -1545,52 +2379,60 @@ function initEvents() {
 
     document
         .querySelectorAll('.filter')
-        .forEach((btn) => {
+        .forEach(
+            (btn) => {
 
-            btn.addEventListener(
-                'click',
-                (e) => {
+                btn.addEventListener(
+                    'click',
+                    (e) => {
 
-                    e.preventDefault();
+                        e.preventDefault();
 
-                    document
-                        .querySelectorAll('.filter')
-                        .forEach((b) => {
-                            b.classList.remove(
-                                'active'
-                            );
-                        });
+                        document
+                            .querySelectorAll(
+                                '.filter'
+                            )
+                            .forEach(
+                                (b) => {
 
-                    e.currentTarget.classList.add(
-                        'active'
-                    );
-
-                    activeCategory =
-                        e.currentTarget
-                            .getAttribute(
-                                'data-category'
+                                    b.classList.remove(
+                                        'active'
+                                    );
+                                }
                             );
 
-                    renderProducts();
-
-                    const shop =
-                        document.getElementById(
-                            'shop'
+                        e.currentTarget.classList.add(
+                            'active'
                         );
 
-                    if (
-                        e.currentTarget.tagName ===
-                        'A' &&
-                        shop
-                    ) {
+                        activeCategory =
+                            e.currentTarget
+                                .getAttribute(
+                                    'data-category'
+                                );
 
-                        shop.scrollIntoView({
-                            behavior: 'smooth'
-                        });
+                        renderProducts();
+
+                        const shop =
+                            document.getElementById(
+                                'shop'
+                            );
+
+                        if (
+                            e.currentTarget.tagName ===
+                                'A' &&
+                            shop
+                        ) {
+
+                            shop.scrollIntoView({
+                                behavior:
+                                    'smooth'
+                            });
+                        }
                     }
-                }
-            );
-        });
+                );
+            }
+        );
 
     // ========================================================
     // CHECKOUT BUTTON
@@ -1796,7 +2638,8 @@ function initEvents() {
                                 ? auth.currentUser.email
                                 : formData.get(
                                     'email'
-                                ) || "მითითებული არ არის",
+                                ) ||
+                                "მითითებული არ არის",
 
                         customerName:
                             formData.get(
@@ -1836,54 +2679,60 @@ function initEvents() {
                             "ახალი"
 
                     })
-                    .then(() => {
+                    .then(
+                        () => {
 
-                        showModalMessage(
-                            "წარმატება",
-                            "შეკვეთა წარმატებით გაფორმდა!",
-                            "success"
-                        );
-
-                        cart = [];
-
-                        saveCart();
-                        updateCartUI();
-
-                        closeAllModals();
-
-                        e.target.reset();
-
-                    })
-                    .catch((err) => {
-
-                        console.error(
-                            "შეკვეთის შეცდომა:",
-                            err
-                        );
-
-                        const errEl =
-                            document.getElementById(
-                                'checkout-error'
+                            showModalMessage(
+                                "წარმატება",
+                                "შეკვეთა წარმატებით გაფორმდა!",
+                                "success"
                             );
 
-                        if (errEl) {
+                            cart = [];
 
-                            errEl.textContent =
-                                "შეცდომა შეკვეთის გაფორმებისას.";
+                            saveCart();
+
+                            updateCartUI();
+
+                            closeAllModals();
+
+                            e.target.reset();
+
                         }
+                    )
+                    .catch(
+                        (err) => {
 
-                    })
-                    .finally(() => {
+                            console.error(
+                                "შეკვეთის შეცდომა:",
+                                err
+                            );
 
-                        if (submitButton) {
+                            const errEl =
+                                document.getElementById(
+                                    'checkout-error'
+                                );
 
-                            submitButton.disabled =
-                                false;
+                            if (errEl) {
 
-                            submitButton.textContent =
-                                "შეკვეთის დადასტურება";
+                                errEl.textContent =
+                                    "შეცდომა შეკვეთის გაფორმებისას.";
+                            }
                         }
-                    });
+                    )
+                    .finally(
+                        () => {
+
+                            if (submitButton) {
+
+                                submitButton.disabled =
+                                    false;
+
+                                submitButton.textContent =
+                                    "შეკვეთის დადასტურება";
+                            }
+                        }
+                    );
             }
         );
     }
@@ -1900,21 +2749,23 @@ function initEvents() {
                     '.tab-btn'
                 );
 
-            tabBtns.forEach((b) => {
+            tabBtns.forEach(
+                (b) => {
 
-                b.classList.remove(
-                    'active'
-                );
+                    b.classList.remove(
+                        'active'
+                    );
 
-                b.style.background =
-                    '#e2e8f0';
+                    b.style.background =
+                        '#e2e8f0';
 
-                b.style.color =
-                    '#333';
+                    b.style.color =
+                        '#333';
 
-                b.style.boxShadow =
-                    'none';
-            });
+                    b.style.boxShadow =
+                        'none';
+                }
+            );
 
             if (tab === 'login') {
 
@@ -1942,11 +2793,13 @@ function initEvents() {
                     );
 
                 if (loginForm) {
+
                     loginForm.style.display =
                         'block';
                 }
 
                 if (registerForm) {
+
                     registerForm.style.display =
                         'none';
                 }
@@ -1977,11 +2830,13 @@ function initEvents() {
                     );
 
                 if (loginForm) {
+
                     loginForm.style.display =
                         'none';
                 }
 
                 if (registerForm) {
+
                     registerForm.style.display =
                         'block';
                 }
@@ -2015,28 +2870,32 @@ function initEvents() {
                     email,
                     password
                 )
-                .then(() => {
+                    .then(
+                        () => {
 
-                    closeAllModals();
+                            closeAllModals();
 
-                    showToast(
-                        "წარმატებით შეხვედით სისტემაში"
+                            showToast(
+                                "წარმატებით შეხვედით სისტემაში"
+                            );
+
+                        }
+                    )
+                    .catch(
+                        () => {
+
+                            const loginErr =
+                                document.getElementById(
+                                    'login-error'
+                                );
+
+                            if (loginErr) {
+
+                                loginErr.textContent =
+                                    "არასწორი მეილი ან პაროლი";
+                            }
+                        }
                     );
-
-                })
-                .catch(() => {
-
-                    const loginErr =
-                        document.getElementById(
-                            'login-error'
-                        );
-
-                    if (loginErr) {
-
-                        loginErr.textContent =
-                            "არასწორი მეილი ან პაროლი";
-                    }
-                });
             }
         );
     }
@@ -2071,48 +2930,56 @@ function initEvents() {
                     email,
                     password
                 )
-                .then((cred) => {
+                    .then(
+                        (cred) => {
 
-                    return db
-                        .collection("users")
-                        .doc(
-                            cred.user.uid
-                        )
-                        .set({
+                            return db
+                                .collection(
+                                    "users"
+                                )
+                                .doc(
+                                    cred.user.uid
+                                )
+                                .set({
 
-                            name,
-                            email,
-                            role: "user"
+                                    name,
+                                    email,
+                                    role: "user"
 
-                        });
-                })
-                .then(() => {
+                                });
+                        }
+                    )
+                    .then(
+                        () => {
 
-                    closeAllModals();
+                            closeAllModals();
 
-                    showToast(
-                        "რეგისტრაცია წარმატებულია"
+                            showToast(
+                                "რეგისტრაცია წარმატებულია"
+                            );
+
+                        }
+                    )
+                    .catch(
+                        (error) => {
+
+                            console.error(
+                                "რეგისტრაციის შეცდომა:",
+                                error
+                            );
+
+                            const regErr =
+                                document.getElementById(
+                                    'reg-error'
+                                );
+
+                            if (regErr) {
+
+                                regErr.textContent =
+                                    "შეცდომა რეგისტრაციისას";
+                            }
+                        }
                     );
-
-                })
-                .catch((error) => {
-
-                    console.error(
-                        "რეგისტრაციის შეცდომა:",
-                        error
-                    );
-
-                    const regErr =
-                        document.getElementById(
-                            'reg-error'
-                        );
-
-                    if (regErr) {
-
-                        regErr.textContent =
-                            "შეცდომა რეგისტრაციისას";
-                    }
-                });
             }
         );
     }
