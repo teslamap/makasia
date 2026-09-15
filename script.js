@@ -164,7 +164,6 @@ function calculateCheckout() {
         }
     }
 
-    // თუ ჯამი >= 150-ს, მიწოდება უფასოა
     const deliveryCost = subtotal >= 150 ? 0 : deliveryBasePrice;
     const finalTotal = subtotal + deliveryCost;
 
@@ -183,7 +182,6 @@ function checkAuthStatus() {
         const accountToggle = document.getElementById('account-toggle');
         if (accountToggle) {
             if (user) {
-                // თუ შესულია, ვუწერთ სახელს/მეილს ან "გასვლა"-ს
                 accountToggle.textContent = user.email === "suloanani1@gmail.com" ? "ადმინი" : "პროფილი";
             } else {
                 accountToggle.textContent = "შესვლა";
@@ -200,15 +198,22 @@ function initEvents() {
         overlay.classList.add('show');
     });
 
-    // სრული დახურვის ლოგიკა (× ღილაკები და overlay)
+    // სრული დახურვის ლოგიკა (ყველა მოდალისთვის და × ღილაკებისთვის)
     function closeAllModals() {
         if(cartPanel) cartPanel.classList.remove('open');
         if(overlay) overlay.classList.remove('show');
         
         const authDialog = document.getElementById('auth-dialog');
         const checkoutDialog = document.getElementById('checkout-dialog');
-        if(authDialog && typeof authDialog.close === 'function') authDialog.close();
-        if(checkoutDialog && typeof checkoutDialog.close === 'function') checkoutDialog.close();
+        
+        if(authDialog) {
+            authDialog.close();
+            authDialog.style.display = 'none'; // დაზღვევისთვის
+        }
+        if(checkoutDialog) {
+            checkoutDialog.close();
+            checkoutDialog.style.display = 'none'; // დაზღვევისთვის
+        }
     }
 
     // overlay-ზე დაჭერით დახურვა
@@ -216,9 +221,13 @@ function initEvents() {
         overlay.addEventListener('click', closeAllModals);
     }
 
-    // ყველა დახურვის ღილაკზე (× ან [data-close]) მიბმა
-    document.querySelectorAll('[data-close], .close-modal, .close-btn, [id*="close"]').forEach(el => {
-        el.addEventListener('click', closeAllModals);
+    // უნივერსალური მომართვა ნებისმიერ × ღილაკზე ან დახურვის ელემენტზე
+    document.addEventListener('click', (e) => {
+        const target = e.target;
+        // თუ დააკლიკა ღილაკს რომელსაც აწერია '×' ან აქვს შესაბამისი კლასი
+        if (target.textContent.trim() === '×' || target.classList.contains('close-modal') || target.classList.contains('close-btn') || target.hasAttribute('data-close')) {
+            closeAllModals();
+        }
     });
 
     const searchInput = document.getElementById('search-input');
@@ -244,7 +253,6 @@ function initEvents() {
         accountToggle.addEventListener('click', () => {
             const user = auth.currentUser;
             if (user) {
-                // თუ უკვე შესულია, კითხულობს უნდა თუ არა გასვლა
                 if(confirm("გსურთ სისტემიდან გასვლა?")) {
                     auth.signOut().then(() => {
                         showToast("გახვედით სისტემიდან");
@@ -253,6 +261,7 @@ function initEvents() {
             } else {
                 const authDialog = document.getElementById('auth-dialog');
                 if(authDialog) {
+                    authDialog.style.display = 'block'; // აუცილებელია თუ CSS-ში ნაჩვენები არ არის
                     authDialog.showModal();
                     if(overlay) overlay.classList.add('show');
                 }
@@ -272,6 +281,7 @@ function initEvents() {
             calculateCheckout();
             const checkoutDialog = document.getElementById('checkout-dialog');
             if(checkoutDialog) {
+                checkoutDialog.style.display = 'block';
                 checkoutDialog.showModal();
                 if(overlay) overlay.classList.add('show');
             }
@@ -297,7 +307,6 @@ function initEvents() {
             const deliveryCost = subtotal >= 150 ? 0 : deliveryBasePrice;
             const totalFinal = subtotal + deliveryCost;
 
-            // თითოეული პროდუქტის ფორმატირება პრევიუ ფოტოთი და დეტალებით ადმინისთვის
             const itemsFormatted = cart.map(item => `
                 <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 6px;">
                     <img src="${item.image}" alt="" style="width: 40px; height: 40px; object-fit: cover; border-radius: 4px;">
