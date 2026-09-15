@@ -23,6 +23,7 @@
       color: var(--text-main); 
       min-height: 100vh;
       overflow-x: hidden;
+      scroll-behavior: smooth;
     }
 
     /* ჰედერი */
@@ -54,6 +55,7 @@
       text-transform: uppercase;
       letter-spacing: 1px;
       filter: drop-shadow(0 2px 4px rgba(124, 58, 237, 0.2));
+      cursor: pointer;
     }
 
     .nav-buttons { display: flex; gap: 14px; align-items: center; }
@@ -101,20 +103,40 @@
     /* მთავარი კონტეინერი */
     .container { max-width: 1300px; margin: 0 auto; padding: 40px 24px; }
 
-    /* ბანერი */
+    /* ინტრო (Hero) სექცია */
     .hero-banner {
       background: var(--primary-gradient);
-      border-radius: 30px;
-      padding: 60px 40px;
+      border-radius: 35px;
+      padding: 80px 40px;
       color: white;
       text-align: center;
       margin-bottom: 50px;
-      box-shadow: 0 20px 50px rgba(124, 58, 237, 0.3);
+      box-shadow: 0 25px 60px rgba(124, 58, 237, 0.35);
       position: relative;
       overflow: hidden;
     }
-    .hero-banner h1 { font-size: 42px; font-weight: 800; margin-bottom: 16px; text-shadow: 0 3px 6px rgba(0,0,0,0.2); }
-    .hero-banner p { font-size: 18px; opacity: 0.95; max-width: 600px; margin: 0 auto; font-weight: 500; }
+    .hero-banner h1 { font-size: 46px; font-weight: 800; margin-bottom: 18px; text-shadow: 0 3px 6px rgba(0,0,0,0.2); }
+    .hero-banner p { font-size: 18px; opacity: 0.95; max-width: 650px; margin: 0 auto 30px auto; font-weight: 500; line-height: 1.6; }
+    
+    .hero-action-btn {
+      background: white;
+      color: #4f46e5;
+      padding: 16px 36px;
+      border-radius: 20px;
+      font-size: 16px;
+      font-weight: 800;
+      border: none;
+      cursor: pointer;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      text-decoration: none;
+      display: inline-block;
+    }
+    .hero-action-btn:hover {
+      transform: translateY(-5px) scale(1.05);
+      background: #f8fafc;
+      box-shadow: 0 15px 30px rgba(0,0,0,0.3);
+    }
 
     /* კატეგორიების ფილტრები */
     .categories-bar {
@@ -277,19 +299,19 @@
     }
     .cart-item img { width: 60px; height: 60px; object-fit: cover; border-radius: 12px; }
 
-    /* შეკვეთის ფორმის მოდალი */
-    dialog.checkout-modal {
+    /* მოდალური ფანჯრები (შესვლა/რეგისტრაცია და შეკვეთა) */
+    dialog.custom-modal {
       border: none;
       border-radius: 30px;
       padding: 0;
       width: 100%;
-      max-width: 520px;
+      max-width: 480px;
       box-shadow: 0 30px 60px rgba(79, 70, 229, 0.4);
       margin: auto;
       background: white;
       overflow: hidden;
     }
-    dialog.checkout-modal::backdrop {
+    dialog.custom-modal::backdrop {
       background: rgba(15, 23, 42, 0.75);
       backdrop-filter: blur(8px);
     }
@@ -307,7 +329,8 @@
     }
     .form-group input:focus { outline: none; border-color: #7c3aed; background: white; box-shadow: 0 0 0 4px rgba(124, 58, 237, 0.15); }
 
-    .toast {
+    /* ულამაზესი პოპაპ შეტყობინება (Custom Toast) */
+    .toast-container {
       position: fixed;
       bottom: 35px;
       right: 35px;
@@ -317,12 +340,15 @@
       border-radius: 16px;
       font-weight: 700;
       box-shadow: 0 15px 30px rgba(16, 185, 129, 0.4);
-      transform: translateY(120px);
+      transform: translateY(140px);
       opacity: 0;
       transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
       z-index: 2000;
+      display: flex;
+      align-items: center;
+      gap: 10px;
     }
-    .toast.show { transform: translateY(0); opacity: 1; }
+    .toast-container.show { transform: translateY(0); opacity: 1; }
   </style>
 </head>
 <body>
@@ -330,10 +356,10 @@
   <!-- ჰედერი -->
   <header>
     <div class="nav-container">
-      <div class="logo">✨ Makasia</div>
+      <div class="logo" onclick="window.scrollTo({top:0, behavior:'smooth'})">✨ Makasia</div>
       <div class="nav-buttons">
+        <button class="btn-outline-fancy" id="openAuthModalBtn">👤 შესვლა / რეგისტრაცია</button>
         <button class="btn-outline-fancy" id="openCartBtn">🛒 კალათა (<span id="cartCount">0</span>)</button>
-        <a href="admin.html" class="btn-glow">⚙️ ადმინ პანელი</a>
       </div>
     </div>
   </header>
@@ -341,24 +367,28 @@
   <!-- მთავარი კონტეინერი -->
   <div class="container">
     
-    <!-- ბანერი -->
+    <!-- ინტრო (Hero) სექცია -->
     <div class="hero-banner">
       <h1>პრემიუმ კლასის ჩანთების კოლექცია</h1>
-      <p>აღმოაჩინე შენი უნიკალური სტილი ყოველდღიური და საღამოს მოდელებით</p>
+      <p>აღმოაჩინე შენი უნიკალური სტილი ყოველდღიური და საღამოს მოდელებით. შეიქმენი განუმეორებელი იმიჯი Makasia-სთან ერთად.</p>
+      <a href="#catalogSection" class="hero-action-btn">✨ კატალოგის ნახვა</a>
     </div>
 
-    <!-- კატეგორიები -->
-    <div class="categories-bar">
-      <button class="cat-btn active" data-category="ყველა">✨ ყველა</button>
-      <button class="cat-btn" data-category="ყოველდღიური">👜 ყოველდღიური</button>
-      <button class="cat-btn" data-category="საღამოს">💎 საღამოს</button>
-      <button class="cat-btn" data-category="ზურგჩანთები">🎒 ზურგჩანთები</button>
+    <!-- კატეგორიები და პროდუქტების სექცია -->
+    <div id="catalogSection" style="padding-top: 20px;">
+      <div class="categories-bar">
+        <button class="cat-btn active" data-category="ყველა">✨ ყველა</button>
+        <button class="cat-btn" data-category="ყოველდღიური">👜 ყოველდღიური</button>
+        <button class="cat-btn" data-category="საღამოს">💎 საღამოს</button>
+        <button class="cat-btn" data-category="ზურგჩანთები">🎒 ზურგჩანთები</button>
+      </div>
+
+      <!-- პროდუქტების ბადე -->
+      <div class="products-grid" id="productsGrid">
+        <div style="grid-column: 1 / -1; text-align: center; padding: 50px; font-weight: 700; color: #6366f1;">პროდუქტები იტვირთება...</div>
+      </div>
     </div>
 
-    <!-- პროდუქტების ბადე -->
-    <div class="products-grid" id="productsGrid">
-      <div style="grid-column: 1 / -1; text-align: center; padding: 50px; font-weight: 700; color: #6366f1;">პროდუქტები იტვირთება...</div>
-    </div>
   </div>
 
   <!-- კალათის სლაიდერი -->
@@ -379,8 +409,39 @@
     </div>
   </div>
 
+  <!-- ავტორიზაციის / რეგისტრაციის მოდალი -->
+  <dialog class="custom-modal" id="authModal">
+    <div class="modal-content">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px;">
+        <h2 id="authModalTitle" style="font-size: 22px; font-weight: 800; color: #312e81;">👤 ავტორიზაცია</h2>
+        <button class="close-cart" onclick="document.getElementById('authModal').close()">&times;</button>
+      </div>
+      
+      <form id="authForm">
+        <div class="form-group" id="nameGroup" style="display: none;">
+          <label>სახელი და გვარი</label>
+          <input type="text" id="authName" placeholder="მაგ: ნინო ბერიძე">
+        </div>
+        <div class="form-group">
+          <label>ელ-ფოსტა</label>
+          <input type="email" id="authEmail" required placeholder="example@gmail.com">
+        </div>
+        <div class="form-group">
+          <label>პაროლი</label>
+          <input type="password" id="authPassword" required placeholder="••••••••">
+        </div>
+        <button type="submit" class="btn-glow" id="authSubmitBtn" style="width: 100%; justify-content: center; margin-top: 10px;">შესვლა</button>
+      </form>
+
+      <div style="text-align: center; margin-top: 20px; font-size: 14px;">
+        <span id="authToggleText" style="color: #64748b;">არ გაქვს ანგარიში?</span>
+        <button type="button" id="switchAuthMode" style="background: none; border: none; color: #7c3aed; font-weight: 700; cursor: pointer; margin-left: 5px;">რეგისტრაცია</button>
+      </div>
+    </div>
+  </dialog>
+
   <!-- შეკვეთის მოდალი -->
-  <dialog class="checkout-modal" id="checkoutModal">
+  <dialog class="custom-modal" id="checkoutModal">
     <div class="modal-content">
       <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px;">
         <h2 style="font-size: 22px; font-weight: 800; color: #312e81;">📦 შეკვეთის დეტალები</h2>
@@ -411,10 +472,15 @@
     </div>
   </dialog>
 
-  <div class="toast" id="toast">✨ შეკვეთა წარმატებით გაიგზავნა!</div>
+  <!-- ნორმალური პოპაპ შეტყობინება (Toast) -->
+  <div class="toast-container" id="toast">
+    <span>✨</span>
+    <span id="toastMsg">ოპერაცია წარმატებით დასრულდა!</span>
+  </div>
 
   <!-- Firebase SDK-ები -->
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
 
   <script>
@@ -431,12 +497,81 @@
         firebase.initializeApp(firebaseConfig);
     }
     const db = firebase.firestore();
+    const auth = firebase.auth();
 
     let allProducts = [];
     let cart = JSON.parse(localStorage.getItem('makasia_cart')) || [];
     let currentCategory = 'ყველა';
 
     updateCartUI();
+
+    // მომხმარებლის ავტორიზაციის სტატუსი
+    auth.onAuthStateChanged((user) => {
+        const authBtn = document.getElementById('openAuthModalBtn');
+        if (user) {
+            authBtn.textContent = `👤 ${user.displayName || user.email.split('@')[0]}`;
+            authBtn.onclick = () => {
+                if(confirm("სურს სისტემიდან გასვლა?")) {
+                    auth.signOut().then(() => showToast("წარმატებით გამოხვედით"));
+                }
+            };
+        } else {
+            authBtn.textContent = "👤 შესვლა / რეგისტრაცია";
+            authBtn.onclick = () => document.getElementById('authModal').showModal();
+        }
+    });
+
+    // ავტორიზაციის ფორმის გადართვა (შესვლა <-> რეგისტრაცია)
+    let isRegisterMode = false;
+    const authModal = document.getElementById('authModal');
+    const nameGroup = document.getElementById('nameGroup');
+    const authModalTitle = document.getElementById('authModalTitle');
+    const authSubmitBtn = document.getElementById('authSubmitBtn');
+    const authToggleText = document.getElementById('authToggleText');
+    const switchAuthModeBtn = document.getElementById('switchAuthMode');
+
+    switchAuthModeBtn.addEventListener('click', () => {
+        isRegisterMode = !isRegisterMode;
+        if(isRegisterMode) {
+            authModalTitle.textContent = "✨ რეგისტრაცია";
+            nameGroup.style.display = "block";
+            authSubmitBtn.textContent = "რეგისტრაცია";
+            authToggleText.textContent = "უკვე გაქვს ანგარიში?";
+            switchAuthModeBtn.textContent = "შესვლა";
+        } else {
+            authModalTitle.textContent = "👤 ავტორიზაცია";
+            nameGroup.style.display = "none";
+            authSubmitBtn.textContent = "შესვლა";
+            authToggleText.textContent = "არ გაქვს ანგარიში?";
+            switchAuthModeBtn.textContent = "რეგისტრაცია";
+        }
+    });
+
+    document.getElementById('authForm').addEventListener('submit', (e) => {
+        e.preventDefault();
+        const email = document.getElementById('authEmail').value;
+        const password = document.getElementById('authPassword').value;
+        const name = document.getElementById('authName').value;
+
+        if(isRegisterMode) {
+            auth.createUserWithEmailAndPassword(email, password)
+            .then((cred) => {
+                return cred.user.updateProfile({ displayName: name });
+            })
+            .then(() => {
+                authModal.close();
+                showToast("რეგისტრაცია წარმატებით დასრულდა!");
+            })
+            .catch(err => showToast("შეცდომა: " + err.message));
+        } else {
+            auth.signInWithEmailAndPassword(email, password)
+            .then(() => {
+                authModal.close();
+                showToast("წარმატებით შეხვედით სისტემაში!");
+            })
+            .catch(err => showToast("მონაცემები არასწორია"));
+        }
+    });
 
     // პროდუქტების წამოღება ფაირბეისიდან
     const productsGrid = document.getElementById('productsGrid');
@@ -502,7 +637,7 @@
             cart.push({ id, name, price, image, qty: 1 });
         }
         saveAndRenderCart();
-        showToast("✨ პროდუქტი დაემატა კალათაში!");
+        showToast("პროდუქტი დაემატა კალათაში!");
     }
 
     function saveAndRenderCart() {
@@ -558,7 +693,7 @@
     const checkoutModal = document.getElementById('checkoutModal');
     document.getElementById('checkoutBtn').addEventListener('click', () => {
         if(cart.length === 0) {
-            alert("კალათა ცარიელია!");
+            showToast("კალათა ცარიელია!");
             return;
         }
         cartDrawer.classList.remove('open');
@@ -589,17 +724,18 @@
             checkoutModal.close();
             cart = [];
             saveAndRenderCart();
-            showToast("🚀 შეკვეთა წარმატებით გაიგზავნა!");
+            showToast("შეკვეთა წარმატებით გაიგზავნა!");
             e.target.reset();
         })
         .catch(err => {
-            alert("შეცდომა შეკვეთისას: " + err.message);
+            showToast("შეცდომა შეკვეთისას");
         });
     });
 
+    // ულამაზესი პოპაპ შეტყობინების ფუნქცია
     function showToast(msg) {
         const toast = document.getElementById('toast');
-        toast.textContent = msg;
+        document.getElementById('toastMsg').textContent = msg;
         toast.classList.add('show');
         setTimeout(() => toast.classList.remove('show'), 3500);
     }
