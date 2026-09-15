@@ -1,4 +1,4 @@
-// Firebase-ის ინიციალიზაცია (თუ უკვე აწერია თავში, მხოლოდ ლოგიკა გამოიყენე)
+// Firebase-ის ინიციალიზაცია
 const db = firebase.firestore();
 const auth = firebase.auth();
 
@@ -9,22 +9,48 @@ const logoutBtn = document.getElementById('logoutBtn');
 const loginError = document.getElementById('loginError');
 const ordersList = document.getElementById('ordersList');
 
-// ადმინად შესვლა
+// ფიქსირებული ადმინის მეილი
+const ADMIN_EMAIL = "suloanani1@gmail.com";
+
+// ადმინად შესვლა (მხოლოდ პაროლით)
 if (loginBtn) {
     loginBtn.addEventListener('click', () => {
-        const email = document.getElementById('adminEmail').value;
-        const password = document.getElementById('adminPassword').value;
+        const passwordInput = document.getElementById('adminPassword');
+        const password = passwordInput ? passwordInput.value : '';
 
-        auth.signInWithEmailAndPassword(email, password)
+        if (!password) {
+            if(loginError) loginError.textContent = "გთხოვთ შეიყვანოთ პაროლი!";
+            return;
+        }
+
+        auth.signInWithEmailAndPassword(ADMIN_EMAIL, password)
             .then(() => {
-                loginError.textContent = "";
+                if(loginError) loginError.textContent = "";
             })
             .catch((error) => {
-                loginError.textContent = "არასწორი ელ-ფოსტა ან პაროლი!";
+                if(loginError) loginError.textContent = "არასწორი პაროლი!";
                 console.error(error);
             });
     });
 }
+
+// პაროლის აღდგენის ფუნქცია
+window.resetAdminPassword = function() {
+    auth.sendPasswordResetEmail(ADMIN_EMAIL)
+        .then(() => {
+            if(loginError) {
+                loginError.style.color = "green";
+                loginError.textContent = "აღდგენის ლინკი გაიგზავნა თქვენს ელ-ფოსტაზე!";
+            }
+        })
+        .catch((error) => {
+            if(loginError) {
+                loginError.style.color = "red";
+                loginError.textContent = "შეცდომა აღდგენის მოთხოვნისას.";
+            }
+            console.error(error);
+        });
+};
 
 // გამოსვლა
 if (logoutBtn) {
@@ -35,18 +61,23 @@ if (logoutBtn) {
 
 // ავტორიზაციის სტატუსის კონტროლი
 auth.onAuthStateChanged((user) => {
-    if (user) {
-        loginSection.style.display = 'none';
-        adminSection.style.display = 'block';
+    if (user && user.email === ADMIN_EMAIL) {
+        if(loginSection) loginSection.style.display = 'none';
+        if(adminSection) adminSection.style.display = 'block';
         loadOrders();
     } else {
-        loginSection.style.display = 'block';
-        adminSection.style.display = 'none';
+        if(loginSection) loginSection.style.display = 'block';
+        if(adminSection) adminSection.style.display = 'none';
+        if(user && user.email !== ADMIN_EMAIL) {
+            auth.signOut(); // თუ სხვა იუზერმა სცადა შესვლა
+        }
     }
 });
 
 // შეკვეთების წამოღება ბაზიდან და სრული დეტალიზაციით გამოტანა
 function loadOrders() {
+    if (!ordersList) return;
+    
     db.collection("orders").orderBy("createdAt", "desc").onSnapshot((snapshot) => {
         ordersList.innerHTML = "";
         
