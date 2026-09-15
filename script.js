@@ -29,6 +29,84 @@ const cartPanel = document.getElementById('cart-panel');
 const overlay = document.getElementById('overlay');
 const toast = document.getElementById('toast');
 
+// 🌟 სრულიად უნივერსალური და ავტომატური პოაპის დამჭერი (Alert-ისა და Confirm-ის ნაცვლად)
+window.showModalMessage = function(title, text, type = 'info', onConfirm = null) {
+    let modal = document.getElementById('universalModal');
+    
+    if (!modal) {
+        const div = document.createElement('div');
+        div.innerHTML = `
+            <dialog id="universalModal" class="admin-modal" style="border: none; border-radius: 30px; padding: 0; width: 100%; max-width: 400px; box-shadow: 0 30px 60px rgba(79, 70, 229, 0.3); background: white; margin: auto;">
+              <div style="padding: 30px; text-align: center; font-family: 'Noto Sans Georgian', sans-serif;">
+                <div id="uniModalIcon" style="font-size: 42px; margin-bottom: 15px;">✨</div>
+                <h3 id="uniModalTitle" style="font-size: 20px; font-weight: 800; color: #312e81; margin-bottom: 10px;">შეტყობინება</h3>
+                <p id="uniModalText" style="color: #64748b; font-size: 14px; margin-bottom: 25px; line-height: 1.5;"></p>
+                <div id="uniModalActions" style="display: flex; gap: 14px;"></div>
+              </div>
+            </dialog>
+        `;
+        document.body.appendChild(div);
+        modal = document.getElementById('universalModal');
+    }
+
+    document.getElementById('uniModalTitle').textContent = title;
+    document.getElementById('uniModalText').textContent = text;
+    
+    const iconEl = document.getElementById('uniModalIcon');
+    const actionsEl = document.getElementById('uniModalActions');
+    
+    if (type === 'confirm' || type === 'danger') {
+        iconEl.textContent = '⚠️';
+    } else if (type === 'success') {
+        iconEl.textContent = '✅';
+    } else {
+        iconEl.textContent = '✨';
+    }
+
+    actionsEl.innerHTML = '';
+
+    if (onConfirm) {
+        const cancelBtn = document.createElement('button');
+        cancelBtn.type = 'button';
+        cancelBtn.style.cssText = 'background: #e2e8f0; color: #475569; flex: 1; padding: 14px; border-radius: 14px; border: none; font-weight: 700; cursor: pointer; font-size: 14px;';
+        cancelBtn.textContent = 'გაუქმება';
+        cancelBtn.onclick = () => modal.close();
+
+        const okBtn = document.createElement('button');
+        okBtn.type = 'button';
+        okBtn.style.cssText = 'flex: 1; padding: 14px; border-radius: 14px; border: none; font-weight: 700; cursor: pointer; color: white; font-size: 14px; ' + (type === 'danger' ? 'background: linear-gradient(135deg, #ef4444, #b91c1c);' : 'background: #1e1b4b;');
+        okBtn.textContent = 'დიახ';
+        okBtn.onclick = () => {
+            modal.close();
+            onConfirm();
+        };
+
+        actionsEl.appendChild(cancelBtn);
+        actionsEl.appendChild(okBtn);
+    } else {
+        const okBtn = document.createElement('button');
+        okBtn.type = 'button';
+        okBtn.style.cssText = 'width: 100%; padding: 14px; border-radius: 14px; border: none; font-weight: 700; cursor: pointer; background: #1e1b4b; color: white; font-size: 14px;';
+        okBtn.textContent = 'კარგი';
+        okBtn.onclick = () => modal.close();
+
+        actionsEl.appendChild(okBtn);
+    }
+
+    if (!modal.open) {
+        modal.showModal();
+    }
+};
+
+// 🛡️ ავტომატური გადაფარვა ბრაუზერის ძველი ფანჯრებისთვის
+window.alert = function(msg) {
+    window.showModalMessage("ყურადღება", msg, "info");
+};
+
+window.confirm = function(msg) {
+    return window.showModalMessage("დადასტურება", msg, "danger");
+};
+
 // ინიციალიზაცია
 document.addEventListener('DOMContentLoaded', () => {
     loadProductsFromDB();
@@ -232,28 +310,27 @@ function setupProfileDropdown() {
     if (myOrdersLink) {
         myOrdersLink.addEventListener('click', async (e) => {
             e.preventDefault();
-            profilePopup.style.display = 'none';
             
             const user = auth.currentUser;
             if (!user) {
-                showToast("გთხოვთ გაიაროთ ავტორიზაცია");
+                showModalMessage("ყურადღება", "გთხოვთ გაიაროთ ავტორიზაცია", "info");
                 return;
             }
 
-            let ordersModal = document.getElementById('orders-modal');
-            if (!ordersModal) {
-                ordersModal = document.createElement('div');
-                ordersModal.id = 'orders-modal';
-                ordersModal.style.cssText = "display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; padding: 25px; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); z-index: 1000; width: 90%; max-width: 600px; max-height: 80vh; overflow-y: auto;";
-                document.body.appendChild(ordersModal);
+            const ordersSection = document.getElementById('popup-orders-section');
+            const ordersListContainer = document.getElementById('popup-orders-list');
+            
+            if (ordersSection) {
+                if (ordersSection.style.display === 'block') {
+                    ordersSection.style.display = 'none';
+                    return;
+                }
+                ordersSection.style.display = 'block';
             }
 
-            ordersModal.innerHTML = `<h3 style="margin-bottom: 15px; font-size: 18px; border-bottom: 1px solid #eee; padding-bottom: 10px;">ჩემი შეკვეთების ისტორია</h3><div id="orders-list"><p style="text-align: center; color: #666; padding: 20px;">იტვირთება...</p></div><button onclick="document.getElementById('orders-modal').style.display='none'; document.getElementById('overlay').classList.remove('show');" style="margin-top: 15px; width: 100%; padding: 10px; background: #333; color: white; border: none; border-radius: 6px; cursor: pointer;">დახურვა</button>`;
-            
-            ordersModal.style.display = 'block';
-            if(overlay) overlay.classList.add('show');
-
-            const ordersListContainer = document.getElementById('orders-list');
+            if (ordersListContainer) {
+                ordersListContainer.innerHTML = `<p style="text-align: center; color: #666; font-size: 13px; padding: 10px;">იტვირთება...</p>`;
+            }
 
             try {
                 const snapshot = await db.collection('orders')
@@ -262,7 +339,9 @@ function setupProfileDropdown() {
                     .get();
 
                 if (snapshot.empty) {
-                    ordersListContainer.innerHTML = `<p style="text-align: center; color: #777; padding: 20px;">თქვენ ჯერ არ გაქვთ გაფორმებული შეკვეთები.</p>`;
+                    if (ordersListContainer) {
+                        ordersListContainer.innerHTML = `<p style="text-align: center; color: #777; font-size: 13px; padding: 10px;">შეკვეთები არ მოიძებნა.</p>`;
+                    }
                     return;
                 }
 
@@ -271,29 +350,29 @@ function setupProfileDropdown() {
                     const order = doc.data();
                     const date = order.createdAt ? order.createdAt.toDate().toLocaleString('ka-GE') : 'ახალი';
                     html += `
-                        <div style="border: 1px solid #eee; border-radius: 8px; padding: 12px; margin-bottom: 12px; background: #fafafa;">
-                            <div style="display: flex; justify-content: space-between; font-size: 13px; color: #666; margin-bottom: 6px;">
-                                <span>თარიღი: ${date}</span>
-                                <strong style="color: #2e7d32;">სტატუსი: ${order.status}</strong>
+                        <div style="border: 1px solid #eee; border-radius: 6px; padding: 8px; margin-bottom: 8px; background: #fafafa; font-size: 12px;">
+                            <div style="display: flex; justify-content: space-between; color: #666; margin-bottom: 4px;">
+                                <span>${date}</span>
+                                <strong style="color: #2e7d32;">${order.status}</strong>
                             </div>
-                            <div style="font-size: 14px; margin-bottom: 8px;">
-                                <strong>მიმღები:</strong> ${order.customerName} (${order.phone})<br>
-                                <strong>მისამართი:</strong> ${order.address} (${order.delivery})
+                            <div style="margin-bottom: 4px;">
+                                <strong>თანხა:</strong> ${order.totalPrice}
                             </div>
-                            <div style="background: white; padding: 8px; border-radius: 6px; border: 1px solid #eee; margin-bottom: 6px;">
+                            <div style="background: white; padding: 6px; border-radius: 4px; border: 1px solid #eee;">
                                 ${order.productDetails}
-                            </div>
-                            <div style="text-align: right; font-weight: 600; font-size: 15px; color: #111;">
-                                სულ: ${order.totalPrice}
                             </div>
                         </div>
                     `;
                 });
-                ordersListContainer.innerHTML = html;
+                if (ordersListContainer) {
+                    ordersListContainer.innerHTML = html;
+                }
 
             } catch (error) {
                 console.error("შეკვეთების წამოღების შეცდომა:", error);
-                ordersListContainer.innerHTML = `<p style="text-align: center; color: #d32f2f; padding: 20px;">შეცდომა შეკვეთების ჩატვირთვისას.</p>`;
+                if (ordersListContainer) {
+                    ordersListContainer.innerHTML = `<p style="text-align: center; color: #d32f2f; font-size: 13px; padding: 10px;">ვერ მოხერხდა ჩატვირთვა.</p>`;
+                }
             }
         });
     }
@@ -329,10 +408,8 @@ function initEvents() {
         const authDialog = document.getElementById('auth-dialog');
         const checkoutDialog = document.getElementById('checkout-dialog');
         const profilePopup = document.getElementById('profilePopup');
-        const ordersModal = document.getElementById('orders-modal');
         
         if(profilePopup) profilePopup.style.display = 'none';
-        if(ordersModal) ordersModal.style.display = 'none';
         if(authDialog) {
             authDialog.close();
             authDialog.style.display = 'none';
@@ -375,7 +452,7 @@ function initEvents() {
     if (checkoutBtn) {
         checkoutBtn.addEventListener('click', () => {
             if (cart.length === 0) {
-                alert("კალათა ცარიელია!");
+                showModalMessage("ყურადღება", "კალათა ცარიელია!", "info");
                 return;
             }
             if(cartPanel) cartPanel.classList.remove('open');
@@ -394,7 +471,7 @@ function initEvents() {
         deliveryInput.addEventListener('change', calculateCheckout);
     }
 
-    // შეკვეთის გაგზავნა ბაზაში (მომხმარებლის აიდითურთ)
+    // შეკვეთის გაგზავნა ბაზაში
     const checkoutForm = document.getElementById('checkout-form');
     if (checkoutForm) {
         checkoutForm.addEventListener('submit', (e) => {
@@ -430,7 +507,7 @@ function initEvents() {
                 createdAt: firebase.firestore.FieldValue.serverTimestamp(),
                 status: "ახალი"
             }).then(() => {
-                alert("შეკვეთა წარმატებით გაფორმდა!");
+                showModalMessage("წარმატება", "შეკვეთა წარმატებით გაფორმდა!", "success");
                 cart = [];
                 saveCart();
                 updateCartUI();
