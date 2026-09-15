@@ -21,8 +21,8 @@
       <a href="#contact">კონტაქტი</a>
     </nav>
     <div class="header-actions">
-      <button class="account-button" id="openAuthBtn">შესვლა</button>
-      <button class="cart-button" id="cartBtn">კალათა <span id="cartCount">0</span></button>
+      <button class="account-button" id="account-toggle">შესვლა</button>
+      <button class="cart-button" id="cart-toggle">კალათა <span id="cart-count">0</span></button>
     </div>
   </header>
 
@@ -42,10 +42,10 @@
 
     <!-- კატეგორიები -->
     <div class="categories">
-      <a href="#shop" data-cat="all">ყველა ჩანთა <span>→</span></a>
-      <a href="#shop" data-cat="everyday">ყოველდღიური <span>→</span></a>
-      <a href="#shop" data-cat="evening">სამოსელო / საღამოს <span>→</span></a>
-      <a href="#shop" data-cat="backpack">ზურგჩანთები <span>→</span></a>
+      <a href="#shop" class="filter" data-category="ყველა">ყველა ჩანთა <span>→</span></a>
+      <a href="#shop" class="filter" data-category="ყოველდღიური">ყოველდღიური <span>→</span></a>
+      <a href="#shop" class="filter" data-category="საღამოს">სამოსელო / საღამოს <span>→</span></a>
+      <a href="#shop" class="filter" data-category="ზურგჩანთები">ზურგჩანთები <span>→</span></a>
     </div>
 
     <section class="shop-section" id="shop">
@@ -54,23 +54,22 @@
           <p class="eyebrow">კატალოგი</p>
           <h2>რჩეული მოდელები</h2>
         </div>
-        <p id="product-result">იტვირთება...</p>
       </div>
 
       <div class="toolbar">
         <div class="search-field">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
-          <input type="text" id="searchInput" placeholder="მოძებნე ჩანთა...">
+          <input type="text" id="search-input" placeholder="მოძებნე ჩანთა...">
         </div>
-        <div class="filters" id="filterContainer">
-          <button class="filter active" data-filter="all">ყველა</button>
-          <button class="filter" data-filter="everyday">ყოველდღიური</button>
-          <button class="filter" data-filter="evening">საღამოს</button>
-          <button class="filter" data-filter="backpack">ზურგჩანთები</button>
+        <div class="filters">
+          <button class="filter active" data-category="ყველა">ყველა</button>
+          <button class="filter" data-category="ყოველდღიური">ყოველდღიური</button>
+          <button class="filter" data-category="საღამოს">საღამოს</button>
+          <button class="filter" data-category="ზურგჩანთები">ზურგჩანთები</button>
         </div>
       </div>
 
-      <div class="product-grid" id="productGrid">
+      <div class="product-grid" id="product-grid">
         <!-- პროდუქტები იტვირთება დინამიკურად JS-ით -->
       </div>
     </section>
@@ -96,7 +95,6 @@
         <input type="email" placeholder="შეიყვანეთ თქვენი ელ-ფოსტა..." required>
         <button type="submit" class="button">გამოწერა</button>
       </form>
-      <div class="form-message" id="newsletterMsg"></div>
     </section>
   </main>
 
@@ -111,57 +109,73 @@
 
   <!-- კალათის გვერდითი პანელი -->
   <div class="overlay" id="overlay"></div>
-  <aside class="cart-panel" id="cartPanel">
+  <aside class="cart-panel" id="cart-panel">
     <div class="panel-header">
       <h2>თქვენი კალათა</h2>
-      <button class="close-button" id="closeCart">&times;</button>
+      <button class="close-btn" id="closeCart">&times;</button>
     </div>
-    <div class="cart-items" id="cartItems">
+    <div class="cart-items" id="cart-items">
       <div class="empty-cart">კალათა ცარიელია</div>
     </div>
     <div class="cart-footer">
-      <div><span>სულ:</span> <strong id="cartTotalPrice">0 ლარი</strong></div>
-      <button class="button button-dark full" id="checkoutBtn">შეკვეთის გაფორმება</button>
+      <div><span>სულ:</span> <strong id="cart-total">0 ₾</strong></div>
+      <button class="button button-dark full" id="checkout">შეკვეთის გაფორმება</button>
     </div>
   </aside>
 
-  <!-- პროდუქტის დეტალური დიალოგი -->
-  <dialog id="productDialog">
-    <button class="dialog-close" id="closeDialog">&times;</button>
-    <div class="dialog-product" id="dialogContent"></div>
-  </dialog>
-
   <!-- ავტორიზაციის დიალოგი -->
-  <dialog id="authDialog" class="form-dialog">
+  <dialog id="auth-dialog" class="form-dialog">
     <div class="form-dialog-content">
-      <button class="dialog-close" id="closeAuthDialog">&times;</button>
-      <h2>სისტემაში შესვლა</h2>
-      <p class="dialog-intro">შეიყვანეთ თქვენი მონაცემები პროფილისა და შეკვეთების სამართავად.</p>
-      <form id="authForm">
-        <label>ელ-ფოსტა <input type="email" id="authEmail" required></label>
-        <label>პაროლი <input type="password" id="authPassword" required></label>
-        <p class="field-error" id="authError"></p>
-        <button type="submit" class="button button-dark full">შესვლა</button>
+      <button class="close-modal" id="closeAuthDialog">&times;</button>
+      <div style="display: flex; gap: 10px; margin-bottom: 20px;">
+        <button type="button" class="tab-btn active button" onclick="switchAuthTab('login')" style="flex:1;">შესვლა</button>
+        <button type="button" class="tab-btn button" onclick="switchAuthTab('register')" style="flex:1; background: #eee; color:#333;">რეგისტრაცია</button>
+      </div>
+
+      <!-- შესვლის ფორმა -->
+      <form id="login-form">
+        <h2>სისტემაში შესვლა</h2>
+        <label>ელ-ფოსტა <input type="email" name="loginEmail" required></label>
+        <label>პაროლი <input type="password" name="loginPassword" required></label>
+        <p class="field-error" id="login-error" style="color:red; font-size:13px;"></p>
+        <button type="submit" class="button button-dark full" style="margin-top:10px;">შესვლა</button>
+      </form>
+
+      <!-- რეგისტრაციის ფორმა -->
+      <form id="register-form" style="display: none;">
+        <h2>რეგისტრაცია</h2>
+        <label>სახელი <input type="text" name="regName" required></label>
+        <label>ელ-ფოსტა <input type="email" name="regEmail" required></label>
+        <label>პაროლი <input type="password" name="regPassword" required></label>
+        <p class="field-error" id="reg-error" style="color:red; font-size:13px;"></p>
+        <button type="submit" class="button button-dark full" style="margin-top:10px;">რეგისტრაცია</button>
       </form>
     </div>
   </dialog>
 
   <!-- შეკვეთის გაფორმების დიალოგი -->
-  <dialog id="checkoutDialog" class="form-dialog">
+  <dialog id="checkout-dialog" class="form-dialog">
     <div class="form-dialog-content">
-      <button class="dialog-close" id="closeCheckoutDialog">&times;</button>
+      <button class="close-modal">&times;</button>
       <h2>შეკვეთა</h2>
       <p class="dialog-intro">შეავსეთ მიწოდების დეტალები:</p>
-      <form id="orderForm">
-        <label>სახელი და გვარი <input type="text" id="custName" required></label>
-        <label>ტელეფონი <input type="tel" id="custPhone" required></label>
-        <label>ქალაქი / მისამართი <input type="text" id="custAddress" required></label>
-        <div class="checkout-summary">
-          <span>პროდუქტების ღირებულება:</span>
-          <strong id="summarySubtotal">0 ლარი</strong>
-          <span class="checkout-total-label">სულ გადასახდელი:</span>
-          <strong class="checkout-total" id="summaryTotal">0 ლარი</strong>
+      <form id="checkout-form">
+        <label>სახელი და გვარი <input type="text" name="customerName" required></label>
+        <label>ტელეფონი <input type="tel" name="phone" required></label>
+        <label>ქალაქი / მისამართი <input type="text" name="address" required></label>
+        <label>მიწოდების ტიპი 
+          <select name="delivery" style="width:100%; padding: 8px; margin-top: 5px;">
+            <option value="თბილისი (სტანდარტული - 8 ₾)">თბილისი (სტანდარტული - 8 ₾)</option>
+            <option value="რეგიონები / ფოსტა (12 ₾)">რეგიონები / ფოსტა (12 ₾)</option>
+          </select>
+        </label>
+        <div class="checkout-summary" style="margin: 15px 0;">
+          <span>პროდუქტები: <strong id="checkout-subtotal">0 ₾</strong></span><br>
+          <span>მიწოდება: <strong id="checkout-delivery">8 ₾</strong></span><br>
+          <span class="checkout-total-label" style="font-size: 16px;">სულ გადასახდელი:</span>
+          <strong class="checkout-total" id="checkout-total" style="font-size: 16px;">0 ₾</strong>
         </div>
+        <p class="field-error" id="checkout-error" style="color:red;"></p>
         <button type="submit" class="button button-dark full">შეკვეთის დადასტურება</button>
       </form>
     </div>
