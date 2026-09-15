@@ -199,7 +199,7 @@ function checkAuthStatus() {
     });
 }
 
-// პროფილის პოაპ დროპდაუნ მენიუს მართვა
+// პროფილის პოაპ დროპდაუნ მენიუს და შეკვეთების ისტორიის მართვა
 function setupProfileDropdown() {
     const accountToggle = document.getElementById('account-toggle');
     const profilePopup = document.getElementById('profilePopup');
@@ -209,7 +209,6 @@ function setupProfileDropdown() {
     accountToggle.addEventListener('click', (e) => {
         const user = auth.currentUser;
         if (!user) {
-            // თუ არ არის შესული, ხსნის ავტორიზაციის დიალოგს
             const authDialog = document.getElementById('auth-dialog');
             if(authDialog) {
                 authDialog.style.display = 'block';
@@ -217,26 +216,85 @@ function setupProfileDropdown() {
                 if(overlay) overlay.classList.add('show');
             }
         } else {
-            // თუ შესულია, აჩვენებს/მალავს პროფილის პოაპს
             e.stopPropagation();
             profilePopup.style.display = profilePopup.style.display === 'block' ? 'none' : 'block';
         }
     });
 
-    // პოაპის დახურვა გვერდზე კლიკისას
     document.addEventListener('click', (e) => {
         if (!accountToggle.contains(e.target) && !profilePopup.contains(e.target)) {
             profilePopup.style.display = 'none';
         }
     });
 
-    // ჩემი შეკვეთების ლინკი
+    // ჩემი შეკვეთების ისტორიის გამოტანა ბაზიდან
     const myOrdersLink = document.getElementById('myOrdersLink');
     if (myOrdersLink) {
-        myOrdersLink.addEventListener('click', (e) => {
+        myOrdersLink.addEventListener('click', async (e) => {
             e.preventDefault();
             profilePopup.style.display = 'none';
-            showToast("შეკვეთების ისტორია მალე გააქტიურდება!");
+            
+            const user = auth.currentUser;
+            if (!user) {
+                showToast("გთხოვთ გაიაროთ ავტორიზაცია");
+                return;
+            }
+
+            let ordersModal = document.getElementById('orders-modal');
+            if (!ordersModal) {
+                ordersModal = document.createElement('div');
+                ordersModal.id = 'orders-modal';
+                ordersModal.style.cssText = "display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; padding: 25px; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); z-index: 1000; width: 90%; max-width: 600px; max-height: 80vh; overflow-y: auto;";
+                document.body.appendChild(ordersModal);
+            }
+
+            ordersModal.innerHTML = `<h3 style="margin-bottom: 15px; font-size: 18px; border-bottom: 1px solid #eee; padding-bottom: 10px;">ჩემი შეკვეთების ისტორია</h3><div id="orders-list"><p style="text-align: center; color: #666; padding: 20px;">იტვირთება...</p></div><button onclick="document.getElementById('orders-modal').style.display='none'; document.getElementById('overlay').classList.remove('show');" style="margin-top: 15px; width: 100%; padding: 10px; background: #333; color: white; border: none; border-radius: 6px; cursor: pointer;">დახურვა</button>`;
+            
+            ordersModal.style.display = 'block';
+            if(overlay) overlay.classList.add('show');
+
+            const ordersListContainer = document.getElementById('orders-list');
+
+            try {
+                const snapshot = await db.collection('orders')
+                    .where('userId', '==', user.uid)
+                    .orderBy('createdAt', 'desc')
+                    .get();
+
+                if (snapshot.empty) {
+                    ordersListContainer.innerHTML = `<p style="text-align: center; color: #777; padding: 20px;">თქვენ ჯერ არ გაქვთ გაფორმებული შეკვეთები.</p>`;
+                    return;
+                }
+
+                let html = '';
+                snapshot.forEach(doc => {
+                    const order = doc.data();
+                    const date = order.createdAt ? order.createdAt.toDate().toLocaleString('ka-GE') : 'ახალი';
+                    html += `
+                        <div style="border: 1px solid #eee; border-radius: 8px; padding: 12px; margin-bottom: 12px; background: #fafafa;">
+                            <div style="display: flex; justify-content: space-between; font-size: 13px; color: #666; margin-bottom: 6px;">
+                                <span>თარიღი: ${date}</span>
+                                <strong style="color: #2e7d32;">სტატუსი: ${order.status}</strong>
+                            </div>
+                            <div style="font-size: 14px; margin-bottom: 8px;">
+                                <strong>მიმღები:</strong> ${order.customerName} (${order.phone})<br>
+                                <strong>მისამართი:</strong> ${order.address} (${order.delivery})
+                            </div>
+                            <div style="background: white; padding: 8px; border-radius: 6px; border: 1px solid #eee; margin-bottom: 6px;">
+                                ${order.productDetails}
+                            </div>
+                            <div style="text-align: right; font-weight: 600; font-size: 15px; color: #111;">
+                                სულ: ${order.totalPrice}
+                            </div>
+                        </div>
+                    `;
+                });
+                ordersListContainer.innerHTML = html;
+
+            } catch (error) {
+                console.error("შეკვეთების წამოღების შეცდომა:", error);
+                ordersListContainer.innerHTML = `<p style="text-align: center; color: #d32f2f; padding: 20px;">შეცდომა შეკვეთების ჩატვირთვისას.</p>`;
+            }
         });
     }
 
@@ -256,7 +314,6 @@ function setupProfileDropdown() {
 
 // ღონისძიებების მართვა
 function initEvents() {
-    // კალათის გახსნა
     const cartToggle = document.getElementById('cart-toggle');
     if (cartToggle) {
         cartToggle.addEventListener('click', () => {
@@ -265,7 +322,6 @@ function initEvents() {
         });
     }
 
-    // სრული დახურვის ლოგიკა (ყველა მოდალისთვის და × ღილაკებისთვის)
     function closeAllModals() {
         if(cartPanel) cartPanel.classList.remove('open');
         if(overlay) overlay.classList.remove('show');
@@ -273,8 +329,10 @@ function initEvents() {
         const authDialog = document.getElementById('auth-dialog');
         const checkoutDialog = document.getElementById('checkout-dialog');
         const profilePopup = document.getElementById('profilePopup');
+        const ordersModal = document.getElementById('orders-modal');
         
         if(profilePopup) profilePopup.style.display = 'none';
+        if(ordersModal) ordersModal.style.display = 'none';
         if(authDialog) {
             authDialog.close();
             authDialog.style.display = 'none';
@@ -285,12 +343,10 @@ function initEvents() {
         }
     }
 
-    // overlay-ზე დაჭერით დახურვა
     if(overlay) {
         overlay.addEventListener('click', closeAllModals);
     }
 
-    // უნივერსალური მომართვა ნებისმიერ × ღილაკზე ან დახურვის ელემენტზე
     document.addEventListener('click', (e) => {
         const target = e.target;
         if (target.textContent.trim() === '×' || target.classList.contains('close-modal') || target.classList.contains('close-btn') || target.hasAttribute('data-close')) {
@@ -315,7 +371,6 @@ function initEvents() {
         });
     });
 
-    // შეკვეთის გაფორმების ფანჯრის გახსნა
     const checkoutBtn = document.getElementById('checkout');
     if (checkoutBtn) {
         checkoutBtn.addEventListener('click', () => {
@@ -339,7 +394,7 @@ function initEvents() {
         deliveryInput.addEventListener('change', calculateCheckout);
     }
 
-    // შეკვეთის გაგზავნა ბაზაში
+    // შეკვეთის გაგზავნა ბაზაში (მომხმარებლის აიდითურთ)
     const checkoutForm = document.getElementById('checkout-form');
     if (checkoutForm) {
         checkoutForm.addEventListener('submit', (e) => {
@@ -364,6 +419,8 @@ function initEvents() {
             `).join('');
 
             db.collection("orders").add({
+                userId: auth.currentUser ? auth.currentUser.uid : "guest",
+                userEmail: auth.currentUser ? auth.currentUser.email : formData.get('email') || "მითითებული არ არის",
                 customerName: formData.get('customerName'),
                 phone: formData.get('phone'),
                 address: formData.get('address'),
@@ -380,13 +437,13 @@ function initEvents() {
                 closeAllModals();
                 e.target.reset();
             }).catch(err => {
+                console.error(err);
                 const errEl = document.getElementById('checkout-error');
                 if(errEl) errEl.textContent = "შეცდომა შეკვეთის გაფორმებისას.";
             });
         });
     }
 
-    // ავტორიზაციის ტაბების გადართვა
     window.switchAuthTab = function(tab) {
         const tabBtns = document.querySelectorAll('.tab-btn');
         tabBtns.forEach(b => {
@@ -415,7 +472,6 @@ function initEvents() {
         }
     };
 
-    // მომხმარებლის შესვლა
     const loginForm = document.getElementById('login-form');
     if (loginForm) {
         loginForm.addEventListener('submit', (e) => {
@@ -434,7 +490,6 @@ function initEvents() {
         });
     }
 
-    // მომხმარებლის რეგისტრაცია
     const registerForm = document.getElementById('register-form');
     if (registerForm) {
         registerForm.addEventListener('submit', (e) => {
