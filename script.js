@@ -208,11 +208,11 @@ function initEvents() {
         
         if(authDialog) {
             authDialog.close();
-            authDialog.style.display = 'none'; // დაზღვევისთვის
+            authDialog.style.display = 'none';
         }
         if(checkoutDialog) {
             checkoutDialog.close();
-            checkoutDialog.style.display = 'none'; // დაზღვევისთვის
+            checkoutDialog.style.display = 'none';
         }
     }
 
@@ -224,7 +224,6 @@ function initEvents() {
     // უნივერსალური მომართვა ნებისმიერ × ღილაკზე ან დახურვის ელემენტზე
     document.addEventListener('click', (e) => {
         const target = e.target;
-        // თუ დააკლიკა ღილაკს რომელსაც აწერია '×' ან აქვს შესაბამისი კლასი
         if (target.textContent.trim() === '×' || target.classList.contains('close-modal') || target.classList.contains('close-btn') || target.hasAttribute('data-close')) {
             closeAllModals();
         }
@@ -261,7 +260,7 @@ function initEvents() {
             } else {
                 const authDialog = document.getElementById('auth-dialog');
                 if(authDialog) {
-                    authDialog.style.display = 'block'; // აუცილებელია თუ CSS-ში ნაჩვენები არ არის
+                    authDialog.style.display = 'block';
                     authDialog.showModal();
                     if(overlay) overlay.classList.add('show');
                 }
