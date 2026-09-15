@@ -1,0 +1,3913 @@
+<!DOCTYPE html>
+<html lang="ka">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Makasia — პრემიუმ ტყავის ჩანთები</title>
+
+  <meta
+    name="description"
+    content="Makasia — პრემიუმ ხარისხის ტყავის ჩანთები და აქსესუარები საქართველოში."
+  >
+
+  <meta name="theme-color" content="#17121f">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+  <link
+    href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Noto+Sans+Georgian:wght@400;500;600;700;800&display=swap"
+    rel="stylesheet"
+  >
+
+  <style>
+
+    :root {
+      --bg: #f7f5f2;
+      --bg-soft: #efebe7;
+      --surface: #ffffff;
+      --surface-dark: #19151d;
+
+      --text: #201b24;
+      --text-soft: #716a75;
+      --text-light: #aaa3ad;
+
+      --accent: #8d5f43;
+      --accent-dark: #68432e;
+      --accent-light: #c49b7d;
+
+      --border: rgba(32, 27, 36, .10);
+
+      --green: #16835a;
+      --red: #c73c3c;
+
+      --shadow-sm:
+        0 5px 20px rgba(32, 27, 36, .06);
+
+      --shadow:
+        0 15px 45px rgba(32, 27, 36, .10);
+
+      --shadow-lg:
+        0 30px 80px rgba(32, 27, 36, .16);
+
+      --radius-sm: 12px;
+      --radius: 20px;
+      --radius-lg: 30px;
+
+      --container: 1380px;
+    }
+
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+
+    body {
+      background: var(--bg);
+
+      color: var(--text);
+
+      font-family:
+        "Noto Sans Georgian",
+        "Plus Jakarta Sans",
+        sans-serif;
+
+      min-height: 100vh;
+
+      overflow-x: hidden;
+
+      -webkit-font-smoothing: antialiased;
+    }
+
+
+    button,
+    input,
+    select,
+    textarea {
+      font-family: inherit;
+    }
+
+
+    button {
+      cursor: pointer;
+    }
+
+
+    a {
+      color: inherit;
+    }
+
+
+    img {
+      max-width: 100%;
+    }
+
+
+    ::selection {
+      background: var(--accent);
+      color: white;
+    }
+
+
+    /* =========================================================
+       ANNOUNCEMENT
+    ========================================================= */
+
+    .announcement {
+      width: 100%;
+
+      background: var(--surface-dark);
+
+      color: #fff;
+
+      text-align: center;
+
+      padding: 9px 16px;
+
+      font-size: 12px;
+
+      font-weight: 700;
+
+      letter-spacing: .3px;
+    }
+
+
+    /* =========================================================
+       HEADER
+    ========================================================= */
+
+    .site-header {
+      position: sticky;
+
+      top: 0;
+
+      z-index: 900;
+
+      width: min(100%, var(--container));
+
+      margin: 0 auto;
+
+      padding: 15px 28px;
+
+      display: grid;
+
+      grid-template-columns: 1fr auto 1fr;
+
+      align-items: center;
+
+      gap: 30px;
+
+      background: rgba(255,255,255,.90);
+
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+
+      border-bottom: 1px solid var(--border);
+
+      box-shadow:
+        0 8px 30px rgba(32,27,36,.035);
+
+      transition:
+        background .3s ease,
+        box-shadow .3s ease;
+    }
+
+
+    .brand {
+      display: inline-flex;
+
+      align-items: center;
+
+      justify-self: start;
+
+      text-decoration: none;
+
+      flex-shrink: 0;
+    }
+
+
+    .brand img {
+      display: block;
+
+      width: auto;
+
+      height: 58px;
+
+      max-width: 220px;
+
+      object-fit: contain;
+    }
+
+
+    .site-header nav {
+      display: flex;
+
+      align-items: center;
+
+      justify-content: center;
+
+      gap: 30px;
+    }
+
+
+    .site-header nav a {
+      position: relative;
+
+      color: #403944;
+
+      text-decoration: none;
+
+      font-size: 13px;
+
+      font-weight: 700;
+
+      white-space: nowrap;
+
+      transition: color .25s ease;
+    }
+
+
+    .site-header nav a::after {
+      content: "";
+
+      position: absolute;
+
+      left: 0;
+      right: 0;
+
+      bottom: -7px;
+
+      height: 2px;
+
+      border-radius: 10px;
+
+      background: var(--accent);
+
+      transform: scaleX(0);
+
+      transform-origin: center;
+
+      transition: transform .25s ease;
+    }
+
+
+    .site-header nav a:hover {
+      color: var(--accent);
+    }
+
+
+    .site-header nav a:hover::after {
+      transform: scaleX(1);
+    }
+
+
+    .header-actions {
+      justify-self: end;
+
+      display: flex;
+
+      align-items: center;
+
+      gap: 8px;
+
+      position: relative;
+    }
+
+
+    .mobile-menu-btn {
+      display: none;
+
+      width: 42px;
+      height: 42px;
+
+      border: 1px solid var(--border);
+
+      background: white;
+
+      border-radius: 12px;
+
+      color: var(--text);
+
+      font-size: 20px;
+    }
+
+
+    .account-button,
+    .cart-button {
+      min-height: 42px;
+
+      padding: 9px 15px;
+
+      border-radius: 12px;
+
+      border: 1px solid var(--border);
+
+      background: white;
+
+      color: var(--text);
+
+      font-size: 12px;
+
+      font-weight: 800;
+
+      transition:
+        transform .25s ease,
+        border-color .25s ease,
+        background .25s ease;
+    }
+
+
+    .account-button:hover,
+    .cart-button:hover {
+      transform: translateY(-2px);
+
+      border-color: rgba(141,95,67,.35);
+
+      background: #fbf8f5;
+    }
+
+
+    #cart-count {
+      display: inline-flex;
+
+      align-items: center;
+      justify-content: center;
+
+      min-width: 21px;
+      height: 21px;
+
+      padding: 0 5px;
+
+      margin-left: 4px;
+
+      border-radius: 100px;
+
+      background: var(--surface-dark);
+
+      color: white;
+
+      font-size: 10px;
+
+      font-weight: 800;
+    }
+
+
+    /* =========================================================
+       PROFILE POPUP
+    ========================================================= */
+
+    .profile-dropdown-container {
+      position: relative;
+    }
+
+
+    .profile-popup {
+      position: absolute;
+
+      top: calc(100% + 12px);
+
+      right: 0;
+
+      width: 245px;
+
+      padding: 8px;
+
+      background: white;
+
+      border: 1px solid var(--border);
+
+      border-radius: 17px;
+
+      box-shadow: var(--shadow-lg);
+
+      display: none;
+
+      animation: popupIn .2s ease;
+    }
+
+
+    .profile-popup a {
+      display: flex;
+
+      align-items: center;
+
+      gap: 9px;
+
+      padding: 12px;
+
+      border-radius: 11px;
+
+      color: var(--text);
+
+      text-decoration: none;
+
+      font-size: 12px;
+
+      font-weight: 700;
+
+      transition: background .2s ease;
+    }
+
+
+    .profile-popup a:hover {
+      background: var(--bg);
+    }
+
+
+    .profile-popup hr {
+      border: 0;
+
+      border-top: 1px solid var(--border);
+
+      margin: 5px 0;
+    }
+
+
+    .profile-popup .logout-link {
+      color: var(--red);
+    }
+
+
+    @keyframes popupIn {
+      from {
+        opacity: 0;
+        transform: translateY(-5px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+
+    /* =========================================================
+       MAIN
+    ========================================================= */
+
+    main {
+      width: min(100%, var(--container));
+
+      margin: 0 auto;
+
+      padding: 28px;
+    }
+
+
+    /* =========================================================
+       HERO
+    ========================================================= */
+
+    .hero {
+      min-height: 570px;
+
+      display: grid;
+
+      grid-template-columns: 1.05fr .95fr;
+
+      align-items: stretch;
+
+      overflow: hidden;
+
+      position: relative;
+
+      border-radius: var(--radius-lg);
+
+      background:
+        linear-gradient(
+          120deg,
+          #1d1820 0%,
+          #29212a 52%,
+          #4a332b 100%
+        );
+
+      color: white;
+
+      box-shadow: var(--shadow-lg);
+
+      margin-bottom: 28px;
+    }
+
+
+    .hero::before {
+      content: "";
+
+      position: absolute;
+
+      width: 480px;
+      height: 480px;
+
+      border-radius: 50%;
+
+      background:
+        radial-gradient(
+          circle,
+          rgba(196,155,125,.22),
+          transparent 68%
+        );
+
+      right: 28%;
+
+      top: -220px;
+
+      pointer-events: none;
+    }
+
+
+    .hero-copy {
+      position: relative;
+
+      z-index: 2;
+
+      display: flex;
+
+      flex-direction: column;
+
+      justify-content: center;
+
+      padding: 70px;
+    }
+
+
+    .eyebrow {
+      display: inline-flex;
+
+      align-items: center;
+
+      width: fit-content;
+
+      padding: 7px 12px;
+
+      border-radius: 100px;
+
+      background: rgba(255,255,255,.09);
+
+      border: 1px solid rgba(255,255,255,.13);
+
+      color: #e7d9ce;
+
+      font-size: 10px;
+
+      font-weight: 800;
+
+      letter-spacing: 1.5px;
+
+      text-transform: uppercase;
+
+      margin-bottom: 18px;
+    }
+
+
+    .hero-copy h1 {
+      max-width: 680px;
+
+      font-size: clamp(38px, 5vw, 68px);
+
+      line-height: 1.05;
+
+      letter-spacing: -2.5px;
+
+      font-weight: 800;
+
+      margin-bottom: 22px;
+    }
+
+
+    .hero-copy p:not(.eyebrow) {
+      max-width: 600px;
+
+      color: rgba(255,255,255,.74);
+
+      font-size: 15px;
+
+      line-height: 1.8;
+
+      margin-bottom: 30px;
+    }
+
+
+    .hero-buttons {
+      display: flex;
+
+      flex-wrap: wrap;
+
+      gap: 10px;
+    }
+
+
+    .hero-image {
+      position: relative;
+
+      min-height: 570px;
+
+      overflow: hidden;
+    }
+
+
+    .hero-image::after {
+      content: "";
+
+      position: absolute;
+
+      inset: 0;
+
+      background:
+        linear-gradient(
+          90deg,
+          rgba(29,24,32,.38),
+          transparent 35%
+        );
+    }
+
+
+    .hero-image img {
+      width: 100%;
+      height: 100%;
+
+      object-fit: cover;
+
+      display: block;
+
+      transition: transform 1s ease;
+    }
+
+
+    .hero:hover .hero-image img {
+      transform: scale(1.035);
+    }
+
+
+    .hero-note {
+      position: absolute;
+
+      z-index: 4;
+
+      left: 22px;
+      right: 22px;
+      bottom: 22px;
+
+      padding: 14px 17px;
+
+      border-radius: 15px;
+
+      background: rgba(255,255,255,.88);
+
+      backdrop-filter: blur(12px);
+
+      color: var(--text);
+
+      font-size: 12px;
+
+      line-height: 1.5;
+
+      font-weight: 800;
+
+      box-shadow: var(--shadow);
+    }
+
+
+    /* =========================================================
+       BUTTONS
+    ========================================================= */
+
+    .button {
+      display: inline-flex;
+
+      align-items: center;
+
+      justify-content: center;
+
+      gap: 9px;
+
+      min-height: 46px;
+
+      padding: 12px 20px;
+
+      border: 0;
+
+      border-radius: 13px;
+
+      background: var(--accent);
+
+      color: white;
+
+      text-decoration: none;
+
+      font-size: 12px;
+
+      font-weight: 800;
+
+      box-shadow:
+        0 10px 25px rgba(141,95,67,.24);
+
+      transition:
+        transform .25s ease,
+        background .25s ease,
+        box-shadow .25s ease;
+    }
+
+
+    .button:hover {
+      transform: translateY(-2px);
+
+      background: var(--accent-dark);
+
+      box-shadow:
+        0 14px 30px rgba(141,95,67,.30);
+    }
+
+
+    .button-dark {
+      background: white;
+
+      color: var(--text);
+
+      box-shadow: none;
+    }
+
+
+    .button-dark:hover {
+      background: #f3eee9;
+
+      color: var(--text);
+    }
+
+
+    .button-outline {
+      background: transparent;
+
+      border: 1px solid rgba(255,255,255,.25);
+
+      box-shadow: none;
+    }
+
+
+    .button-outline:hover {
+      background: rgba(255,255,255,.08);
+    }
+
+
+    .full {
+      width: 100%;
+    }
+
+
+    /* =========================================================
+       CATEGORY STRIP
+    ========================================================= */
+
+    .categories {
+      display: grid;
+
+      grid-template-columns:
+        repeat(4, 1fr);
+
+      gap: 10px;
+
+      margin-bottom: 28px;
+    }
+
+
+    .categories .filter {
+      min-height: 76px;
+
+      display: flex;
+
+      align-items: center;
+
+      justify-content: space-between;
+
+      gap: 10px;
+
+      padding: 16px 19px;
+
+      background: white;
+
+      border: 1px solid var(--border);
+
+      border-radius: 16px;
+
+      color: var(--text);
+
+      text-decoration: none;
+
+      font-size: 12px;
+
+      font-weight: 800;
+
+      box-shadow: var(--shadow-sm);
+
+      transition:
+        transform .25s ease,
+        border-color .25s ease,
+        background .25s ease;
+    }
+
+
+    .categories .filter span {
+      color: var(--accent);
+
+      font-size: 17px;
+
+      transition: transform .25s ease;
+    }
+
+
+    .categories .filter:hover {
+      transform: translateY(-3px);
+
+      border-color: rgba(141,95,67,.3);
+
+      background: #fcfaf8;
+    }
+
+
+    .categories .filter:hover span {
+      transform: translateX(4px);
+    }
+
+
+    /* =========================================================
+       SHOP
+    ========================================================= */
+
+    .shop-section {
+      padding: 34px;
+
+      background: rgba(255,255,255,.78);
+
+      border: 1px solid rgba(32,27,36,.07);
+
+      border-radius: var(--radius-lg);
+
+      box-shadow: var(--shadow-sm);
+
+      margin-bottom: 28px;
+    }
+
+
+    .section-heading {
+      display: flex;
+
+      align-items: flex-end;
+
+      justify-content: space-between;
+
+      gap: 20px;
+    }
+
+
+    .section-heading .eyebrow {
+      margin-bottom: 8px;
+
+      background: var(--bg-soft);
+
+      border-color: transparent;
+
+      color: var(--accent);
+    }
+
+
+    .section-heading h2 {
+      font-size: clamp(27px, 3vw, 38px);
+
+      line-height: 1.15;
+
+      letter-spacing: -1px;
+
+      font-weight: 800;
+    }
+
+
+    .section-subtitle {
+      color: var(--text-soft);
+
+      font-size: 12px;
+
+      line-height: 1.6;
+
+      margin-top: 8px;
+    }
+
+
+    /* =========================================================
+       TOOLBAR
+    ========================================================= */
+
+    .toolbar {
+      display: flex;
+
+      align-items: center;
+
+      justify-content: space-between;
+
+      gap: 12px;
+
+      margin: 28px 0;
+    }
+
+
+    .search-field {
+      flex: 1;
+
+      max-width: 410px;
+
+      height: 48px;
+
+      display: flex;
+
+      align-items: center;
+
+      gap: 8px;
+
+      padding: 0 14px;
+
+      background: white;
+
+      border: 1px solid var(--border);
+
+      border-radius: 13px;
+
+      box-shadow: var(--shadow-sm);
+
+      color: var(--text-soft);
+    }
+
+
+    .search-field:focus-within {
+      border-color: rgba(141,95,67,.45);
+
+      box-shadow:
+        0 0 0 4px rgba(141,95,67,.08);
+    }
+
+
+    .search-field input {
+      width: 100%;
+
+      border: 0;
+
+      outline: 0;
+
+      background: transparent;
+
+      color: var(--text);
+
+      font-size: 12px;
+
+      font-weight: 600;
+    }
+
+
+    .search-field input::placeholder {
+      color: #aaa3ad;
+    }
+
+
+    .filters {
+      display: flex;
+
+      align-items: center;
+
+      gap: 7px;
+
+      flex-wrap: wrap;
+    }
+
+
+    .filters .filter {
+      min-height: 40px;
+
+      padding: 8px 13px;
+
+      border-radius: 11px;
+
+      border: 1px solid var(--border);
+
+      background: white;
+
+      color: var(--text-soft);
+
+      font-size: 11px;
+
+      font-weight: 800;
+
+      transition:
+        background .2s ease,
+        color .2s ease,
+        border-color .2s ease;
+    }
+
+
+    .filters .filter:hover,
+    .filters .filter.active {
+      background: var(--text);
+
+      border-color: var(--text);
+
+      color: white;
+    }
+
+
+    /* =========================================================
+       PRODUCT GRID
+    ========================================================= */
+
+    .product-grid {
+      display: grid;
+
+      grid-template-columns:
+        repeat(4, minmax(0, 1fr));
+
+      gap: 16px;
+    }
+
+
+    .product-card {
+      position: relative;
+
+      overflow: hidden;
+
+      display: flex;
+
+      flex-direction: column;
+
+      min-width: 0;
+
+      background: white;
+
+      border: 1px solid var(--border);
+
+      border-radius: 18px;
+
+      box-shadow: var(--shadow-sm);
+
+      transition:
+        transform .35s cubic-bezier(.16,1,.3,1),
+        box-shadow .35s ease,
+        border-color .35s ease;
+    }
+
+
+    .product-card:hover {
+      transform: translateY(-7px);
+
+      box-shadow: var(--shadow);
+
+      border-color: rgba(141,95,67,.18);
+    }
+
+
+    .product-card-image {
+      position: relative;
+
+      overflow: hidden;
+
+      background: #eee9e5;
+
+      aspect-ratio: 1 / 1;
+    }
+
+
+    .product-card img {
+      width: 100%;
+      height: 100%;
+
+      object-fit: cover;
+
+      display: block;
+
+      transition: transform .55s cubic-bezier(.16,1,.3,1);
+    }
+
+
+    .product-card:hover img {
+      transform: scale(1.06);
+    }
+
+
+    .product-info {
+      padding: 16px;
+    }
+
+
+    .product-info h3 {
+      color: var(--text);
+
+      font-size: 14px;
+
+      line-height: 1.4;
+
+      font-weight: 800;
+
+      margin: 5px 0 8px;
+    }
+
+
+    .product-category {
+      color: var(--text-light);
+
+      font-size: 10px;
+
+      font-weight: 700;
+    }
+
+
+    .product-price {
+      color: var(--accent);
+
+      font-size: 17px;
+
+      font-weight: 800;
+    }
+
+
+    .product-actions {
+      display: flex;
+
+      align-items: center;
+
+      gap: 8px;
+
+      margin-top: 13px;
+    }
+
+
+    .product-actions button {
+      flex: 1;
+
+      min-height: 40px;
+
+      border-radius: 11px;
+
+      border: 1px solid var(--border);
+
+      background: white;
+
+      color: var(--text);
+
+      font-size: 11px;
+
+      font-weight: 800;
+
+      transition: all .2s ease;
+    }
+
+
+    .product-actions button:hover {
+      background: var(--text);
+
+      border-color: var(--text);
+
+      color: white;
+    }
+
+
+    .product-actions .add-to-cart {
+      background: var(--accent);
+
+      border-color: var(--accent);
+
+      color: white;
+    }
+
+
+    .product-actions .add-to-cart:hover {
+      background: var(--accent-dark);
+
+      border-color: var(--accent-dark);
+    }
+
+
+    /* =========================================================
+       TRUST BAR
+    ========================================================= */
+
+    .trust-grid {
+      display: grid;
+
+      grid-template-columns:
+        repeat(4, 1fr);
+
+      gap: 10px;
+
+      margin-bottom: 28px;
+    }
+
+
+    .trust-card {
+      padding: 20px;
+
+      display: flex;
+
+      align-items: center;
+
+      gap: 14px;
+
+      background: white;
+
+      border: 1px solid var(--border);
+
+      border-radius: 17px;
+
+      box-shadow: var(--shadow-sm);
+    }
+
+
+    .trust-icon {
+      width: 42px;
+      height: 42px;
+
+      flex-shrink: 0;
+
+      display: grid;
+
+      place-items: center;
+
+      border-radius: 12px;
+
+      background: var(--bg-soft);
+
+      font-size: 19px;
+    }
+
+
+    .trust-card strong {
+      display: block;
+
+      font-size: 11px;
+
+      font-weight: 800;
+
+      margin-bottom: 4px;
+    }
+
+
+    .trust-card span {
+      display: block;
+
+      color: var(--text-soft);
+
+      font-size: 9px;
+
+      line-height: 1.4;
+    }
+
+
+    /* =========================================================
+       STORY
+    ========================================================= */
+
+    .story {
+      display: grid;
+
+      grid-template-columns: 1fr 1fr;
+
+      gap: 40px;
+
+      align-items: center;
+
+      padding: 35px;
+
+      background: var(--surface-dark);
+
+      color: white;
+
+      border-radius: var(--radius-lg);
+
+      margin-bottom: 28px;
+
+      overflow: hidden;
+    }
+
+
+    .story-image {
+      overflow: hidden;
+
+      border-radius: 20px;
+
+      min-height: 360px;
+    }
+
+
+    .story-image img {
+      width: 100%;
+      height: 100%;
+
+      min-height: 360px;
+
+      display: block;
+
+      object-fit: cover;
+
+      transition: transform .7s ease;
+    }
+
+
+    .story:hover .story-image img {
+      transform: scale(1.04);
+    }
+
+
+    .story-copy {
+      padding: 20px;
+    }
+
+
+    .story-copy .eyebrow {
+      background: rgba(255,255,255,.08);
+    }
+
+
+    .story-copy h2 {
+      max-width: 580px;
+
+      font-size: clamp(27px, 3vw, 42px);
+
+      line-height: 1.15;
+
+      letter-spacing: -1px;
+
+      margin-bottom: 20px;
+    }
+
+
+    .story-copy p:not(.eyebrow) {
+      max-width: 580px;
+
+      color: rgba(255,255,255,.66);
+
+      font-size: 13px;
+
+      line-height: 1.9;
+
+      margin-bottom: 22px;
+    }
+
+
+    .text-link {
+      display: inline-flex;
+
+      align-items: center;
+
+      gap: 7px;
+
+      color: #e2c9b7;
+
+      font-size: 12px;
+
+      font-weight: 800;
+
+      text-decoration: none;
+    }
+
+
+    .text-link span {
+      transition: transform .2s ease;
+    }
+
+
+    .text-link:hover span {
+      transform: translateX(4px);
+    }
+
+
+    /* =========================================================
+       NEWSLETTER
+    ========================================================= */
+
+    .newsletter {
+      display: flex;
+
+      align-items: center;
+
+      justify-content: space-between;
+
+      gap: 30px;
+
+      padding: 40px;
+
+      background:
+        linear-gradient(
+          135deg,
+          #d7c0ad,
+          #a98065
+        );
+
+      color: white;
+
+      border-radius: var(--radius-lg);
+
+      box-shadow: var(--shadow);
+
+      margin-bottom: 28px;
+    }
+
+
+    .newsletter .eyebrow {
+      background: rgba(255,255,255,.15);
+
+      border-color: rgba(255,255,255,.15);
+
+      color: white;
+    }
+
+
+    .newsletter h2 {
+      max-width: 620px;
+
+      font-size: clamp(23px, 3vw, 34px);
+
+      line-height: 1.2;
+
+      letter-spacing: -.8px;
+    }
+
+
+    #newsletterForm {
+      width: min(100%, 440px);
+
+      display: flex;
+
+      gap: 8px;
+    }
+
+
+    #newsletterForm input {
+      flex: 1;
+
+      min-width: 0;
+
+      height: 48px;
+
+      padding: 0 15px;
+
+      border: 0;
+
+      outline: 0;
+
+      border-radius: 12px;
+
+      background: rgba(255,255,255,.96);
+
+      color: var(--text);
+
+      font-size: 11px;
+    }
+
+
+    #newsletterForm button {
+      background: var(--text);
+
+      white-space: nowrap;
+    }
+
+
+    /* =========================================================
+       FOOTER
+    ========================================================= */
+
+    footer {
+      width: min(100%, var(--container));
+
+      margin: 0 auto;
+
+      padding: 35px 28px;
+
+      display: flex;
+
+      justify-content: space-between;
+
+      align-items: center;
+
+      gap: 20px;
+
+      color: var(--text-soft);
+
+      font-size: 10px;
+
+      font-weight: 600;
+
+      border-top: 1px solid var(--border);
+    }
+
+
+    footer div {
+      display: flex;
+
+      gap: 18px;
+    }
+
+
+    footer a {
+      color: var(--text);
+
+      text-decoration: none;
+
+      font-weight: 700;
+    }
+
+
+    footer a:hover {
+      color: var(--accent);
+    }
+
+
+    /* =========================================================
+       OVERLAY
+    ========================================================= */
+
+    .overlay {
+      position: fixed;
+
+      inset: 0;
+
+      z-index: 1000;
+
+      background: rgba(15,12,17,.65);
+
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+
+      opacity: 0;
+
+      visibility: hidden;
+
+      transition:
+        opacity .25s ease,
+        visibility .25s ease;
+    }
+
+
+    .overlay.open {
+      opacity: 1;
+
+      visibility: visible;
+    }
+
+
+    /* =========================================================
+       CART
+    ========================================================= */
+
+    .cart-panel {
+      position: fixed;
+
+      z-index: 1001;
+
+      top: 50%;
+      left: 50%;
+
+      width: min(94vw, 550px);
+
+      height: min(84vh, 740px);
+
+      padding: 26px;
+
+      display: flex;
+
+      flex-direction: column;
+
+      background: white;
+
+      border-radius: 24px;
+
+      box-shadow: var(--shadow-lg);
+
+      opacity: 0;
+
+      visibility: hidden;
+
+      transform:
+        translate(-50%, -47%)
+        scale(.96);
+
+      transition:
+        opacity .25s ease,
+        visibility .25s ease,
+        transform .3s cubic-bezier(.16,1,.3,1);
+
+      overflow: hidden;
+    }
+
+
+    .cart-panel.open {
+      opacity: 1;
+
+      visibility: visible;
+
+      transform:
+        translate(-50%, -50%)
+        scale(1);
+    }
+
+
+    .cart-panel .panel-header {
+      flex-shrink: 0;
+
+      display: flex;
+
+      align-items: center;
+
+      justify-content: space-between;
+
+      gap: 15px;
+
+      padding-bottom: 16px;
+
+      margin-bottom: 15px;
+
+      border-bottom: 1px solid var(--border);
+    }
+
+
+    .panel-header h2 {
+      color: var(--text);
+
+      font-size: 20px;
+
+      font-weight: 800;
+    }
+
+
+    .close-btn {
+      width: 38px;
+      height: 38px;
+
+      display: grid;
+
+      place-items: center;
+
+      border: 1px solid var(--border);
+
+      border-radius: 50%;
+
+      background: var(--bg);
+
+      color: var(--text);
+
+      font-size: 20px;
+
+      transition:
+        transform .2s ease,
+        background .2s ease;
+    }
+
+
+    .close-btn:hover {
+      transform: rotate(90deg);
+
+      background: #eee7e1;
+    }
+
+
+    .cart-panel .cart-items {
+      flex: 1;
+
+      min-height: 0;
+
+      overflow-y: auto;
+
+      padding-right: 4px;
+
+      margin-bottom: 15px;
+    }
+
+
+    .cart-panel .cart-items::-webkit-scrollbar {
+      width: 5px;
+    }
+
+
+    .cart-panel .cart-items::-webkit-scrollbar-thumb {
+      background: #d9d2cc;
+
+      border-radius: 20px;
+    }
+
+
+    .empty-cart {
+      padding: 60px 20px;
+
+      text-align: center;
+
+      color: var(--text-soft);
+
+      font-size: 13px;
+    }
+
+
+    .cart-panel .cart-footer {
+      flex-shrink: 0;
+
+      padding-top: 18px;
+
+      border-top: 1px solid var(--border);
+    }
+
+
+    /* =========================================================
+       DIALOGS
+    ========================================================= */
+
+    dialog.form-dialog,
+    dialog.admin-modal {
+      width: min(94vw, 470px);
+
+      max-width: 470px;
+
+      padding: 0;
+
+      margin: auto;
+
+      border: 0;
+
+      border-radius: 24px;
+
+      background: white;
+
+      box-shadow: var(--shadow-lg);
+
+      overflow: hidden;
+    }
+
+
+    dialog.form-dialog::backdrop,
+    dialog.admin-modal::backdrop {
+      background: rgba(15,12,17,.68);
+
+      backdrop-filter: blur(8px);
+    }
+
+
+    .form-dialog-content {
+      position: relative;
+
+      padding: 32px;
+    }
+
+
+    .close-modal {
+      position: absolute;
+
+      top: 18px;
+      right: 18px;
+
+      width: 34px;
+      height: 34px;
+
+      display: grid;
+
+      place-items: center;
+
+      border: 1px solid var(--border);
+
+      border-radius: 50%;
+
+      background: var(--bg);
+
+      color: var(--text);
+
+      font-size: 18px;
+    }
+
+
+    .form-dialog-content label {
+      display: block;
+
+      margin-bottom: 14px;
+
+      color: var(--text);
+
+      font-size: 11px;
+
+      font-weight: 800;
+    }
+
+
+    .form-dialog-content input,
+    .form-dialog-content select {
+      width: 100%;
+
+      height: 46px;
+
+      margin-top: 7px;
+
+      padding: 0 13px;
+
+      border: 1px solid var(--border);
+
+      border-radius: 11px;
+
+      outline: 0;
+
+      background: #fbfaf9;
+
+      color: var(--text);
+
+      font-size: 12px;
+
+      transition:
+        border-color .2s ease,
+        box-shadow .2s ease,
+        background .2s ease;
+    }
+
+
+    .form-dialog-content input:focus,
+    .form-dialog-content select:focus {
+      border-color: rgba(141,95,67,.5);
+
+      background: white;
+
+      box-shadow:
+        0 0 0 4px rgba(141,95,67,.08);
+    }
+
+
+    .field-error {
+      color: var(--red);
+
+      font-size: 11px;
+
+      line-height: 1.5;
+    }
+
+
+    /* =========================================================
+       TOAST
+    ========================================================= */
+
+    .toast {
+      position: fixed;
+
+      right: 22px;
+      bottom: 22px;
+
+      z-index: 2000;
+
+      max-width: calc(100vw - 44px);
+
+      padding: 13px 17px;
+
+      border-radius: 12px;
+
+      background: var(--surface-dark);
+
+      color: white;
+
+      font-size: 11px;
+
+      font-weight: 800;
+
+      box-shadow: var(--shadow-lg);
+
+      transform: translateY(120px);
+
+      opacity: 0;
+
+      transition:
+        transform .35s cubic-bezier(.16,1,.3,1),
+        opacity .3s ease;
+    }
+
+
+    .toast.show {
+      transform: translateY(0);
+
+      opacity: 1;
+    }
+
+
+    /* =========================================================
+       MOBILE BOTTOM NAV
+    ========================================================= */
+
+    .mobile-bottom-nav {
+      display: none;
+    }
+
+
+    /* =========================================================
+       RESPONSIVE
+    ========================================================= */
+
+    @media (max-width: 1100px) {
+
+      .product-grid {
+        grid-template-columns:
+          repeat(3, minmax(0, 1fr));
+      }
+
+
+      .hero-copy {
+        padding: 50px;
+      }
+
+
+      .categories {
+        grid-template-columns:
+          repeat(2, 1fr);
+      }
+
+
+      .trust-grid {
+        grid-template-columns:
+          repeat(2, 1fr);
+      }
+
+    }
+
+
+    @media (max-width: 900px) {
+
+      .site-header {
+        grid-template-columns: auto 1fr auto;
+
+        padding: 12px 18px;
+
+        gap: 10px;
+      }
+
+
+      .mobile-menu-btn {
+        display: grid;
+
+        place-items: center;
+      }
+
+
+      .site-header nav {
+        position: absolute;
+
+        top: 100%;
+
+        left: 0;
+
+        right: 0;
+
+        display: none;
+
+        flex-direction: column;
+
+        gap: 0;
+
+        padding: 10px;
+
+        background: white;
+
+        border-bottom: 1px solid var(--border);
+
+        box-shadow: var(--shadow);
+      }
+
+
+      .site-header nav.active {
+        display: flex;
+      }
+
+
+      .site-header nav a {
+        width: 100%;
+
+        padding: 13px;
+
+        text-align: center;
+
+        border-radius: 10px;
+      }
+
+
+      .site-header nav a:hover {
+        background: var(--bg);
+      }
+
+
+      .site-header nav a::after {
+        display: none;
+      }
+
+
+      .brand {
+        justify-self: center;
+      }
+
+
+      .brand img {
+        height: 50px;
+
+        max-width: 180px;
+      }
+
+
+      .hero {
+        grid-template-columns: 1fr;
+
+        min-height: auto;
+      }
+
+
+      .hero-copy {
+        min-height: 440px;
+
+        padding: 50px 35px;
+
+        text-align: center;
+
+        align-items: center;
+      }
+
+
+      .hero-copy h1 {
+        font-size: 45px;
+      }
+
+
+      .hero-copy p:not(.eyebrow) {
+        max-width: 620px;
+      }
+
+
+      .hero-image {
+        display: none;
+      }
+
+
+      .story {
+        grid-template-columns: 1fr;
+      }
+
+
+      .story-image {
+        min-height: 320px;
+      }
+
+
+      .story-image img {
+        min-height: 320px;
+      }
+
+
+      .newsletter {
+        flex-direction: column;
+
+        align-items: stretch;
+      }
+
+
+      #newsletterForm {
+        width: 100%;
+
+        max-width: none;
+      }
+
+
+      .toolbar {
+        align-items: stretch;
+
+        flex-direction: column;
+      }
+
+
+      .search-field {
+        max-width: none;
+      }
+
+    }
+
+
+    @media (max-width: 650px) {
+
+      body {
+        padding-bottom: 68px;
+      }
+
+
+      .announcement {
+        padding: 8px 12px;
+
+        font-size: 10px;
+      }
+
+
+      .site-header {
+        padding: 9px 12px;
+      }
+
+
+      .brand img {
+        height: 43px;
+
+        max-width: 155px;
+      }
+
+
+      .account-button,
+      .cart-button {
+        min-height: 38px;
+
+        padding: 7px 9px;
+
+        font-size: 10px;
+      }
+
+
+      .mobile-menu-btn {
+        width: 38px;
+        height: 38px;
+
+        font-size: 18px;
+      }
+
+
+      main {
+        padding: 12px;
+      }
+
+
+      .hero {
+        border-radius: 21px;
+
+        margin-bottom: 12px;
+      }
+
+
+      .hero-copy {
+        min-height: 430px;
+
+        padding: 38px 22px;
+      }
+
+
+      .hero-copy h1 {
+        font-size: 38px;
+
+        letter-spacing: -1.5px;
+      }
+
+
+      .hero-copy p:not(.eyebrow) {
+        font-size: 12px;
+
+        line-height: 1.75;
+      }
+
+
+      .hero-buttons {
+        width: 100%;
+
+        flex-direction: column;
+      }
+
+
+      .hero-buttons .button {
+        width: 100%;
+      }
+
+
+      .categories {
+        grid-template-columns:
+          repeat(2, 1fr);
+
+        gap: 7px;
+
+        margin-bottom: 12px;
+      }
+
+
+      .categories .filter {
+        min-height: 62px;
+
+        padding: 12px;
+
+        font-size: 10px;
+
+        border-radius: 13px;
+      }
+
+
+      .shop-section {
+        padding: 17px;
+
+        border-radius: 19px;
+
+        margin-bottom: 12px;
+      }
+
+
+      .section-heading h2 {
+        font-size: 26px;
+      }
+
+
+      .product-grid {
+        grid-template-columns:
+          repeat(2, minmax(0, 1fr));
+
+        gap: 9px;
+      }
+
+
+      .product-card {
+        border-radius: 14px;
+      }
+
+
+      .product-info {
+        padding: 11px;
+      }
+
+
+      .product-info h3 {
+        font-size: 11px;
+
+        margin: 4px 0 7px;
+      }
+
+
+      .product-price {
+        font-size: 14px;
+      }
+
+
+      .product-actions {
+        margin-top: 9px;
+      }
+
+
+      .product-actions button {
+        min-height: 36px;
+
+        padding: 5px;
+
+        font-size: 9px;
+
+        border-radius: 9px;
+      }
+
+
+      .trust-grid {
+        grid-template-columns:
+          repeat(2, 1fr);
+
+        gap: 7px;
+
+        margin-bottom: 12px;
+      }
+
+
+      .trust-card {
+        padding: 13px;
+
+        gap: 8px;
+
+        border-radius: 13px;
+      }
+
+
+      .trust-icon {
+        width: 34px;
+        height: 34px;
+
+        border-radius: 9px;
+
+        font-size: 15px;
+      }
+
+
+      .trust-card strong {
+        font-size: 9px;
+      }
+
+
+      .trust-card span {
+        font-size: 7px;
+      }
+
+
+      .story {
+        padding: 14px;
+
+        gap: 12px;
+
+        border-radius: 19px;
+
+        margin-bottom: 12px;
+      }
+
+
+      .story-image {
+        min-height: 230px;
+
+        border-radius: 14px;
+      }
+
+
+      .story-image img {
+        min-height: 230px;
+      }
+
+
+      .story-copy {
+        padding: 12px 7px 18px;
+      }
+
+
+      .story-copy h2 {
+        font-size: 27px;
+      }
+
+
+      .story-copy p:not(.eyebrow) {
+        font-size: 11px;
+
+        line-height: 1.75;
+      }
+
+
+      .newsletter {
+        padding: 25px 18px;
+
+        border-radius: 19px;
+
+        margin-bottom: 12px;
+      }
+
+
+      .newsletter h2 {
+        font-size: 23px;
+      }
+
+
+      #newsletterForm {
+        flex-direction: column;
+      }
+
+
+      #newsletterForm input,
+      #newsletterForm button {
+        width: 100%;
+
+        min-height: 46px;
+      }
+
+
+      footer {
+        padding: 25px 15px;
+
+        flex-direction: column;
+
+        text-align: center;
+
+        font-size: 9px;
+      }
+
+
+      footer div {
+        gap: 12px;
+      }
+
+
+      .cart-panel {
+        width: calc(100vw - 18px);
+
+        height: calc(100dvh - 18px);
+
+        max-height: none;
+
+        padding: 19px;
+
+        border-radius: 19px;
+      }
+
+
+      .form-dialog-content {
+        padding: 25px 19px;
+      }
+
+
+      .profile-popup {
+        right: -55px;
+
+        width: 225px;
+      }
+
+
+      .mobile-bottom-nav {
+        position: fixed;
+
+        z-index: 850;
+
+        left: 9px;
+        right: 9px;
+        bottom: 9px;
+
+        height: 56px;
+
+        display: grid;
+
+        grid-template-columns:
+          repeat(4, 1fr);
+
+        align-items: center;
+
+        background: rgba(255,255,255,.94);
+
+        backdrop-filter: blur(18px);
+
+        border: 1px solid var(--border);
+
+        border-radius: 17px;
+
+        box-shadow: var(--shadow-lg);
+      }
+
+
+      .mobile-bottom-nav a,
+      .mobile-bottom-nav button {
+        height: 100%;
+
+        display: flex;
+
+        flex-direction: column;
+
+        align-items: center;
+
+        justify-content: center;
+
+        gap: 3px;
+
+        border: 0;
+
+        background: transparent;
+
+        color: var(--text-soft);
+
+        text-decoration: none;
+
+        font-size: 8px;
+
+        font-weight: 800;
+      }
+
+
+      .mobile-bottom-nav span:first-child {
+        font-size: 17px;
+      }
+
+    }
+
+
+    @media (max-width: 380px) {
+
+      .account-button {
+        display: none;
+      }
+
+
+      .hero-copy h1 {
+        font-size: 32px;
+      }
+
+
+      .product-grid {
+        gap: 7px;
+      }
+
+
+      .product-info {
+        padding: 9px;
+      }
+
+
+      .product-info h3 {
+        font-size: 10px;
+      }
+
+
+      .product-price {
+        font-size: 13px;
+      }
+
+    }
+
+  </style>
+</head>
+
+
+<body>
+
+
+  <!-- =======================================================
+       TOP ANNOUNCEMENT
+  ======================================================== -->
+
+  <div class="announcement">
+    ✦ უფასო მიწოდება 150 ₾-ზე ზემოთ მთელი საქართველოს მასშტაბით ✦
+  </div>
+
+
+  <!-- =======================================================
+       HEADER
+  ======================================================== -->
+
+  <header class="site-header">
+
+
+    <button
+      class="mobile-menu-btn"
+      id="mobileMenuBtn"
+      type="button"
+      aria-label="მენიუს გახსნა"
+    >
+      ☰
+    </button>
+
+
+    <a
+      href="#"
+      class="brand"
+      aria-label="Makasia"
+    >
+      <img
+        src="./logo.jpg"
+        alt="Makasia"
+      >
+    </a>
+
+
+    <nav id="mainNav">
+
+      <a
+        href="#shop"
+        class="nav-link"
+      >
+        კოლექცია
+      </a>
+
+      <a
+        href="#story"
+        class="nav-link"
+      >
+        ჩვენ შესახებ
+      </a>
+
+      <a
+        href="#contact"
+        class="nav-link"
+      >
+        კონტაქტი
+      </a>
+
+    </nav>
+
+
+    <div class="header-actions">
+
+
+      <div class="profile-dropdown-container">
+
+
+        <button
+          class="account-button"
+          id="account-toggle"
+          type="button"
+        >
+          შესვლა
+        </button>
+
+
+        <div
+          class="profile-popup"
+          id="profilePopup"
+        >
+
+          <a
+            href="#"
+            id="myOrdersLink"
+          >
+            📦 ჩემი შეკვეთები
+          </a>
+
+
+          <div
+            id="popup-orders-section"
+            style="
+              margin-top:10px;
+              border-top:1px solid #eee;
+              padding-top:10px;
+              display:none;
+              max-height:250px;
+              overflow-y:auto;
+            "
+          >
+
+            <div id="popup-orders-list"></div>
+
+          </div>
+
+
+          <hr>
+
+
+          <a
+            href="#"
+            class="logout-link"
+            id="logoutLink"
+          >
+            🚪 გასვლა
+          </a>
+
+        </div>
+
+      </div>
+
+
+      <button
+        class="cart-button"
+        id="cart-toggle"
+        type="button"
+      >
+        🛍 კალათა
+
+        <span id="cart-count">
+          0
+        </span>
+
+      </button>
+
+    </div>
+
+  </header>
+
+
+
+  <main>
+
+
+    <!-- =====================================================
+         HERO
+    ====================================================== -->
+
+    <section class="hero">
+
+
+      <div class="hero-copy">
+
+
+        <p class="eyebrow">
+          MAKASIA COLLECTION
+        </p>
+
+
+        <h1>
+          ელეგანტურობა
+          ყოველ დეტალში.
+        </h1>
+
+
+        <p>
+          აღმოაჩინეთ Makasia-ს პრემიუმ ხარისხის ტყავის
+          ჩანთების კოლექცია — შექმნილი მათთვის,
+          ვინც ხარისხს, სტილსა და გამორჩეულ დეტალებს აფასებს.
+        </p>
+
+
+        <div class="hero-buttons">
+
+
+          <a
+            href="#shop"
+            class="button"
+          >
+            კოლექციის ნახვა
+            <span>→</span>
+          </a>
+
+
+          <a
+            href="#story"
+            class="button button-outline"
+          >
+            ჩვენი ისტორია
+          </a>
+
+
+        </div>
+
+      </div>
+
+
+      <div class="hero-image">
+
+
+        <img
+          src="https://images.unsplash.com/photo-1584917865442-de89df76afd3?auto=format&fit=crop&w=1400&q=85"
+          alt="Makasia პრემიუმ ჩანთა"
+        >
+
+
+        <div class="hero-note">
+          ✦ პრემიუმ ხარისხი · გამორჩეული დიზაინი · ხელნაკეთი დეტალები
+        </div>
+
+
+      </div>
+
+
+    </section>
+
+
+
+    <!-- =====================================================
+         CATEGORY CARDS
+    ====================================================== -->
+
+    <section class="categories">
+
+
+      <a
+        href="#shop"
+        class="filter"
+        data-category="ყველა"
+      >
+        <span>
+          ყველა ჩანთა
+        </span>
+
+        <span>→</span>
+      </a>
+
+
+      <a
+        href="#shop"
+        class="filter"
+        data-category="ყოველდღიური"
+      >
+        <span>
+          ყოველდღიური
+        </span>
+
+        <span>→</span>
+      </a>
+
+
+      <a
+        href="#shop"
+        class="filter"
+        data-category="საღამოს"
+      >
+        <span>
+          საღამოს
+        </span>
+
+        <span>→</span>
+      </a>
+
+
+      <a
+        href="#shop"
+        class="filter"
+        data-category="ზურგჩანთები"
+      >
+        <span>
+          ზურგჩანთები
+        </span>
+
+        <span>→</span>
+      </a>
+
+
+    </section>
+
+
+
+    <!-- =====================================================
+         TRUST FEATURES
+    ====================================================== -->
+
+    <section class="trust-grid">
+
+
+      <div class="trust-card">
+
+        <div class="trust-icon">
+          🚚
+        </div>
+
+        <div>
+
+          <strong>
+            სწრაფი მიწოდება
+          </strong>
+
+          <span>
+            მთელ საქართველოში
+          </span>
+
+        </div>
+
+      </div>
+
+
+      <div class="trust-card">
+
+        <div class="trust-icon">
+          🔒
+        </div>
+
+        <div>
+
+          <strong>
+            უსაფრთხო შეკვეთა
+          </strong>
+
+          <span>
+            დაცული მომხმარებლის მონაცემები
+          </span>
+
+        </div>
+
+      </div>
+
+
+      <div class="trust-card">
+
+        <div class="trust-icon">
+          ✨
+        </div>
+
+        <div>
+
+          <strong>
+            პრემიუმ ხარისხი
+          </strong>
+
+          <span>
+            შერჩეული მასალები და დეტალები
+          </span>
+
+        </div>
+
+      </div>
+
+
+      <div class="trust-card">
+
+        <div class="trust-icon">
+          💬
+        </div>
+
+        <div>
+
+          <strong>
+            მომხმარებლის მხარდაჭერა
+          </strong>
+
+          <span>
+            ჩვენ ყოველთვის მზად ვართ დაგეხმაროთ
+          </span>
+
+        </div>
+
+      </div>
+
+
+    </section>
+
+
+
+    <!-- =====================================================
+         SHOP
+    ====================================================== -->
+
+    <section
+      class="shop-section"
+      id="shop"
+    >
+
+
+      <div class="section-heading">
+
+
+        <div>
+
+          <p class="eyebrow">
+            კატალოგი
+          </p>
+
+
+          <h2>
+            რჩეული მოდელები
+          </h2>
+
+
+          <p class="section-subtitle">
+            აირჩიეთ თქვენი სტილისთვის შექმნილი მოდელი.
+          </p>
+
+        </div>
+
+
+      </div>
+
+
+
+      <!-- TOOLBAR -->
+
+      <div class="toolbar">
+
+
+        <div class="search-field">
+
+
+          <svg
+            width="16"
+            height="16"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            aria-hidden="true"
+          >
+
+            <circle
+              cx="11"
+              cy="11"
+              r="8"
+            ></circle>
+
+            <line
+              x1="21"
+              y1="21"
+              x2="16.65"
+              y2="16.65"
+            ></line>
+
+          </svg>
+
+
+          <input
+            type="text"
+            id="search-input"
+            placeholder="მოძებნე ჩანთა..."
+            autocomplete="off"
+          >
+
+
+        </div>
+
+
+
+        <div class="filters">
+
+
+          <button
+            class="filter active"
+            data-category="ყველა"
+            type="button"
+          >
+            ყველა
+          </button>
+
+
+          <button
+            class="filter"
+            data-category="ყოველდღიური"
+            type="button"
+          >
+            ყოველდღიური
+          </button>
+
+
+          <button
+            class="filter"
+            data-category="საღამოს"
+            type="button"
+          >
+            საღამოს
+          </button>
+
+
+          <button
+            class="filter"
+            data-category="ზურგჩანთები"
+            type="button"
+          >
+            ზურგჩანთები
+          </button>
+
+
+        </div>
+
+
+      </div>
+
+
+
+      <!-- PRODUCT GRID -->
+
+      <div
+        class="product-grid"
+        id="product-grid"
+      >
+
+        <!-- პროდუქტებს აქ ჩასვამს script.js -->
+
+
+      </div>
+
+
+    </section>
+
+
+
+    <!-- =====================================================
+         STORY
+    ====================================================== -->
+
+    <section
+      class="story"
+      id="story"
+    >
+
+
+      <div class="story-image">
+
+
+        <img
+          src="https://images.unsplash.com/photo-1548036328-c9fa89d128fa?auto=format&fit=crop&w=1200&q=85"
+          alt="Makasia ტყავის ჩანთები"
+        >
+
+
+      </div>
+
+
+      <div class="story-copy">
+
+
+        <p class="eyebrow">
+          ჩვენი ისტორია
+        </p>
+
+
+        <h2>
+          შექმნილია განსაკუთრებული გემოვნებისთვის.
+        </h2>
+
+
+        <p>
+          Makasia აერთიანებს ტრადიციულ ხელოსნობას,
+          თანამედროვე დიზაინსა და ხარისხისადმი განსაკუთრებულ
+          დამოკიდებულებას.
+        </p>
+
+
+        <p>
+          თითოეული მოდელი შექმნილია იმისთვის, რომ ყოველდღიურ
+          ცხოვრებაში პრაქტიკულობასთან ერთად ინდივიდუალური
+          სტილიც გამოხატოს.
+        </p>
+
+
+        <a
+          href="#shop"
+          class="text-link"
+        >
+          კოლექციის ნახვა
+          <span>→</span>
+        </a>
+
+
+      </div>
+
+
+    </section>
+
+
+
+    <!-- =====================================================
+         NEWSLETTER
+    ====================================================== -->
+
+    <section
+      class="newsletter"
+      id="contact"
+    >
+
+
+      <div>
+
+
+        <p class="eyebrow">
+          MAKASIA FAMILY
+        </p>
+
+
+        <h2>
+          მიიღეთ 10%-იანი ფასდაკლება პირველ შენაძენზე.
+        </h2>
+
+
+      </div>
+
+
+      <form id="newsletterForm">
+
+
+        <input
+          type="email"
+          placeholder="თქვენი ელ-ფოსტა..."
+          required
+        >
+
+
+        <button
+          type="submit"
+          class="button"
+        >
+          გამოწერა
+        </button>
+
+
+      </form>
+
+
+    </section>
+
+
+  </main>
+
+
+
+  <!-- =======================================================
+       FOOTER
+  ======================================================== -->
+
+  <footer>
+
+
+    <p>
+      © 2026 Makasia. ყველა უფლება დაცულია.
+    </p>
+
+
+    <div>
+
+      <a href="#">
+        კონფიდენციალურობა
+      </a>
+
+      <a href="#">
+        პირობები
+      </a>
+
+    </div>
+
+
+  </footer>
+
+
+
+  <!-- =======================================================
+       OVERLAY
+  ======================================================== -->
+
+  <div
+    class="overlay"
+    id="overlay"
+  ></div>
+
+
+
+  <!-- =======================================================
+       CART
+  ======================================================== -->
+
+  <aside
+    class="cart-panel"
+    id="cart-panel"
+    aria-label="კალათა"
+  >
+
+
+    <div class="panel-header">
+
+
+      <h2>
+        თქვენი კალათა
+      </h2>
+
+
+      <button
+        class="close-btn"
+        id="closeCart"
+        type="button"
+        aria-label="კალათის დახურვა"
+      >
+        ×
+      </button>
+
+
+    </div>
+
+
+    <div
+      class="cart-items"
+      id="cart-items"
+    >
+
+      <div class="empty-cart">
+        კალათა ცარიელია
+      </div>
+
+    </div>
+
+
+    <div class="cart-footer">
+
+
+      <div
+        style="
+          display:flex;
+          justify-content:space-between;
+          align-items:center;
+          gap:15px;
+          font-size:16px;
+          font-weight:800;
+          margin-bottom:16px;
+        "
+      >
+
+        <span>
+          სულ
+        </span>
+
+
+        <strong
+          id="cart-total"
+          style="color:#8d5f43;"
+        >
+          0 ₾
+        </strong>
+
+
+      </div>
+
+
+      <button
+        class="button full"
+        id="checkout"
+        type="button"
+      >
+        შეკვეთის გაფორმება
+      </button>
+
+
+    </div>
+
+
+  </aside>
+
+
+
+  <!-- =======================================================
+       AUTH DIALOG
+  ======================================================== -->
+
+  <dialog
+    id="auth-dialog"
+    class="form-dialog"
+  >
+
+
+    <div class="form-dialog-content">
+
+
+      <button
+        class="close-modal"
+        id="closeAuthDialog"
+        type="button"
+        aria-label="დახურვა"
+      >
+        ×
+      </button>
+
+
+      <div
+        style="
+          display:flex;
+          gap:7px;
+          margin-bottom:24px;
+          padding-right:35px;
+        "
+      >
+
+
+        <button
+          type="button"
+          class="tab-btn active button"
+          onclick="switchAuthTab('login')"
+          style="flex:1;"
+        >
+          შესვლა
+        </button>
+
+
+        <button
+          type="button"
+          class="tab-btn button"
+          onclick="switchAuthTab('register')"
+          style="
+            flex:1;
+            background:#eee9e5;
+            color:#403944;
+            box-shadow:none;
+          "
+        >
+          რეგისტრაცია
+        </button>
+
+
+      </div>
+
+
+
+      <!-- LOGIN -->
+
+      <form id="login-form">
+
+
+        <h2
+          style="
+            font-size:22px;
+            font-weight:800;
+            color:#201b24;
+            margin-bottom:20px;
+          "
+        >
+          სისტემაში შესვლა
+        </h2>
+
+
+        <label>
+
+          ელ-ფოსტა
+
+          <input
+            type="email"
+            name="loginEmail"
+            required
+            placeholder="example@gmail.com"
+          >
+
+        </label>
+
+
+        <label>
+
+          პაროლი
+
+          <input
+            type="password"
+            name="loginPassword"
+            required
+            placeholder="••••••••"
+          >
+
+        </label>
+
+
+        <p
+          class="field-error"
+          id="login-error"
+        ></p>
+
+
+        <button
+          type="submit"
+          class="button full"
+          style="margin-top:18px;"
+        >
+          შესვლა
+        </button>
+
+
+      </form>
+
+
+
+      <!-- REGISTER -->
+
+      <form
+        id="register-form"
+        style="display:none;"
+      >
+
+
+        <h2
+          style="
+            font-size:22px;
+            font-weight:800;
+            color:#201b24;
+            margin-bottom:20px;
+          "
+        >
+          რეგისტრაცია
+        </h2>
+
+
+        <label>
+
+          სახელი
+
+          <input
+            type="text"
+            name="regName"
+            required
+            placeholder="ნინო ბერიძე"
+          >
+
+        </label>
+
+
+        <label>
+
+          ელ-ფოსტა
+
+          <input
+            type="email"
+            name="regEmail"
+            required
+            placeholder="example@gmail.com"
+          >
+
+        </label>
+
+
+        <label>
+
+          პაროლი
+
+          <input
+            type="password"
+            name="regPassword"
+            required
+            placeholder="••••••••"
+          >
+
+        </label>
+
+
+        <p
+          class="field-error"
+          id="reg-error"
+        ></p>
+
+
+        <button
+          type="submit"
+          class="button full"
+          style="margin-top:18px;"
+        >
+          რეგისტრაცია
+        </button>
+
+
+      </form>
+
+
+    </div>
+
+
+  </dialog>
+
+
+
+  <!-- =======================================================
+       CHECKOUT
+  ======================================================== -->
+
+  <dialog
+    id="checkout-dialog"
+    class="form-dialog"
+  >
+
+
+    <div class="form-dialog-content">
+
+
+      <button
+        class="close-modal"
+        onclick="
+          document.getElementById('checkout-dialog').close()
+        "
+        type="button"
+        aria-label="დახურვა"
+      >
+        ×
+      </button>
+
+
+      <h2
+        style="
+          font-size:22px;
+          font-weight:800;
+          color:#201b24;
+          margin-bottom:8px;
+          padding-right:35px;
+        "
+      >
+        შეკვეთის გაფორმება
+      </h2>
+
+
+      <p
+        class="dialog-intro"
+        style="
+          color:#716a75;
+          font-size:11px;
+          margin-bottom:20px;
+          line-height:1.6;
+        "
+      >
+        შეავსეთ მიწოდების დეტალები:
+      </p>
+
+
+      <form id="checkout-form">
+
+
+        <label>
+
+          სახელი და გვარი
+
+          <input
+            type="text"
+            name="customerName"
+            required
+            placeholder="ნინო ბერიძე"
+          >
+
+        </label>
+
+
+        <label>
+
+          ტელეფონი
+
+          <input
+            type="tel"
+            name="phone"
+            required
+            placeholder="+995 599 00 00 00"
+          >
+
+        </label>
+
+
+        <label>
+
+          ქალაქი / მისამართი
+
+          <input
+            type="text"
+            name="address"
+            required
+            placeholder="თბილისი, რუსთაველის გამზირი 1"
+          >
+
+        </label>
+
+
+        <label>
+
+          მიწოდების ტიპი
+
+          <select name="delivery">
+
+            <option value="თბილისი (სტანდარტული - 8 ₾)">
+              თბილისი — სტანდარტული · 8 ₾
+            </option>
+
+            <option value="რეგიონები / ფოსტა (12 ₾)">
+              რეგიონები / ფოსტა · 12 ₾
+            </option>
+
+          </select>
+
+        </label>
+
+
+        <div
+          class="checkout-summary"
+          style="
+            margin:18px 0;
+            background:#f7f5f2;
+            padding:15px;
+            border-radius:13px;
+            border:1px solid rgba(32,27,36,.08);
+            font-size:11px;
+            line-height:2;
+          "
+        >
+
+
+          <span>
+            პროდუქტები:
+
+            <strong id="checkout-subtotal">
+              0 ₾
+            </strong>
+          </span>
+
+
+          <br>
+
+
+          <span>
+            მიწოდება:
+
+            <strong id="checkout-delivery">
+              8 ₾
+            </strong>
+          </span>
+
+
+          <br>
+
+
+          <div
+            style="
+              margin-top:7px;
+              padding-top:7px;
+              border-top:1px solid #ddd5ce;
+              display:flex;
+              justify-content:space-between;
+              gap:10px;
+            "
+          >
+
+            <span
+              class="checkout-total-label"
+              style="
+                font-weight:800;
+                color:#201b24;
+              "
+            >
+              სულ გადასახდელი:
+            </span>
+
+
+            <strong
+              class="checkout-total"
+              id="checkout-total"
+              style="
+                font-weight:800;
+                color:#8d5f43;
+                font-size:15px;
+              "
+            >
+              0 ₾
+            </strong>
+
+
+          </div>
+
+
+        </div>
+
+
+        <p
+          class="field-error"
+          id="checkout-error"
+        ></p>
+
+
+        <button
+          type="submit"
+          class="button full"
+        >
+          შეკვეთის დადასტურება
+        </button>
+
+
+      </form>
+
+
+    </div>
+
+
+  </dialog>
+
+
+
+  <!-- =======================================================
+       UNIVERSAL MODAL
+  ======================================================== -->
+
+  <dialog
+    id="universalModal"
+    class="admin-modal"
+    style="
+      max-width:400px;
+      text-align:center;
+    "
+  >
+
+
+    <div
+      class="form-dialog-content"
+      style="padding:30px;"
+    >
+
+
+      <div
+        id="uniModalIcon"
+        style="
+          font-size:42px;
+          margin-bottom:15px;
+        "
+      >
+        ✨
+      </div>
+
+
+      <h3
+        id="uniModalTitle"
+        style="
+          font-size:20px;
+          font-weight:800;
+          color:#201b24;
+          margin-bottom:10px;
+        "
+      >
+        შეტყობინება
+      </h3>
+
+
+      <p
+        id="uniModalText"
+        style="
+          color:#716a75;
+          font-size:12px;
+          margin-bottom:25px;
+          line-height:1.6;
+        "
+      ></p>
+
+
+      <div
+        class="modal-actions"
+        id="uniModalActions"
+        style="
+          display:flex;
+          gap:10px;
+        "
+      ></div>
+
+
+    </div>
+
+
+  </dialog>
+
+
+
+  <!-- =======================================================
+       TOAST
+  ======================================================== -->
+
+  <div
+    class="toast"
+    id="toast"
+  >
+    ოპერაცია წარმატებით დასრულდა
+  </div>
+
+
+
+  <!-- =======================================================
+       MOBILE BOTTOM NAV
+  ======================================================== -->
+
+  <nav
+    class="mobile-bottom-nav"
+    aria-label="მობილური ნავიგაცია"
+  >
+
+
+    <a href="#">
+      <span>⌂</span>
+      <span>მთავარი</span>
+    </a>
+
+
+    <a href="#shop">
+      <span>⌕</span>
+      <span>ძიება</span>
+    </a>
+
+
+    <button
+      type="button"
+      onclick="
+        document.getElementById('account-toggle').click()
+      "
+    >
+      <span>♙</span>
+      <span>პროფილი</span>
+    </button>
+
+
+    <button
+      type="button"
+      onclick="
+        document.getElementById('cart-toggle').click()
+      "
+    >
+      <span>🛍</span>
+      <span>კალათა</span>
+    </button>
+
+
+  </nav>
+
+
+
+  <!-- =======================================================
+       FIREBASE
+  ======================================================== -->
+
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+
+
+
+  <!-- =======================================================
+       MOBILE MENU
+  ======================================================== -->
+
+  <script>
+
+    document.addEventListener("DOMContentLoaded", function () {
+
+      const mobileMenuBtn =
+        document.getElementById("mobileMenuBtn");
+
+      const mainNav =
+        document.getElementById("mainNav");
+
+
+      if (!mobileMenuBtn || !mainNav) {
+        return;
+      }
+
+
+      mobileMenuBtn.addEventListener("click", function () {
+
+        mainNav.classList.toggle("active");
+
+      });
+
+
+      mainNav
+        .querySelectorAll("a")
+        .forEach(function (link) {
+
+          link.addEventListener("click", function () {
+
+            mainNav.classList.remove("active");
+
+          });
+
+        });
+
+    });
+
+  </script>
+
+
+
+  <!-- =======================================================
+       EXISTING SCRIPT
+  ======================================================== -->
+
+  <script src="./script.js"></script>
+
+
+</body>
+</html>
