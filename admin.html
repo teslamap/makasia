@@ -132,12 +132,12 @@
     .toast { position: fixed; bottom: 35px; right: 35px; background: linear-gradient(135deg, #10b981, #059669); color: white; padding: 16px 28px; border-radius: 16px; font-weight: 700; box-shadow: 0 15px 30px rgba(16, 185, 129, 0.4); transform: translateY(120px); opacity: 0; transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1); z-index: 1000; font-size: 15px; }
     .toast.show { transform: translateY(0); opacity: 1; }
 
-    dialog.catalog-modal { max-width: 950px; }
+    dialog.catalog-match { max-width: 950px; }
   </style>
 </head>
 <body>
 
-  <!-- ლოგინის სექცია (სანამ ადმინი არ არის შესული) -->
+  <!-- ლოგინის სექცია -->
   <div id="loginSection" class="login-wrapper" style="display: none;">
     <div class="login-card">
       <h2>🔐 ადმინ პანელი</h2>
@@ -147,7 +147,7 @@
     </div>
   </div>
 
-  <!-- ძირითადი ადმინ სექცია (როცა ადმინი შესულია) -->
+  <!-- ძირითადი ადმინ სექცია -->
   <div id="adminSection" class="admin-container" style="display: none;">
     <div class="admin-header">
       <h1>✨ Makasia — მართვის პანელი</h1>
@@ -223,7 +223,7 @@
   </dialog>
 
   <!-- პროდუქტების კატალოგის პოპაპი -->
-  <dialog id="catalogModal" class="admin-modal catalog-modal">
+  <dialog id="catalogModal" class="admin-modal catalog-match" style="max-width: 950px;">
     <div class="modal-content">
       <div class="modal-header">
         <h3>🛍️ პროდუქტების კატალოგი და მართვა</h3>
@@ -251,9 +251,22 @@
     </div>
   </dialog>
 
+  <!-- თანამედროვე დადასტურების მოდალი (Custom Confirm Modal) -->
+  <dialog id="confirmModal" class="admin-modal" style="max-width: 400px; text-align: center;">
+    <div class="modal-content" style="padding: 30px;">
+      <div style="font-size: 42px; margin-bottom: 15px;">⚠️</div>
+      <h3 id="confirmTitle" style="font-size: 20px; font-weight: 800; color: #312e81; margin-bottom: 10px;">დადასტურება</h3>
+      <p id="confirmText" style="color: #64748b; font-size: 14px; margin-bottom: 25px;">ნამდვილად გსურთ ამ მოქმედების შესრულება?</p>
+      <div class="modal-actions" style="margin-top: 0;">
+        <button type="button" class="btn" style="background: #e2e8f0; color: #475569;" id="confirmCancelBtn">გაუქმება</button>
+        <button type="button" class="btn btn-glow-red" id="confirmOkBtn">წაშლა</button>
+      </div>
+    </div>
+  </dialog>
+
   <div class="toast" id="toast">✨ ოპერაცია წარმატებით დასრულდა!</div>
 
-  <!-- Firebase SDK-ები (მხოლოდ Firestore-სთვის) -->
+  <!-- Firebase SDK-ები -->
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
 
@@ -273,7 +286,7 @@
 
     const db = firebase.firestore();
 
-    // 🔑 აქ შეგიძლია ნებისმიერ დროს შეცვალო ადმინის ფიქსირებული პაროლი:
+    // 🔑 ადმინის ფიქსირებული პაროლი
     const ADMIN_SECRET_PASSWORD = "MakasiaAdmin2026!";
 
     const loginSection = document.getElementById('loginSection');
@@ -282,7 +295,6 @@
     const adminLogout = document.getElementById('adminLogout');
     const loginError = document.getElementById('loginError');
 
-    // გვერდის ჩატვირთვისას შემოწმება (იუზერების სესიას არ ეხება)
     window.addEventListener('DOMContentLoaded', () => {
         if (sessionStorage.getItem('isAdminLoggedIn') === 'true') {
             loginSection.style.display = 'none';
@@ -295,7 +307,6 @@
         }
     });
 
-    // შესვლის ღილაკის ლოგიკა
     if (loginBtn) {
         loginBtn.addEventListener('click', () => {
             const passwordInput = document.getElementById('adminPassword');
@@ -314,7 +325,6 @@
         });
     }
 
-    // გასვლა პანელიდან
     if (adminLogout) {
         adminLogout.addEventListener('click', () => {
             sessionStorage.removeItem('isAdminLoggedIn');
@@ -345,7 +355,6 @@
         productModal.close();
     }
 
-    // ფოტოს ატვირთვა ImgBB სერვისზე
     async function uploadImageIfNeeded() {
         const fileInput = document.getElementById('prodImageFile');
         const urlInput = document.getElementById('prodImage').value;
@@ -420,7 +429,7 @@
                     <td>
                       <div style="display: flex; gap: 8px;">
                         <button class="btn btn-glow-blue" style="padding: 6px 12px; font-size: 12px; box-shadow: none; width: auto;" onclick="openEditModal('${doc.id}', '${escapeHtml(p.name)}', ${p.price}, '${p.category}', '${p.image}')">✏️</button>
-                        <button class="btn btn-glow-red" style="padding: 6px 12px; font-size: 12px; box-shadow: none; width: auto;" onclick="deleteProduct('${doc.id}')">🗑️</button>
+                        <button class="btn btn-glow-red" style="padding: 6px 12px; font-size: 12px; box-shadow: none; width: auto;" onclick="confirmDeleteProduct('${doc.id}')">🗑️</button>
                       </div>
                     </td>
                 `;
@@ -445,12 +454,13 @@
         productModal.showModal();
     }
 
-    window.deleteProduct = function(id) {
-        if(confirm("ნამდვილად გსურთ პროდუქტის წაშლა?")) {
+    // თანამედროვე პოაპი პროდუქტის წაშლისთვის
+    window.confirmDeleteProduct = function(id) {
+        showCustomConfirm("პროდუქტის წაშლა", "ნამდვილად გსურთ ამ პროდუქტის წაშლა?", () => {
             db.collection("products").doc(id).delete().then(() => {
                 showToast("პროდუქტი წარმატებით წაიშალა!");
             });
-        }
+        });
     };
 
     function loadOrders() {
@@ -473,7 +483,7 @@
                     <td><strong style="color: #059669; font-size: 15px;">${o.totalPrice} ₾</strong></td>
                     <td><span style="background: linear-gradient(135deg, #fef08a, #fde047); color: #854d0e; padding: 6px 14px; border-radius: 20px; font-size: 12px; font-weight: 800; box-shadow: 0 2px 5px rgba(0,0,0,0.05);">${o.status || 'ახალი'}</span></td>
                     <td>
-                      <button class="btn btn-glow-red" style="padding: 6px 12px; font-size: 12px; box-shadow: none; width: auto;" onclick="deleteOrder('${doc.id}')">🗑️ წაშლა</button>
+                      <button class="btn btn-glow-red" style="padding: 6px 12px; font-size: 12px; box-shadow: none; width: auto;" onclick="confirmDeleteOrder('${doc.id}')">🗑️ წაშლა</button>
                     </td>
                 `;
                 adminOrdersTable.appendChild(tr);
@@ -481,16 +491,44 @@
         });
     }
 
-    // შეკვეთის წაშლის ფუნქცია
-    window.deleteOrder = function(id) {
-        if(confirm("ნამდვილად გსურთ ამ შეკვეთის წაშლა?")) {
+    // თანამედროვე პოაპი შეკვეთის წაშლისთვის
+    window.confirmDeleteOrder = function(id) {
+        showCustomConfirm("შეკვეთის წაშლა", "ნამდვილად გსურთ ამ შეკვეთის წაშლა?", () => {
             db.collection("orders").doc(id).delete().then(() => {
                 showToast("შეკვეთა წარმატებით წაიშალა!");
             }).catch((error) => {
                 alert("შეცდომა წაშლისას: " + error.message);
             });
-        }
+        });
     };
+
+    // დამხმარე ფუნქცია თანამედროვე პოაპის გამოსაძახებლად
+    function showCustomConfirm(title, text, onConfirm) {
+        const modal = document.getElementById('confirmModal');
+        document.getElementById('confirmTitle').textContent = title;
+        document.getElementById('confirmText').textContent = text;
+        
+        const okBtn = document.getElementById('confirmOkBtn');
+        const cancelBtn = document.getElementById('confirmCancelBtn');
+
+        // ძველი ივენთების გაწმენდა რომ ორმაგად არ აირთოს
+        const newOkBtn = okBtn.cloneNode(true);
+        okBtn.parentNode.replaceChild(newOkBtn, okBtn);
+
+        const newCancelBtn = cancelBtn.cloneNode(true);
+        cancelBtn.parentNode.replaceChild(newCancelBtn, cancelBtn);
+
+        newOkBtn.addEventListener('click', () => {
+            modal.close();
+            onConfirm();
+        });
+
+        newCancelBtn.addEventListener('click', () => {
+            modal.close();
+        });
+
+        modal.showModal();
+    }
 
     function showToast(msg) {
         const toast = document.getElementById('toast');
