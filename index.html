@@ -1,162 +1,173 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="ka">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="Feshven Bags — თანამედროვე ჩანთების ონლაინ მაღაზია">
-  <title>Feshven Bags — შენი ყოველდღიური სტილი</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Makasia — ტყავის ხელჩანთები და აქსესუარები</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@600;700&family=Noto+Sans+Georgian:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css">
-  <style>
-    /* თანამედროვე ავტორიზაციის მოდალის (შესვლა/რეგისტრაცია) სტილები */
-    #auth-dialog { border: none; border-radius: 24px; padding: 36px 32px 32px; box-shadow: 0 10px 40px rgba(0,0,0,0.15); max-width: 400px; width: 90%; background: #ffffff; position: relative; margin: auto; }
-    #auth-dialog::backdrop { background: rgba(0,0,0,0.4); backdrop-filter: blur(5px); }
-    #auth-dialog .dialog-close { position: absolute; top: 20px; right: 20px; background: #f5f5f5; border: none; width: 32px; height: 32px; border-radius: 50%; font-size: 20px; line-height: 1; cursor: pointer; display: flex; align-items: center; justify-content: center; color: #555; transition: 0.3s; }
-    #auth-dialog .dialog-close:hover { background: #e5e5e5; color: #000; }
-    
-    .auth-tabs { display: flex; background: #f5f5f5; border-radius: 14px; padding: 4px; margin-bottom: 24px; }
-    .tab-btn { flex: 1; background: transparent; border: none; font-size: 15px; font-weight: 600; cursor: pointer; color: #777; padding: 10px; border-radius: 10px; transition: 0.3s ease; }
-    .tab-btn.active { color: #111; background: #ffffff; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
-    
-    .auth-form label { display: block; margin-bottom: 16px; font-size: 13px; font-weight: 600; color: #444; }
-    .auth-form input { width: 100%; padding: 14px 16px; margin-top: 8px; border: 1.5px solid #eaeaea; border-radius: 14px; box-sizing: border-box; font-size: 15px; background: #fafafa; transition: 0.3s ease; outline: none; font-family: inherit; }
-    .auth-form input:focus { border-color: #111; background: #ffffff; box-shadow: 0 0 0 3px rgba(17,17,17,0.05); }
-    .auth-form button[type="submit"] { border-radius: 14px; padding: 14px; font-size: 15px; font-weight: 600; margin-top: 10px; transition: 0.3s; }
-    .field-error { color: #d32f2f; font-size: 13px; margin-top: 5px; }
-  </style>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400..800;1,9..40,400..800&family=Noto+Sans+Georgian:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,600;0,700;1,600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <div class="announcement">უფასო მიწოდება საქართველოში 150 ₾-ზე მეტი შეკვეთისას</div>
-  <header class="site-header">    
-    <a class="brand" href="#home" aria-label="Feshven Bags მთავარი გვერდი">FESHვენ<span>bags</span></a>    
-    <nav aria-label="მთავარი მენიუ">      
-      <a href="#shop">კატალოგი</a>
-      <a href="#about">ჩვენ შესახებ</a>
+
+  <div class="announcement">უფასო მიწოდება 150 ლარზე ზემოთ მთელი საქართველოს მასშტაბით</div>
+
+  <header class="site-header">
+    <a href="#" class="brand">Maka<span>sia</span></a>
+    <nav>
+      <a href="#shop">კოლექცია</a>
+      <a href="#story">ჩვენ შესახებ</a>
       <a href="#contact">კონტაქტი</a>
-    </nav>    
-    <div class="header-actions">      
-      <button class="icon-button" id="search-toggle" aria-label="ძიება">⌕</button>      
-      <button class="account-button" id="account-toggle">შესვლა</button>      
-      <button class="cart-button" id="cart-toggle" aria-label="კალათის გახსნა">კალათა <span id="cart-count">0</span></button>    </div>  
+    </nav>
+    <div class="header-actions">
+      <button class="account-button" id="openAuthBtn">შესვლა</button>
+      <button class="cart-button" id="cartBtn">კალათა <span id="cartCount">0</span></button>
+    </div>
   </header>
 
-  <main id="home">
-    <section class="hero">      
-      <div class="hero-copy">        
-        <p class="eyebrow">ახალი კოლექცია · 2026</p>        
-        <h1>ჩანთა, რომელიც შენს ტემპს მიჰყვება.</h1>        
-        <p>გაალამაზე ყოველდღიურობა გამორჩეული, მსუბუქი და პრაქტიკული მოდელებით.</p>        
-        <a class="button button-dark" href="#shop">აღმოაჩინე კოლექცია <span>→</span></a>      
-      </div>      
-      <div class="hero-image"><img src="https://images.unsplash.com/photo-1584917865442-de89df76afd3?auto=format&fit=crop&w=1200&q=85" alt="მინიმალისტური ტყავის ჩანთა"></div>      
-      <div class="hero-note"><strong>ხელით შერჩეული</strong><br>ხარისხი და დიზაინი ერთ სივრცეში</div>    
+  <main>
+    <section class="hero">
+      <div class="hero-copy">
+        <p class="eyebrow">ხელნაკეთი კოლექცია</p>
+        <h1>ელეგანტურობა ყოველ დეტალში</h1>
+        <p>აღმოაჩინეთ Makasia-ს პრემიუმი ხარისხის ტყავის ჩანთები, რომლებიც შექმნილია თქვენი ყოველდღიური სტილის განსამტკიცებლად.</p>
+        <a href="#shop" class="button button-dark">კოლექციის ნახვა <span>→</span></a>
+      </div>
+      <div class="hero-image">
+        <img src="https://images.unsplash.com/photo-1584917865442-de89df76afd3?auto=format&fit=crop&w=1200&q=80" alt="Makasia Handbag">
+        <div class="hero-note">პრემიუმ ხარისხის ნატურალური ტყავი და გამორჩეული დიზაინი.</div>
+      </div>
     </section>
 
-    <section class="categories" aria-label="კატეგორიები">      
-      <a href="#shop" data-category-link="ყველა">ყველა ჩანთა <span>→</span></a>      
-      <a href="#shop" data-category-link="ყოველდღიური">ყოველდღიური <span>→</span></a>      
-      <a href="#shop" data-category-link="საღამოს">საღამოს <span>→</span></a>      
-      <a href="#shop" data-category-link="ზურგჩანთა">ზურგჩანთა <span>→</span></a>    
-    </section>
+    <!-- კატეგორიები (ფოტო 2-ის სტილში, დახვეწილი ისრებით) -->
+    <div class="categories">
+      <a href="#shop" data-cat="all">ყველა ჩანთა <span>→</span></a>
+      <a href="#shop" data-cat="everyday">ყოველდღიური <span>→</span></a>
+      <a href="#shop" data-cat="evening">სამოსელო / საღამოს <span>→</span></a>
+      <a href="#shop" data-cat="backpack">ზურგჩანთები <span>→</span></a>
+    </div>
 
-    <section class="shop-section" id="shop">      
+    <section class="shop-section" id="shop">
       <div class="section-heading">
-        <div><p class="eyebrow">შენი რჩეულები</p><h2>პოპულარული მოდელები</h2></div>
-        <p id="product-result" aria-live="polite"></p>
-      </div>      
-      <div class="toolbar">        
-        <label class="search-field"><span>⌕</span><input id="search-input" type="search" placeholder="მოძებნე ჩანთა"></label>        
-        <div class="filters" role="group" aria-label="კატეგორიის ფილტრი">          
-          <button class="filter active" data-category="ყველა">ყველა</button>
-          <button class="filter" data-category="ყოველდღიური">ყოველდღიური</button>
-          <button class="filter" data-category="საღამოს">საღამოს</button>
-          <button class="filter" data-category="ზურგჩანთა">ზურგჩანთა</button>        
-        </div>      
-      </div>      
-      <div class="product-grid" id="product-grid"></div>    
+        <div>
+          <p class="eyebrow">კატალოგი</p>
+          <h2>რჩეული მოდელები</h2>
+        </div>
+        <p id="product-result">იტვირთება...</p>
+      </div>
+
+      <div class="toolbar">
+        <div class="search-field">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+          <input type="text" id="searchInput" placeholder="მოძებნე ჩანთა...">
+        </div>
+        <div class="filters" id="filterContainer">
+          <button class="filter active" data-filter="all">ყველა</button>
+          <button class="filter" data-filter="everyday">ყოველდღიური</button>
+          <button class="filter" data-filter="evening">საღამოს</button>
+          <button class="filter" data-filter="backpack">ზურგჩანთები</button>
+        </div>
+      </div>
+
+      <div class="product-grid" id="productGrid">
+        <!-- პროდუქტები იტვირთება დინამიკურად JS-ით -->
+      </div>
     </section>
 
-    <section class="story" id="about">
-      <div class="story-image"><img src="https://images.unsplash.com/photo-1553062407-98eeb64c6a62?auto=format&fit=crop&w=1000&q=85" alt="ჩანთის დეტალი"></div>
-      <div class="story-copy"><p class="eyebrow">Feshven-ის ფილოსოფია</p><h2>სტილი არაა სეზონური. ის შენია.</h2><p>ვარჩევთ ჩანთებს, რომლებიც ლამაზად გამოიყურება და რეალურ ცხოვრებაში მართლა გეხმარება. ნაკლები ზედმეტი, მეტი ხასიათი.</p><a class="text-link" href="#contact">გაიცანი ჩვენთან <span>→</span></a></div>
+    <section class="story" id="story">
+      <div class="story-image">
+        <img src="https://images.unsplash.com/photo-1548036328-c9fa89d128fa?auto=format&fit=crop&w=1000&q=80" alt="Makasia Workshop">
+      </div>
+      <div class="story-copy">
+        <p class="eyebrow">ჩვენი ხელნაკეთი ისტორია</p>
+        <h2>შექმნილია განსაკუთრებული გემოვნებისთვის</h2>
+        <p>Makasia აერთიანებს ტრადიციულ ხელოსნობასა და თანამედროვე ტენდენციებს. თითოეული მოდელი მზადდება მაქსიმალური სიზუსტითა და სიყვარულით.</p>
+        <a href="#shop" class="text-link">გაიგეთ მეტი ბრენდის შესახებ <span>→</span></a>
+      </div>
     </section>
 
     <section class="newsletter" id="contact">
-      <div><p class="eyebrow">იყავი პირველი</p><h2>ახალი ამბები და სპეციალური შეთავაზებები</h2></div>
-      <form id="newsletter-form"><label class="sr-only" for="email">ელფოსტა</label><input id="email" type="email" required placeholder="შენი ელფოსტა"><button class="button button-light" type="submit">გამოწერა</button></form>
-      <p class="form-message" id="form-message" aria-live="polite"></p>
-    </section>  
+      <div>
+        <p class="eyebrow">გახდი Makasia ოჯახის წევრი</p>
+        <h2>მიიღეთ 10%-იანი ფასდაკლება პირველ შენაძენზე</h2>
+      </div>
+      <form id="newsletterForm">
+        <input type="email" placeholder="შეიყვანეთ თქვენი ელ-ფოსტა..." required>
+        <button type="submit" class="button">გამოწერა</button>
+      </form>
+      <div class="form-message" id="newsletterMsg"></div>
+    </section>
   </main>
 
   <footer>
-    <a class="brand" href="#home">FESHვენ<span>bags</span></a>
-    <p>© 2026 Feshven Bags. შექმნილია თბილისში.</p>
-    <div><a href="#shop">მაღაზია</a><a href="#about">ჩვენ შესახებ</a><a href="admin.html">ადმინ პანელი</a></div>
+    <p>&copy; 2026 Makasia. ყველა უფლება დაცულია.</p>
+    <div>
+      <a href="admin.html">ადმინ პანელი</a>
+      <a href="#">კონფიდენციალურობა</a>
+      <a href="#">პირობები</a>
+    </div>
   </footer>
 
-  <aside class="cart-panel" id="cart-panel" aria-label="კალათა" aria-hidden="true">
-    <div class="panel-header"><h2>შენი კალათა</h2><button class="close-button" data-close="cart-panel" aria-label="დახურვა">×</button></div>
-    <div id="cart-items" class="cart-items"></div>
+  <!-- კალათის გვერდითი პანელი -->
+  <div class="overlay" id="overlay"></div>
+  <aside class="cart-panel" id="cartPanel">
+    <div class="panel-header">
+      <h2>თქვენი კალათა</h2>
+      <button class="close-button" id="closeCart">&times;</button>
+    </div>
+    <div class="cart-items" id="cartItems">
+      <div class="empty-cart">კალათა ცარიელია</div>
+    </div>
     <div class="cart-footer">
-      <div><span>ჯამი</span><strong id="cart-total">0 ₾</strong></div>
-      <button class="button button-dark full" id="checkout">შეკვეთის გაფორმება</button>
+      <div><span>სულ:</span> <strong id="cartTotalPrice">0 ლარი</strong></div>
+      <button class="button button-dark full" id="checkoutBtn">შეკვეთის გაფორმება</button>
     </div>
   </aside>
 
-  <div class="overlay" id="overlay"></div>  
-  
-  <dialog id="product-dialog"><button class="close-button dialog-close" aria-label="დახურვა">×</button><div id="dialog-content"></div></dialog>  
-  
-  <dialog class="form-dialog" id="auth-dialog">
-    <button class="close-button dialog-close" aria-label="დახურვა">×</button>
-    <div id="auth-content">
-      <div class="auth-tabs">
-        <button class="tab-btn active" onclick="switchAuthTab('login')">შესვლა</button>
-        <button class="tab-btn" onclick="switchAuthTab('register')">რეგისტრაცია</button>
-      </div>
-      
-      <form id="login-form" class="auth-form">
-        <label>ელფოსტა<input type="email" name="loginEmail" required></label>
-        <label>პაროლი<input type="password" name="loginPassword" required></label>
-        <button class="button button-dark full" type="submit">შესვლა</button>
-        <p id="login-error" class="field-error"></p>
-      </form>
+  <!-- პროდუქტის დეტალური დიალოგი -->
+  <dialog id="productDialog">
+    <button class="dialog-close" id="closeDialog">&times;</button>
+    <div class="dialog-product" id="dialogContent"></div>
+  </dialog>
 
-      <form id="register-form" class="auth-form" style="display:none;">
-        <label>სახელი<input type="text" name="regName" required></label>
-        <label>ელფოსტა<input type="email" name="regEmail" required></label>
-        <label>პაროლი<input type="password" name="regPassword" required></label>
-        <button class="button button-dark full" type="submit">რეგისტრაცია</button>
-        <p id="reg-error" class="field-error"></p>
+  <!-- ავტორიზაციის დიალოგი -->
+  <dialog id="authDialog" class="form-dialog">
+    <div class="form-dialog-content">
+      <button class="dialog-close" id="closeAuthDialog">&times;</button>
+      <h2>სისტემაში შესვლა</h2>
+      <p class="dialog-intro">შეიყვანეთ თქვენი მონაცემები პროფილისა და შეკვეთების სამართავად.</p>
+      <form id="authForm">
+        <label>ელ-ფოსტა <input type="email" id="authEmail" required></label>
+        <label>პაროლი <input type="password" id="authPassword" required></label>
+        <p class="field-error" id="authError"></p>
+        <button type="submit" class="button button-dark full">შესვლა</button>
       </form>
     </div>
   </dialog>
 
-  <dialog class="form-dialog" id="checkout-dialog">
-    <button class="close-button dialog-close" aria-label="დახურვა">×</button>
+  <!-- შეკვეთის გაფორმების დიალოგი -->
+  <dialog id="checkoutDialog" class="form-dialog">
     <div class="form-dialog-content">
-      <p class="eyebrow">შეკვეთის გაფორმება</p>
-      <h2>მიწოდების დეტალები</h2>
-      <form id="checkout-form" novalidate>
-        <label>სახელი და გვარი<input name="customerName" required autocomplete="name"></label>
-        <label>ტელეფონი<input name="phone" required inputmode="tel" placeholder="5XX XX XX XX"></label>
-        <label>მიწოდების მისამართი<textarea name="address" required rows="3" placeholder="ქალაქი, ქუჩა, ნომერი"></textarea></label>
-        <label>მიწოდების მეთოდი<select name="delivery"><option value="კურიერი თბილისში">კურიერი თბილისში — 8 ₾</option><option value="საქართველოს ფოსტა">საქართველოს ფოსტა — 12 ₾</option></select></label>
-        <div class="checkout-summary"><span>პროდუქცია</span><strong id="checkout-subtotal"></strong><span>მიწოდება</span><strong id="checkout-delivery"></strong><span class="checkout-total-label">ჯამი</span><strong class="checkout-total" id="checkout-total"></strong></div>
-        <button class="button button-dark full" type="submit">შეკვეთის დადასტურება</button>
-        <p class="field-error" id="checkout-error" aria-live="polite"></p>
+      <button class="dialog-close" id="closeCheckoutDialog">&times;</button>
+      <h2>შეკვეთა</h2>
+      <p class="dialog-intro">შეავსეთ მიწოდების დეტალები:</p>
+      <form id="orderForm">
+        <label>სახელი და გვარი <input type="text" id="custName" required></label>
+        <label>ტელეფონი <input type="tel" id="custPhone" required></label>
+        <label>ქალაქი / მისამართი <input type="text" id="custAddress" required></label>
+        <div class="checkout-summary">
+          <span>პროდუქტების ღირებულება:</span>
+          <strong id="summarySubtotal">0 ლარი</strong>
+          <span class="checkout-total-label">სულ გადასახდელი:</span>
+          <strong class="checkout-total" id="summaryTotal">0 ლარი</strong>
+        </div>
+        <button type="submit" class="button button-dark full">შეკვეთის დადასტურება</button>
       </form>
     </div>
-  </dialog>  
+  </dialog>
 
-  <div class="toast" id="toast" role="status"></div>  
-
-  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
-
+  <div class="toast" id="toast">ოპერაცია წარმატებით დასრულდა</div>
   <script src="script.js"></script>
 </body>
 </html>
