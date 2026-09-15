@@ -6,191 +6,209 @@
   <title>Makasia — ადმინ პანელი</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Noto+Sans+Georgian:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400..800;1,9..40,400..800&family=Noto+Sans+Georgian:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./style.css">
   <style>
-    .admin-container { max-width: 1200px; margin: 40px auto; padding: 0 24px; }
-    .admin-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; border-bottom: 1px solid var(--line); padding-bottom: 20px; }
-    .admin-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-bottom: 30px; }
-    .stat-card { background: #fff; padding: 24px; border-radius: var(--radius); border: 1px solid var(--line); box-shadow: var(--shadow); }
-    .stat-card h3 { font-size: 14px; color: var(--muted); margin: 0 0 8px; }
-    .stat-card .number { font-size: 28px; font-weight: 700; font-family: "DM Sans", sans-serif; color: var(--accent); }
-    .orders-table { width: 100%; border-collapse: collapse; background: #fff; border-radius: var(--radius); overflow: hidden; border: 1px solid var(--line); box-shadow: var(--shadow); }
-    .orders-table th, .orders-table td { padding: 16px; text-align: left; border-bottom: 1px solid var(--line); font-size: 13px; }
-    .orders-table th { background: var(--cream); font-weight: 700; }
-    .badge { padding: 4px 10px; border-radius: 20px; font-size: 11px; font-weight: 700; background: #e2e8f0; }
-    .badge.new { background: #fef3c7; color: #d97706; }
-    .badge.completed { background: #d1fae5; color: #059669; }
-    .login-box { max-width: 420px; margin: 100px auto; background: #fff; padding: 40px; border-radius: var(--radius); border: 1px solid var(--line); box-shadow: var(--shadow); }
+    body { background-color: #f8f9fa; }
+    .admin-container { max-width: 1200px; margin: 40px auto; padding: 0 20px; }
+    .admin-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; background: white; padding: 20px; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+    .admin-section { background: white; padding: 24px; border-radius: 12px; margin-bottom: 30px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+    .admin-section h2 { margin-bottom: 20px; font-size: 20px; }
+    table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+    th, td { padding: 12px; text-align: left; border-bottom: 1px solid #eee; font-size: 14px; }
+    th { background: #f1f3f5; font-weight: 600; }
+    .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 15px; }
+    .form-grid input, .form-grid select { padding: 10px; border: 1px solid #ddd; border-radius: 6px; font-size: 14px; width: 100%; box-sizing: border-box; }
+    .danger-btn { background: #ffe3e3; color: #c92a2a; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; }
+    .danger-btn:hover { background: #ffc9c9; }
   </style>
+</head>
+<body>
+
+  <div class="admin-container">
+    <div class="admin-header">
+      <h1>Makasia — ადმინისტრაცია</h1>
+      <div>
+        <a href="index.html" class="button" style="text-decoration:none; margin-right: 10px; background: #e9ecef; color: #333;">საიტზე დაბრუნება</a>
+        <button id="adminLogout" class="button button-dark" style="background: #c92a2a;">გასვლა</button>
+      </div>
+    </div>
+
+    <!-- პროდუქტის დამატების სექცია -->
+    <div class="admin-section">
+      <h2>ახალი პროდუქტის დამატება</h2>
+      <form id="addProductForm">
+        <div class="form-grid">
+          <input type="text" id="prodName" placeholder="პროდუქტის დასახელება" required>
+          <input type="number" id="prodPrice" placeholder="ფასი (₾)" required>
+          <select id="prodCategory" required>
+            <option value="">აირჩიეთ კატეგორია</option>
+            <option value="ყოველდღიური">ყოველდღიური</option>
+            <option value="საღამოს">საღამოს</option>
+            <option value="ზურგჩანთები">ზურგჩანთები</option>
+          </select>
+          <input type="url" id="prodImage" placeholder="სურათის ბმული (URL)" required>
+        </div>
+        <button type="submit" class="button button-dark">დამატება კატალოგში</button>
+      </form>
+    </div>
+
+    <!-- პროდუქტების სია -->
+    <div class="admin-section">
+      <h2>არსებული პროდუქტები</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>სურათი</th>
+            <th>სახელწოდება</th>
+            <th>კატეგორია</th>
+            <th>ფასი</th>
+            <th>მოქმედება</th>
+          </tr>
+        </thead>
+        <tbody id="adminProductTable">
+          <tr><td colspan="5" style="text-align:center;">იტვირთება...</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- შეკვეთების სექცია -->
+    <div class="admin-section">
+      <h2>შემოსული შეკვეთები</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>თარიღი / ID</th>
+            <th>მომხმარებელი</th>
+            <th>ტელეფონი / მისამართი</th>
+            <th>დეტალები</th>
+            <th>თანხა</th>
+            <th>სტატუსი</th>
+          </tr>
+        </thead>
+        <tbody id="adminOrdersTable">
+          <tr><td colspan="6" style="text-align:center;">იტვირთება...</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="toast" id="toast">ოპერაცია წარმატებით დასრულდა</div>
+
   <!-- Firebase SDK-ები -->
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
-</head>
-<body>
 
-  <header class="site-header">
-    <a href="index.html" class="brand">Maka<span>sia</span> <small style="font-size:12px; font-family:var(--font); font-weight:normal;">[ადმინ]</small></a>
-    <div id="adminUserArea" style="display:none;">
-      <button class="button button-light" id="logoutBtn" style="padding: 8px 16px;">გასვლა</button>
-    </div>
-  </header>
-
-  <!-- შესვლის სექცია -->
-  <div id="loginSection" class="login-box">
-    <h2>ადმინისტრაცია</h2>
-    <p class="dialog-intro" style="margin-bottom: 20px;">შედით სამართავ პანელში:</p>
-    <div style="display:grid; gap:16px;">
-      <label style="font-size:12px; font-weight:700;">ელ-ფოსტა <input type="email" id="adminEmail" style="width:100%; padding:12px; border:1px solid var(--line); border-radius:8px; margin-top:6px;"></label>
-      <label style="font-size:12px; font-weight:700;">პაროლი <input type="password" id="adminPassword" style="width:100%; padding:12px; border:1px solid var(--line); border-radius:8px; margin-top:6px;"></label>
-      <p id="loginError" class="field-error"></p>
-      <button class="button button-dark full" id="loginBtn">შესვლა</button>
-    </div>
-  </div>
-
-  <!-- ადმინ პანელის მთავარი სექცია -->
-  <main id="adminSection" class="admin-container" style="display:none;">
-    <div class="admin-header">
-      <h2>შეკვეთების მართვა</h2>
-      <a href="index.html" class="text-link">საიტზე დაბრუნება <span>→</span></a>
-    </div>
-
-    <div class="admin-stats">
-      <div class="stat-card">
-        <h3>სულ შეკვეთები</h3>
-        <div class="number" id="totalOrdersCount">0</div>
-      </div>
-      <div class="stat-card">
-        <h3>ჯამური შემოსავალი</h3>
-        <div class="number" id="totalRevenue">0 ₾</div>
-      </div>
-      <div class="stat-card">
-        <h3>სტატუსი</h3>
-        <div class="number" style="font-size: 18px; color: #059669; margin-top:6px;">აქტიურია ✓</div>
-      </div>
-    </div>
-
-    <div style="background: #fff; border-radius: var(--radius); border: 1px solid var(--line); overflow: hidden; box-shadow: var(--shadow);">
-      <div style="padding: 20px; border-bottom: 1px solid var(--line); font-weight: 700; font-size: 16px;">ბოლოს შემოსული შეკვეთები</div>
-      <div style="overflow-x: auto;">
-        <table class="orders-table">
-          <thead>
-            <tr>
-              <th>თარიღი</th>
-              <th>მომხმარებელი</th>
-              <th>ტელეფონი</th>
-              <th>მისამართი</th>
-              <th>დეტალები</th>
-              <th>თანხა</th>
-              <th>სტატუსი</th>
-            </tr>
-          </thead>
-          <tbody id="ordersList">
-            <!-- შეკვეთები იტვირთება ბაზიდან -->
-          </tbody>
-        </table>
-      </div>
-    </div>
-  </main>
-
+  <!-- ადმინის სკრიპტი -->
   <script>
-    // შენიშვნა: ჩაატარე შენი Firebase კონფიგურაცია ქვემოთ
     const firebaseConfig = {
-      apiKey: "AIzaSyD-YourAPIKeyHere",
-      authDomain: "makasia-shop.firebaseapp.com",
-      projectId: "makasia-shop",
-      storageBucket: "makasia-shop.appspot.com",
-      messagingSenderId: "123456789",
-      appId: "1:123:web:abc"
+      apiKey: "AIzaSyDuZpWaZFY18eyJNOMjFap2XVTr6D0cMyE",
+      authDomain: "makasia.firebaseapp.com",
+      projectId: "makasia",
+      storageBucket: "makasia.firebasestorage.app",
+      messagingSenderId: "51102698357",
+      appId: "1:51102698357:web:59f62a3c8e76663947a13c"
     };
 
     if (!firebase.apps.length) {
-      firebase.initializeApp(firebaseConfig);
+        firebase.initializeApp(firebaseConfig);
     }
 
     const db = firebase.firestore();
     const auth = firebase.auth();
 
-    const loginSection = document.getElementById('loginSection');
-    const adminSection = document.getElementById('adminSection');
-    const adminUserArea = document.getElementById('adminUserArea');
-    const loginBtn = document.getElementById('loginBtn');
-    const logoutBtn = document.getElementById('logoutBtn');
-    const loginError = document.getElementById('loginError');
-    const ordersList = document.getElementById('ordersList');
-    const totalOrdersCount = document.getElementById('totalOrdersCount');
-    const totalRevenue = document.getElementById('totalRevenue');
-
-    if (loginBtn) {
-      loginBtn.addEventListener('click', () => {
-        const email = document.getElementById('adminEmail').value;
-        const password = document.getElementById('adminPassword').value;
-
-        auth.signInWithEmailAndPassword(email, password)
-          .then(() => { loginError.textContent = ""; })
-          .catch((error) => {
-            loginError.textContent = "არასწორი ელ-ფოსტა ან პაროლი!";
-            console.error(error);
-          });
-      });
-    }
-
-    if (logoutBtn) {
-      logoutBtn.addEventListener('click', () => { auth.signOut(); });
-    }
-
+    // ადმინის შემოწმება
     auth.onAuthStateChanged((user) => {
-      if (user) {
-        loginSection.style.display = 'none';
-        adminSection.style.display = 'block';
-        adminUserArea.style.display = 'block';
-        loadOrders();
-      } else {
-        loginSection.style.display = 'block';
-        adminSection.style.display = 'none';
-        adminUserArea.style.display = 'none';
-      }
+        if (!user) {
+            alert("გთხოვთ გაიაროთ ავტორიზაცია როგორც ადმინისტრატორმა!");
+            window.location.href = "index.html";
+        }
     });
 
-    function loadOrders() {
-      db.collection("orders").orderBy("createdAt", "desc").onSnapshot((snapshot) => {
-        ordersList.innerHTML = "";
-        
-        if (snapshot.empty) {
-          ordersList.innerHTML = `<tr><td colspan="7" style="text-align:center; color:var(--muted); padding: 30px;">ჯერ შეკვეთები არ არის.</td></tr>`;
-          totalOrdersCount.textContent = "0";
-          totalRevenue.textContent = "0 ₾";
-          return;
-        }
-
-        let count = 0;
-        let revenue = 0;
-
-        snapshot.forEach((doc) => {
-          count++;
-          const data = doc.data();
-          const dateStr = data.createdAt ? new Date(data.createdAt.toDate()).toLocaleString('ka-GE') : 'უცნობი დრო';
-          
-          let priceNum = parseFloat(data.totalPrice) || 0;
-          revenue += priceNum;
-
-          const tr = document.createElement('tr');
-          tr.innerHTML = `
-            <td>${dateStr}</td>
-            <td><strong>${data.customerName || 'არ არის მითითებული'}</strong></td>
-            <td>${data.phone || '-'}</td>
-            <td>${data.address || '-'}</td>
-            <td><small>${data.productDetails || '-'}</small></td>
-            <td><strong>${data.totalPrice || '0'}</strong></td>
-            <td><span class="badge new">ახალი</span></td>
-          `;
-          ordersList.appendChild(tr);
+    document.getElementById('adminLogout').addEventListener('click', () => {
+        auth.signOut().then(() => {
+            window.location.href = "index.html";
         });
+    });
 
-        totalOrdersCount.textContent = count;
-        totalRevenue.textContent = revenue.toFixed(2) + " ₾";
-      });
+    // პროდუქტების გამოტანა და მართვა
+    const adminProductTable = document.getElementById('adminProductTable');
+    db.collection("products").onSnapshot((snapshot) => {
+        adminProductTable.innerHTML = "";
+        if(snapshot.empty) {
+            adminProductTable.innerHTML = `<tr><td colspan="5" style="text-align:center;">პროდუქტები არ მოიძებნა</td></tr>`;
+            return;
+        }
+        snapshot.forEach((doc) => {
+            const p = doc.data();
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td><img src="${p.image}" style="width: 40px; height: 40px; object-fit: cover; border-radius: 4px;"></td>
+                <td><strong>${p.name}</strong></td>
+                <td>${p.category}</td>
+                <td>${p.price} ₾</td>
+                <td><button class="danger-btn" onclick="deleteProduct('${doc.id}')">წაშლა</button></td>
+            `;
+            adminProductTable.appendChild(tr);
+        });
+    });
+
+    // ახალი პროდუქტის დამატება
+    document.getElementById('addProductForm').addEventListener('submit', (e) => {
+        e.preventDefault();
+        const name = document.getElementById('prodName').value;
+        const price = Number(document.getElementById('prodPrice').value);
+        const category = document.getElementById('prodCategory').value;
+        const image = document.getElementById('prodImage').value;
+
+        db.collection("products").add({ name, price, category, image, createdAt: firebase.firestore.FieldValue.serverTimestamp() })
+        .then(() => {
+            showToast("პროდუქტი წარმატებით დაემატა!");
+            e.target.reset();
+        })
+        .catch(err => {
+            alert("შეცდომა პროდუქტის დამატებისას: " + err.message);
+        });
+    });
+
+    window.deleteProduct = function(id) {
+        if(confirm("ნამდვილად გსურთ პროდუქტის წაშლა?")) {
+            db.collection("products").doc(id).delete().then(() => {
+                showToast("პროდუქტი წაიშალა");
+            });
+        }
+    };
+
+    // შეკვეთების გამოტანა
+    const adminOrdersTable = document.getElementById('adminOrdersTable');
+    db.collection("orders").orderBy("createdAt", "desc").onSnapshot((snapshot) => {
+        adminOrdersTable.innerHTML = "";
+        if(snapshot.empty) {
+            adminOrdersTable.innerHTML = `<tr><td colspan="6" style="text-align:center;">შეკვეთები ჯერ არ არის</td></tr>`;
+            return;
+        }
+        snapshot.forEach((doc) => {
+            const o = doc.data();
+            const dateStr = o.createdAt ? new Date(o.createdAt.seconds * 1000).toLocaleString() : 'ახლახანს';
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td><small>${dateStr}</small></td>
+                <td><strong>${o.customerName}</strong></td>
+                <td>${o.phone}<br><small>${o.address}</small></td>
+                <td><div style="max-height: 100px; overflow-y: auto;">${o.productDetails}</div><small>მიწოდება: ${o.delivery}</small></td>
+                <td><strong>${o.totalPrice}</strong></td>
+                <td><span style="background: #e7f5ff; color: #1971c2; padding: 4px 8px; border-radius: 4px; font-size: 12px;">${o.status || 'ახალი'}</span></td>
+            `;
+            adminOrdersTable.appendChild(tr);
+        });
+    });
+
+    function showToast(msg) {
+        const toast = document.getElementById('toast');
+        toast.textContent = msg;
+        toast.classList.add('show');
+        setTimeout(() => toast.classList.remove('show'), 2500);
     }
   </script>
 </body>
