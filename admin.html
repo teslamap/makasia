@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html lang="ka">
 <head>
-  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-storage-compat.js"></script>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Makasia — მართვის პანელი</title>
@@ -288,7 +287,7 @@
     </div>
   </dialog>
 
-  <!-- თანამედროვე დადასტურების მოდალი (Custom Confirm Modal) -->
+  <!-- თანამედროვე დადასტურების მოდალი -->
   <dialog id="confirmModal" class="admin-modal" style="max-width: 400px; text-align: center;">
     <div class="modal-content" style="padding: 30px;">
       <div style="font-size: 42px; margin-bottom: 15px;">⚠️</div>
@@ -301,7 +300,7 @@
     </div>
   </dialog>
 
-  <!-- 🌟 სრულიად უნივერსალური მოდალი ბრაუზერის alert-ის ნაცვლად -->
+  <!-- უნივერსალური მოდალი alert-ის ნაცვლად -->
   <dialog id="universalModal" class="admin-modal" style="max-width: 400px; text-align: center;">
     <div class="modal-content" style="padding: 30px;">
       <div id="uniModalIcon" style="font-size: 42px; margin-bottom: 15px;">⚠️</div>
@@ -313,13 +312,11 @@
 
   <div class="toast" id="toast">✨ ოპერაცია წარმატებით დასრულდა!</div>
 
-  <!-- Firebase SDK-ები -->
+  <!-- Firebase SDK-ები (მხოლოდ საჭიროები) -->
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-storage-compat.js"></script>
 
   <script>
-    // 🌟 უნივერსალური შეტყობინების ფუნქცია ძველი alert-ების ნაცვლად
     window.showModalMessage = function(title, text, type = 'error') {
         const modal = document.getElementById('universalModal');
         if (!modal) return;
@@ -334,7 +331,6 @@
         }
     }
 
-    // 🛡️ ძველი alert-ების გადაფარვა შენი დიზაინის მოდალით
     window.alert = function(msg) {
         window.showModalMessage("ყურადღება", msg, "error");
     };
@@ -353,8 +349,6 @@
     }
 
     const db = firebase.firestore();
-
-    // 🔑 ადმინის ფიქსირებული პაროლი
     const ADMIN_SECRET_PASSWORD = "MakasiaAdmin2026!";
 
     const loginSection = document.getElementById('loginSection');
@@ -423,39 +417,40 @@
         productModal.close();
     }
 
-    // გაუმჯობესებული და დაზღვეული სურათის ატვირთვის ფუნქცია
+    // 🌟 სრულიად სტაბილური ფოტოს ბრაუზერში დამუშავება (ImgBB-ს გარეშე)
     async function uploadImageIfNeeded() {
         const fileInput = document.getElementById('prodImageFile');
         const urlInput = document.getElementById('prodImage').value.trim();
 
-        // თუ ფაილი არ არის არჩეული, მაგრამ ბმული ჩაწერილია — დააბრუნოს ბმული
         if (!fileInput.files || !fileInput.files[0]) {
             if (urlInput) return urlInput;
             window.showModalMessage("შეცდომა", "გთხოვთ აირჩიოთ სურათის ფაილი ან ჩასვათ სურათის ბმული (URL)!", "error");
             return null;
         }
 
-        const formData = new FormData();
-        formData.append("image", fileInput.files[0]);
-        
-        try {
-            const response = await fetch("https://api.imgbb.com/1/upload?key=6d207e44de2184ad52cf5d568bc1d52a", {
-                method: "POST",
-                body: formData
-            });
-            const data = await response.json();
-            if (data.success) {
-                return data.data.url;
-            } else {
-                // თუ ფაილის ატვირთვა ვერ მოხერხდა, მაგრამ ბმული მაინც წერია, ბმული გამოვიყენოთ
-                if (urlInput) return urlInput;
-                throw new Error("ImgBB სერვერმა უარყო ფოტოს ატვირთვა.");
-            }
-        } catch (err) {
-            if (urlInput) return urlInput; // თუ ფაილი ჩავარდა და ბმული არსებობს, ბმულით გავუშვათ
-            window.showModalMessage("ფოტოს ატვირთვის შეცდომა", "ფოტოს ატვირთვა ვერ მოხერხდა. სცადეთ სხვა ფოტო ან ჩასვით პირდაპირი სურათის ბმული (URL).", "error");
+        const file = fileInput.files[0];
+
+        // ზომის შემოწმება (მაქსიმუმ 800KB)
+        if (file.size > 800 * 1024) {
+            window.showModalMessage("ყურადღება", "სურათი ძალიან დიდია. გთხოვთ აირჩიოთ 800KB-ზე პატარა ფოტო ან გამოიყენეთ სურათის ბმული (URL).", "error");
             return null;
         }
+
+        return new Promise((resolve) => {
+            const reader = new FileReader();
+            reader.onload = function(uploadEvent) {
+                resolve(uploadEvent.target.result);
+            };
+            reader.onerror = function() {
+                if (urlInput) {
+                    resolve(urlInput);
+                } else {
+                    window.showModalMessage("შეცდომა", "ფაილის წაკითხვა ვერ მოხერხდა.", "error");
+                    resolve(null);
+                }
+            };
+            reader.readAsDataURL(file);
+        });
     }
 
     productForm.addEventListener('submit', async (e) => {
@@ -504,7 +499,7 @@
                     <td><strong style="color: #059669;">${p.price} ₾</strong></td>
                     <td>
                       <div style="display: flex; gap: 8px;">
-                        <button class="btn btn-glow-blue" style="padding: 6px 12px; font-size: 12px; box-shadow: none; width: auto;" onclick="openEditModal('${doc.id}', '${escapeHtml(p.name)}', ${p.price}, '${p.category}', '${p.image}')">✏️</button>
+                        <button class="btn btn-glow-blue" style="padding: 6px 12px; font-size: 12px; box-shadow: none; width: auto;" onclick="openEditModal('${doc.id}', '${escapeHtml(p.name)}', ${p.price}, '${p.category}', '${escapeHtml(p.image)}')">✏️</button>
                         <button class="btn btn-glow-red" style="padding: 6px 12px; font-size: 12px; box-shadow: none; width: auto;" onclick="confirmDeleteProduct('${doc.id}')">🗑️</button>
                       </div>
                     </td>
@@ -515,6 +510,7 @@
     }
 
     function escapeHtml(text) {
+        if (!text) return '';
         return text.replace(/'/g, "&apos;").replace(/"/g, "&quot;");
     }
 
@@ -524,13 +520,12 @@
         document.getElementById('prodName').value = name;
         document.getElementById('prodPrice').value = price;
         document.getElementById('prodCategory').value = category;
-        document.getElementById('prodImage').value = image;
+        document.getElementById('prodImage').value = image.startsWith('data:') ? '' : image;
         document.getElementById('prodImageFile').value = "";
         catalogModal.close();
         productModal.showModal();
     }
 
-    // თანამედროვე პოაპი პროდუქტის წაშლისთვის
     window.confirmDeleteProduct = function(id) {
         showCustomConfirm("პროდუქტის წაშლა", "ნამდვილად გსურთ ამ პროდუქტის წაშლა?", () => {
             db.collection("products").doc(id).delete().then(() => {
@@ -556,7 +551,7 @@
                     <td><strong style="color: #312e81;">${o.customerName}</strong></td>
                     <td>${o.phone}<br><span style="font-size: 12px; color: #64748b;">${o.address}</span></td>
                     <td><div style="max-height: 80px; overflow-y: auto; font-size: 13px;">${o.productDetails}</div><span style="font-size: 11px; color: #7c3aed; font-weight: 700;">მიწოდება: ${o.delivery}</span></td>
-                    <td><strong style="color: #059669; font-size: 15px;">${o.totalPrice} ₾</strong></td>
+                    ><td><strong style="color: #059669; font-size: 15px;">${o.totalPrice} ₾</strong></td>
                     <td><span style="background: linear-gradient(135deg, #fef08a, #fde047); color: #854d0e; padding: 6px 14px; border-radius: 20px; font-size: 12px; font-weight: 800; box-shadow: 0 2px 5px rgba(0,0,0,0.05);">${o.status || 'ახალი'}</span></td>
                     <td>
                       <button class="btn btn-glow-red" style="padding: 6px 12px; font-size: 12px; box-shadow: none; width: auto;" onclick="confirmDeleteOrder('${doc.id}')">🗑️ წაშლა</button>
@@ -567,7 +562,6 @@
         });
     }
 
-    // თანამედროვე პოაპი შეკვეთის წაშლისთვის
     window.confirmDeleteOrder = function(id) {
         showCustomConfirm("შეკვეთის წაშლა", "ნამდვილად გსურთ ამ შეკვეთის წაშლა?", () => {
             db.collection("orders").doc(id).delete().then(() => {
@@ -578,7 +572,6 @@
         });
     };
 
-    // დამხმარე ფუნქცია თანამედროვე პოაპის გამოსაძახებლად
     function showCustomConfirm(title, text, onConfirm) {
         const modal = document.getElementById('confirmModal');
         document.getElementById('confirmTitle').textContent = title;
