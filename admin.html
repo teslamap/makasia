@@ -315,6 +315,7 @@
   <!-- Firebase SDK-ები (მხოლოდ საჭიროები) -->
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-storage-compat.js"></script>
 
   <script>
     window.showModalMessage = function(title, text, type = 'error') {
@@ -349,6 +350,7 @@
     }
 
     const db = firebase.firestore();
+    const storage = firebase.storage();
     const ADMIN_SECRET_PASSWORD = "MakasiaAdmin2026!";
 
     const loginSection = document.getElementById('loginSection');
@@ -417,67 +419,138 @@
         productModal.close();
     }
 
-    // 🌟 სრულიად სტაბილური ფოტოს ბრაუზერში დამუშავება (ImgBB-ს გარეშე)
+    // 📸 ფოტო ინახება Firebase Storage-ში, ხოლო Firestore-ში მხოლოდ URL.
+    // Base64-ის Firestore-ში შენახვა ამოღებულია, რადგან Firestore-ის document
+    // ლიმიტი დაახლოებით 1MB-ია და Base64 ფოტოს ზომასაც ზრდის.
     async function uploadImageIfNeeded() {
         const fileInput = document.getElementById('prodImageFile');
         const urlInput = document.getElementById('prodImage').value.trim();
 
+        // რედაქტირებისას, თუ ახალი ფოტო არ აგვირჩევია, არსებული URL დავტოვოთ.
         if (!fileInput.files || !fileInput.files[0]) {
             if (urlInput) return urlInput;
-            window.showModalMessage("შეცდომა", "გთხოვთ აირჩიოთ სურათის ფაილი ან ჩასვათ სურათის ბმული (URL)!", "error");
+
+            window.showModalMessage(
+                "შეცდომა",
+                "გთხოვთ აირჩიოთ სურათის ფაილი ან ჩასვათ სურათის ბმული (URL)!",
+                "error"
+            );
             return null;
         }
 
         const file = fileInput.files[0];
 
-        // ზომის შემოწმება (მაქსიმუმ 800KB)
-        if (file.size > 800 * 1024) {
-            window.showModalMessage("ყურადღება", "სურათი ძალიან დიდია. გთხოვთ აირჩიოთ 800KB-ზე პატარა ფოტო ან გამოიყენეთ სურათის ბმული (URL).", "error");
+        if (!file.type.startsWith('image/')) {
+            window.showModalMessage("შეცდომა", "გთხოვთ აირჩიოთ მხოლოდ სურათის ფაილი.", "error");
             return null;
         }
 
-        return new Promise((resolve) => {
-            const reader = new FileReader();
-            reader.onload = function(uploadEvent) {
-                resolve(uploadEvent.target.result);
-            };
-            reader.onerror = function() {
-                if (urlInput) {
-                    resolve(urlInput);
-                } else {
-                    window.showModalMessage("შეცდომა", "ფაილის წაკითხვა ვერ მოხერხდა.", "error");
-                    resolve(null);
-                }
-            };
-            reader.readAsDataURL(file);
-        });
+        // 10MB მაქსიმუმი.
+        if (file.size > 10 * 1024 * 1024) {
+            window.showModalMessage(
+                "ყურადღება",
+                "სურათი ძალიან დიდია. გთხოვთ აირჩიოთ 10MB-ზე პატარა ფოტო.",
+                "error"
+            );
+            return null;
+        }
+
+        try {
+            const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, '_');
+            const fileName =
+                `${Date.now()}_${Math.random().toString(36).slice(2, 10)}_${safeName}`;
+
+            const storageRef = storage.ref().child(`products/${fileName}`);
+
+            // ატვირთვა Firebase Storage-ში
+            await storageRef.put(file, {
+                contentType: file.type,
+                cacheControl: 'public,max-age=31536000'
+            });
+
+            // ჩამოსატვირთი/საჩვენებელი URL
+            return await storageRef.getDownloadURL();
+
+        } catch (error) {
+            console.error("Firebase Storage upload error:", error);
+
+            let message = "ფოტოს ატვირთვა ვერ მოხერხდა.";
+
+            if (error.code === 'storage/unauthorized') {
+                message += " Firebase Storage-ის Rules ატვირთვას კრძალავს.";
+            } else if (error.code === 'storage/quota-exceeded') {
+                message += " Firebase Storage-ის ლიმიტი ამოიწურა.";
+            } else if (error.message) {
+                message += " " + error.message;
+            }
+
+            window.showModalMessage("შეცდომა", message, "error");
+            return null;
+        }
     }
 
     productForm.addEventListener('submit', async (e) => {
         e.preventDefault();
-        const id = editProductId.value;
-        const name = document.getElementById('prodName').value;
-        const price = Number(document.getElementById('prodPrice').value);
-        const category = document.getElementById('prodCategory').value;
-        
-        const imageUrl = await uploadImageIfNeeded();
-        if (!imageUrl) return;
 
-        if (id) {
-            db.collection("products").doc(id).update({ name, price, category, image: imageUrl })
-            .then(() => {
+        const saveBtn = productForm.querySelector('button[type="submit"]');
+        const originalText = saveBtn ? saveBtn.textContent : '';
+
+        try {
+            if (saveBtn) {
+                saveBtn.disabled = true;
+                saveBtn.textContent = "⏳ იტვირთება...";
+            }
+
+            const id = editProductId.value;
+            const name = document.getElementById('prodName').value.trim();
+            const price = Number(document.getElementById('prodPrice').value);
+            const category = document.getElementById('prodCategory').value;
+
+            if (!name || !Number.isFinite(price) || price < 0 || !category) {
+                window.showModalMessage(
+                    "შეცდომა",
+                    "გთხოვთ შეავსოთ პროდუქტის ყველა აუცილებელი ველი სწორად.",
+                    "error"
+                );
+                return;
+            }
+
+            const imageUrl = await uploadImageIfNeeded();
+            if (!imageUrl) return;
+
+            if (id) {
+                await db.collection("products").doc(id).update({
+                    name,
+                    price,
+                    category,
+                    image: imageUrl
+                });
                 showToast("პროდუქტი წარმატებით განახლდა!");
-                closeProductModal();
-            });
-        } else {
-            db.collection("products").add({ 
-                name, price, category, image: imageUrl, 
-                createdAt: firebase.firestore.FieldValue.serverTimestamp() 
-            })
-            .then(() => {
+            } else {
+                await db.collection("products").add({
+                    name,
+                    price,
+                    category,
+                    image: imageUrl,
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                });
                 showToast("პროდუქტი წარმატებით დაემატა!");
-                closeProductModal();
-            });
+            }
+
+            closeProductModal();
+
+        } catch (error) {
+            console.error("Product save error:", error);
+            window.showModalMessage(
+                "შეცდომა",
+                "პროდუქტის შენახვა ვერ მოხერხდა: " + (error.message || "უცნობი შეცდომა"),
+                "error"
+            );
+        } finally {
+            if (saveBtn) {
+                saveBtn.disabled = false;
+                saveBtn.textContent = originalText;
+            }
         }
     });
 
@@ -510,8 +583,13 @@
     }
 
     function escapeHtml(text) {
-        if (!text) return '';
-        return text.replace(/'/g, "&apos;").replace(/"/g, "&quot;");
+        if (text === null || text === undefined) return '';
+        return String(text)
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/'/g, "&#39;")
+            .replace(/"/g, "&quot;");
     }
 
     window.openEditModal = function(id, name, price, category, image) {
