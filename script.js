@@ -1,11 +1,11 @@
 // Firebase კავშირი და მთავარი ლოგიკა
 const firebaseConfig = {
-  apiKey: "AIzaSyDuZpWaZFY18eyJNOMjFap2XVTr6D0cMyE",
-  authDomain: "makasia.firebaseapp.com",
-  projectId: "makasia",
-  storageBucket: "makasia.firebasestorage.app",
-  messagingSenderId: "51102698357",
-  appId: "1:51102698357:web:59f62a3c8e76663947a13c"
+    apiKey: "AIzaSyDuZpWaZFY18eyJNOMjFap2XVTr6D0cMyE",
+    authDomain: "makasia.firebaseapp.com",
+    projectId: "makasia",
+    storageBucket: "makasia.firebasestorage.app",
+    messagingSenderId: "51102698357",
+    appId: "1:51102698357:web:59f62a3c8e76663947a13c"
 };
 
 if (!firebase.apps.length) {
@@ -35,6 +35,7 @@ document.addEventListener('DOMContentLoaded', () => {
     updateCartUI();
     initEvents();
     checkAuthStatus();
+    setupProfileDropdown();
 });
 
 // პროდუქტების წამოღება Firestore-დან რეალურ დროში
@@ -47,12 +48,15 @@ function loadProductsFromDB() {
         renderProducts();
     }, (error) => {
         console.error("პროდუქტების ჩატვირთვის შეცდომა: ", error);
-        productGrid.innerHTML = `<p style="grid-column: 1/-1; text-align: center; color: #d32f2f; padding: 40px;">ვერ მოხერხდა პროდუქტების ჩატვირთვა ბაზიდან.</p>`;
+        if(productGrid) {
+            productGrid.innerHTML = `<p style="grid-column: 1/-1; text-align: center; color: #d32f2f; padding: 40px;">ვერ მოხერხდა პროდუქტების ჩატვირთვა ბაზიდან.</p>`;
+        }
     });
 }
 
 // პროდუქტების გამოტანა ეკრანზე
 function renderProducts() {
+    if (!productGrid) return;
     productGrid.innerHTML = "";
     
     const filtered = products.filter(p => {
@@ -107,6 +111,7 @@ function saveCart() {
 
 // კალათის ინტერფეისის განახლება
 function updateCartUI() {
+    if (!cartCount || !cartItemsContainer || !cartTotal) return;
     const totalCount = cart.reduce((sum, item) => sum + item.quantity, 0);
     cartCount.textContent = totalCount;
 
@@ -119,7 +124,10 @@ function updateCartUI() {
 
     let totalPrice = 0;
     cart.forEach(item => {
-        totalPrice += item.price * item.quantity;
+        const itemPrice = Number(item.price) || 0;
+        const itemQty = Number(item.quantity) || 1;
+        totalPrice += itemPrice * itemQty;
+        
         const div = document.createElement('div');
         div.style.cssText = "display: flex; align-items: center; justify-content: space-between; margin-bottom: 15px; border-bottom: 1px solid #eee; padding-bottom: 10px;";
         div.innerHTML = `
@@ -127,7 +135,7 @@ function updateCartUI() {
                 <img src="${item.image}" style="width: 50px; height: 50px; object-fit: cover; border-radius: 6px;">
                 <div>
                     <div style="font-weight: 600; font-size: 14px;">${item.name}</div>
-                    <div style="font-size: 13px; color: #666;">${item.price} ₾ x ${item.quantity}</div>
+                    <div style="font-size: 13px; color: #666;">${itemPrice} ₾ x ${itemQty}</div>
                 </div>
             </div>
             <button onclick="removeFromCart('${item.id}')" style="background: none; border: none; color: #d32f2f; cursor: pointer; font-size: 18px;">×</button>
@@ -145,6 +153,7 @@ window.removeFromCart = function(productId) {
 };
 
 function showToast(msg) {
+    if (!toast) return;
     toast.textContent = msg;
     toast.classList.add('show');
     setTimeout(() => toast.classList.remove('show'), 2500);
@@ -152,7 +161,7 @@ function showToast(msg) {
 
 // მიწოდების თანხის დაანგარიშება (150 ლარზე ზევით უფასოა)
 function calculateCheckout() {
-    const subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+    const subtotal = cart.reduce((sum, item) => sum + ((Number(item.price) || 0) * (Number(item.quantity) || 1)), 0);
     
     const deliverySelect = document.querySelector('[name="delivery"]');
     let deliveryBasePrice = 8; // თბილისი ნაგულისხმევად
@@ -182,7 +191,7 @@ function checkAuthStatus() {
         const accountToggle = document.getElementById('account-toggle');
         if (accountToggle) {
             if (user) {
-                accountToggle.textContent = user.email === "suloanani1@gmail.com" ? "ადმინი" : "პროფილი";
+                accountToggle.textContent = user.email === "suloanani1@gmail.com" ? "ადმინი ▼" : "პროფილი ▼";
             } else {
                 accountToggle.textContent = "შესვლა";
             }
@@ -190,13 +199,71 @@ function checkAuthStatus() {
     });
 }
 
+// პროფილის პოაპ დროპდაუნ მენიუს მართვა
+function setupProfileDropdown() {
+    const accountToggle = document.getElementById('account-toggle');
+    const profilePopup = document.getElementById('profilePopup');
+
+    if (!accountToggle || !profilePopup) return;
+
+    accountToggle.addEventListener('click', (e) => {
+        const user = auth.currentUser;
+        if (!user) {
+            // თუ არ არის შესული, ხსნის ავტორიზაციის დიალოგს
+            const authDialog = document.getElementById('auth-dialog');
+            if(authDialog) {
+                authDialog.style.display = 'block';
+                authDialog.showModal();
+                if(overlay) overlay.classList.add('show');
+            }
+        } else {
+            // თუ შესულია, აჩვენებს/მალავს პროფილის პოაპს
+            e.stopPropagation();
+            profilePopup.style.display = profilePopup.style.display === 'block' ? 'none' : 'block';
+        }
+    });
+
+    // პოაპის დახურვა გვერდზე კლიკისას
+    document.addEventListener('click', (e) => {
+        if (!accountToggle.contains(e.target) && !profilePopup.contains(e.target)) {
+            profilePopup.style.display = 'none';
+        }
+    });
+
+    // ჩემი შეკვეთების ლინკი
+    const myOrdersLink = document.getElementById('myOrdersLink');
+    if (myOrdersLink) {
+        myOrdersLink.addEventListener('click', (e) => {
+            e.preventDefault();
+            profilePopup.style.display = 'none';
+            showToast("შეკვეთების ისტორია მალე გააქტიურდება!");
+        });
+    }
+
+    // გასვლის (Logout) ლინკი
+    const logoutLink = document.getElementById('logoutLink');
+    if (logoutLink) {
+        logoutLink.addEventListener('click', (e) => {
+            e.preventDefault();
+            profilePopup.style.display = 'none';
+            auth.signOut().then(() => {
+                showToast("წარმატებით გავედით სისტემიდან");
+                setTimeout(() => location.reload(), 1000);
+            });
+        });
+    }
+}
+
 // ღონისძიებების მართვა
 function initEvents() {
     // კალათის გახსნა
-    document.getElementById('cart-toggle').addEventListener('click', () => {
-        cartPanel.classList.add('open');
-        overlay.classList.add('show');
-    });
+    const cartToggle = document.getElementById('cart-toggle');
+    if (cartToggle) {
+        cartToggle.addEventListener('click', () => {
+            if(cartPanel) cartPanel.classList.add('open');
+            if(overlay) overlay.classList.add('show');
+        });
+    }
 
     // სრული დახურვის ლოგიკა (ყველა მოდალისთვის და × ღილაკებისთვის)
     function closeAllModals() {
@@ -205,7 +272,9 @@ function initEvents() {
         
         const authDialog = document.getElementById('auth-dialog');
         const checkoutDialog = document.getElementById('checkout-dialog');
+        const profilePopup = document.getElementById('profilePopup');
         
+        if(profilePopup) profilePopup.style.display = 'none';
         if(authDialog) {
             authDialog.close();
             authDialog.style.display = 'none';
@@ -246,28 +315,6 @@ function initEvents() {
         });
     });
 
-    // ავტორიზაციის ფანჯრის გახსნა
-    const accountToggle = document.getElementById('account-toggle');
-    if (accountToggle) {
-        accountToggle.addEventListener('click', () => {
-            const user = auth.currentUser;
-            if (user) {
-                if(confirm("გსურთ სისტემიდან გასვლა?")) {
-                    auth.signOut().then(() => {
-                        showToast("გახვედით სისტემიდან");
-                    });
-                }
-            } else {
-                const authDialog = document.getElementById('auth-dialog');
-                if(authDialog) {
-                    authDialog.style.display = 'block';
-                    authDialog.showModal();
-                    if(overlay) overlay.classList.add('show');
-                }
-            }
-        });
-    }
-
     // შეკვეთის გაფორმების ფანჯრის გახსნა
     const checkoutBtn = document.getElementById('checkout');
     if (checkoutBtn) {
@@ -299,7 +346,7 @@ function initEvents() {
             e.preventDefault();
             const formData = new FormData(e.target);
             
-            const subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+            const subtotal = cart.reduce((sum, item) => sum + ((Number(item.price) || 0) * (Number(item.quantity) || 1)), 0);
             const deliveryType = formData.get('delivery') || '';
             
             let deliveryBasePrice = deliveryType.includes('რეგიონ') || deliveryType.includes('ფოსტა') ? 12 : 8;
@@ -341,13 +388,28 @@ function initEvents() {
 
     // ავტორიზაციის ტაბების გადართვა
     window.switchAuthTab = function(tab) {
-        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        const tabBtns = document.querySelectorAll('.tab-btn');
+        tabBtns.forEach(b => {
+            b.classList.remove('active');
+            b.style.background = '#e2e8f0';
+            b.style.color = '#333';
+            b.style.boxShadow = 'none';
+        });
+
         if(tab === 'login') {
-            document.querySelectorAll('.tab-btn')[0].classList.add('active');
+            if(tabBtns[0]) {
+                tabBtns[0].classList.add('active');
+                tabBtns[0].style.background = 'var(--primary-gradient)';
+                tabBtns[0].style.color = 'white';
+            }
             document.getElementById('login-form').style.display = 'block';
             document.getElementById('register-form').style.display = 'none';
         } else {
-            document.querySelectorAll('.tab-btn')[1].classList.add('active');
+            if(tabBtns[1]) {
+                tabBtns[1].classList.add('active');
+                tabBtns[1].style.background = 'var(--primary-gradient)';
+                tabBtns[1].style.color = 'white';
+            }
             document.getElementById('login-form').style.display = 'none';
             document.getElementById('register-form').style.display = 'block';
         }
